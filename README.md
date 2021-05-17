@@ -14,8 +14,8 @@ The instructions for the application are on the Home page of the application.
 ## Features
 Features include:
 - Automatic addition of book data, just search the book name and pick from the search results, and click to see a preview! See figure 1
-- Beautiful pinterest-esque stacking book cards in the card view. See figure 2
-- Efficient tabular form for managing and editing several books at once. See figure 3
+- Beautiful pinterest-esque stacking book cards in the Card View. See figure 2
+- Efficient Tabular View for managing and editing several books at once. See figure 3
 - Bookmarking and note taking, with a rich text editor! See figure 4
 - Statistics to analyse your reading habits and your libraries growth. See figure 5
 - Fully customizable accent colour, and a crisp light mode available. See figure 6 and 7
