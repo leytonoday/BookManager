@@ -41,6 +41,10 @@ const mutations = { // These edit the state directly
   UPDATE_NOTES(state, payload) {
     const index = state.books.findIndex(book => book.id === payload.id)
     state.books[index].notes = payload.notes
+  },
+  UPDATE_BOOKMARK(state, payload) {
+    const index = state.books.findIndex(book => book.id === payload.id)
+    state.books[index].bookmark = payload.bookmark
   }
 }
 
@@ -88,7 +92,20 @@ const actions = {
         reject(err)
       }
     })
+  },
+  async updateBookmark({commit}, bookmark) {
+    return new Promise (async (resolve, reject) => {
+      try {
+        const res = await axios.post(`${URLBase}/books/updatebookmark`, bookmark)
+        commit("UPDATE_BOOKMARK", res.data)
+        resolve(res)
+      } catch (err) {
+        reject(err)
+      }
+    })
   }
+
+  
 }
 
 const getters = {

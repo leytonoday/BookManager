@@ -2,7 +2,7 @@
   <div class="root">
     <div v-if="book">
       <vs-button gradient style="float: left" @click="$router.back()">
-        <i class="fas fa-arrow-left"></i>
+        <i class="fas fa-arrow-left" style="margin-right: 0.5em;"></i> Back
       </vs-button>
 
       <h1 class="title has-text-centered">{{ this.book.title }}</h1>
@@ -27,11 +27,15 @@
           </vs-button>
         </div>
 
+       <div class="infoBox">
+        <h2>Bookmark:</h2>
+        <i class="fas fa-bookmark fa-2x" id="bookmark" :style="bookmarkColour"></i>
+        <vs-input id="vs-input" type="number" border primary :vs-theme="theme.name" placeholder="Page No." v-model="bookmark" @input="handleBookmarkInput"/>
+        </div>
+
         <div class="infoBox">
           <h2>Notes:</h2>
-          <vue-editor :editorOptions="editorSettings" :editor-toolbar="customtToolbar" v-model="editorContent" :style="themeStyle">
-            test
-          </vue-editor>
+          <vue-editor :editorOptions="editorSettings" :editor-toolbar="customtToolbar" v-model="editorContent" :style="themeStyle" />
         </div>
 
         <div v-if="book.authors" class="infoBox">
@@ -182,7 +186,7 @@ export default {
   data() {
     return {
       dialogActive: false,
-      notes: "",
+      bookmark: "init",
       editorContent: "",
       customtToolbar: [
         ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
@@ -212,7 +216,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["theme", "accent"]),
+    ...mapGetters(["theme", "accent", "lastLibraryView"]),
     book() {
       return this.$store.getters.bookFromId(this.id)
     },
@@ -233,21 +237,31 @@ export default {
         "--accent": this.accent,
       }
     },
+    bookmarkColour() {
+      console.log(this.book.bookmark)
+      return {
+        "--bookmarkColour" : this.bookmark.length > 0 ? this.accent : ""
+      }
+    }
   },
 
   mounted() {
     this.editorContent = this.book.notes // this is to load the notes when mounted
+    this.bookmark = this.book.bookmark
     ipcRenderer.removeAllListeners("appClosing")
-    ipcRenderer.on("appClosing", (_) =>
-      router.currentRoute.name === "Book"
-        ? this.updateNotes().then(() => ipcRenderer.send("precloseComplete"))
-        : {}
-    )
+    ipcRenderer.on("appClosing", async (_) => {
+      if (router.currentRoute.name === "Book") {
+        await this.updateNotes()
+        await this .updateBookmark()
+        ipcRenderer.send("precloseComplete")
+      }
+    })
   },
 
   beforeRouteLeave(to, from, next) {
     // when the user moves pages, save the notes if edited
     this.updateNotes()
+    this.updateBookmark()
     ipcRenderer.removeAllListeners("appClosing")
     ipcRenderer.on("appClosing", (_) => ipcRenderer.send("precloseComplete"))
     next()
@@ -276,6 +290,26 @@ export default {
         resolve()
       })
     },
+    updateBookmark() {
+      return new Promise((resolve, _) => {
+        if (this.bookmark !== this.book.bookmark) {
+          resolve(
+            this.$store.dispatch("updateBookmark", {
+              id: this.book.id,
+              bookmark: this.bookmark
+            })
+          )
+          resolve()
+        }
+      })
+    },
+    handleBookmarkInput(input) { // clamps the bookmark to the 0 and pageCount
+      if (!this.book.pageCount) return parseInt(this.bookmark) < 0 ? this.bookmark = "" : {}
+
+      if(Number.isNaN(parseInt(input))) return this.bookmark = ""
+      
+      return this.bookmark = Math.min(Math.max(parseInt(input), 0), this.book.pageCount).toString()
+    }
   },
 }
 </script>
@@ -383,4 +417,22 @@ export default {
 .infoBox p {
   color: var(--themeText);
 }
+
+.vs-input-parent >>> .vs-input {
+  width: 100%;
+  text-align: center;
+}
+
+.vs-input-parent {
+  width: 6em;
+}
+
+#bookmark {
+  margin-top: 0.2em;
+  float: left;
+  margin-right: 0.5em;
+  color: var(--bookmarkColour);
+  transition: 0.5s ease;
+}
+
 </style>

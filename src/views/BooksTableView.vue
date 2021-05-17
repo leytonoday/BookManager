@@ -47,6 +47,7 @@
               <vs-th sort @click="sortData($event, 'dateAdded')"> Date Added </vs-th>
               <vs-th sort @click="sortData($event, 'isbn')"> ISBN </vs-th>
               <vs-th sort @click="sortData($event, 'id')"> ID </vs-th>
+              <vs-th sort @click="sortData($event, 'bookmark')"> Bookmark </vs-th>
               <vs-th sort @click="sortData($event, 'read')"> Read </vs-th>
           </vs-tr>
         </template>
@@ -74,6 +75,9 @@
             </vs-td>
             <vs-td>
              {{ book.id }}
+            </vs-td>
+            <vs-td>
+              {{ book.bookmark ? "Page " + book.bookmark : "N/A" }}
             </vs-td>
             <vs-td>
              {{ book.read ? "Read" : "Unread"}}

@@ -30,6 +30,7 @@ import { GridLoader }   from 'vue-spinners-css'
 import { mapGetters }   from "vuex"
 import VueStatus        from 'vue-status'
 import Sidebar          from "./components/thesidebar/TheSidebar.vue"
+import router           from "./router"
 
 export default {
   name: "App",
@@ -47,7 +48,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["theme", "accent"]),
+    ...mapGetters(["theme", "accent", "books"]),
     themeStyle() {
       document.body.style = `background: ${this.theme.background};` // Set body background to match theme
       this.dynamicScrollbarWorkaround(this.theme.background, this.accent) // Set scrollbar to accent colour
@@ -71,7 +72,7 @@ export default {
     document.addEventListener("keydown", event => this.keysDown[event.key] = true)
     document.addEventListener("keyup", event => {
       if (this.keysDown["Control"] && this.keysDown["Alt"] && this.keysDown["ArrowLeft"]) this.$router.back()
-      if (this.keysDown["Control"] && this.keysDown["Alt"] && this.keysDown["ArrowRight"]) this.$router.forward()
+      else if (this.keysDown["Control"] && this.keysDown["Alt"] && this.keysDown["ArrowRight"]) this.$router.forward()
       delete this.keysDown[event.key]
     })
   },

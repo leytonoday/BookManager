@@ -14,6 +14,12 @@
         <vs-button v-if="book.read" success icon>
           <i class="fa fa-check"></i>
         </vs-button>
+        <vs-button v-if="book.bookmark || book.bookmark === 0" shadow primary>
+          <i class="fas fa-bookmark" :style="{ color: accent , 'margin-right': '0.5em'}"></i>
+          <span class="span" :style="{ color: theme.text }">
+            p. {{ book.bookmark }}
+          </span>
+        </vs-button>
       </template>
     </vs-card>
   </div>
@@ -43,7 +49,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["theme"]),
+    ...mapGetters(["theme", "accent"]),
     authors() {
       if (!this.book.authors) return
       let authorsString = typeof this.book.authors === "string" ? this.book.authors : this.book.authors.join(", ") 

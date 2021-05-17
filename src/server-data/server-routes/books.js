@@ -96,10 +96,19 @@ const updateNotesRoute = async (req, res) => {
   store.set("books", books)
 }
 
+const updateBookmarkRoute = async (req, res) => {
+  const {id, bookmark} = req.body
+  const index = books.findIndex(book => book.id === id)
+  books[index].bookmark = bookmark
+  res.status(200).send(books[index])
+  store.set("books", books)
+}
+
 booksRouter.post("/delete/all", deleteAllBooksRoute)
 booksRouter.post("/delete/:id", deleteBookRoute)
 booksRouter.post("/updateread", updateReadRoute)
 booksRouter.post("/updatenotes", updateNotesRoute)
+booksRouter.post("/updatebookmark", updateBookmarkRoute)
 booksRouter.route("/")
   .get(getBooksRoute)
   .post(bodyParser.json(), addBookRoute)

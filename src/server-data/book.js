@@ -6,6 +6,7 @@ class Book {
     this.isbn = isbn
     this.read = addAsRead
     this.notes = notes
+    this.bookmark = ""
     this.dateAdded = new Date(Date.now()).toISOString().slice(0, 10)
     Object.assign(this, data)
   }
