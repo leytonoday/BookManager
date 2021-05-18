@@ -22,21 +22,17 @@ async function makeBook(req) {
       if(books.find(book => book.id === req.body.id)) return reject(409) // already added
 
       const errorCheckedIsbn = req.body.volumeInfo.industryIdentifiers ? req.body.volumeInfo.industryIdentifiers[0].identifier : ""
-      newBook = new Book(req.body.id, errorCheckedIsbn, req.body.volumeInfo, req.body.addAsRead)
+      newBook = new Book(req.body.id, errorCheckedIsbn, req.body.volumeInfo, req.body.addAsRead, req.body.bookmark)
     }
     
     else if (req.body.manual) { // if the book details have been entered manually  
       const bookData = req.body
-      newBook = new Book(req.body.id, req.body.isbn, bookData, bookData.addAsRead, bookData.notes)
+      newBook = new Book(req.body.id, req.body.isbn, bookData, bookData.addAsRead, bookData.notes, bookData.bookmark)
       delete newBook.addAsReaad // this is only used for initializing the read property, and so it can be deleted now
     }
 
-    else if (req.body.import) { 
-
-    }
-
     else { // if the book is being added automatically using a search query or isbn using simply the submit button
-      const {isbn, searchQuery, addAsRead, notes} = req.body
+      const {isbn, searchQuery, addAsRead, notes, bookmark} = req.body
       const urlBase = `https://www.googleapis.com/books/v1/volumes?q=`
       const bookRes = await axios.get(encodeURI(searchQuery ? `${urlBase}${searchQuery.split().join("+")}&maxResults=5` : `${urlBase}isbn:${isbn}`))
       
@@ -44,7 +40,7 @@ async function makeBook(req) {
       if(books.find(book => book.id === bookRes.data.items[0].id)) return reject(409) // already added
 
       const errorCheckedIsbn = isbn || bookRes.data.items[0].volumeInfo.industryIdentifiers ? bookRes.data.items[0].volumeInfo.industryIdentifiers[0].identifier : ""
-      newBook = new Book(bookRes.data.items[0].id, errorCheckedIsbn, bookRes.data.items[0].volumeInfo, addAsRead, notes)
+      newBook = new Book(bookRes.data.items[0].id, errorCheckedIsbn, bookRes.data.items[0].volumeInfo, addAsRead, notes, bookmark)
     }
     if (newBook.publishedDate) newBook.publishedDate = new Date(Date.parse(newBook.publishedDate)).toISOString().slice(0, 10) // format date for consistency
     resolve(newBook)

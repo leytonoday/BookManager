@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from "../store"
+import { remote } from "electron"
 
 // Solution for NavigationDuplication error
 const originalPush = VueRouter.prototype.push

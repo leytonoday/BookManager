@@ -30,7 +30,7 @@ import { GridLoader }   from 'vue-spinners-css'
 import { mapGetters }   from "vuex"
 import VueStatus        from 'vue-status'
 import Sidebar          from "./components/thesidebar/TheSidebar.vue"
-import router           from "./router"
+import { remote } from "electron"
 
 export default {
   name: "App",
