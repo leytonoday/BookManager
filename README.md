@@ -38,7 +38,7 @@ npm run electron:serve
 ```
 Using Yarn:
 ```
-yarn run electron:serve
+yarn electron:serve
 ```
 
 ### Compiles and minifies for production
@@ -48,7 +48,7 @@ npm run electron:build
 ```
 Using Yarn:
 ```
-yarn run electron:build
+yarn electron:build
 ```
 
 Once built, go to dist_electron, and run the "Book Manager Setup 0.1.0" installer. 
