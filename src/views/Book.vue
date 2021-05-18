@@ -238,7 +238,6 @@ export default {
       }
     },
     bookmarkColour() {
-      console.log(this.book.bookmark)
       return {
         "--bookmarkColour" : this.bookmark.length > 0 ? this.accent : ""
       }
@@ -251,8 +250,8 @@ export default {
     ipcRenderer.removeAllListeners("appClosing")
     ipcRenderer.on("appClosing", async (_) => {
       if (router.currentRoute.name === "Book") {
-        await this.updateNotes()
-        await this .updateBookmark()
+        this.updateNotes()
+        this.updateBookmark()
         ipcRenderer.send("precloseComplete")
       }
     })
@@ -279,33 +278,15 @@ export default {
       })
     },
     updateNotes() {
-      return new Promise((resolve, _) => {
-        if (this.editorContent !== this.book.notes)
-          resolve(
-            this.$store.dispatch("updateNotes", {
-              id: this.book.id,
-              notes: this.editorContent,
-            })
-          )
-        resolve()
-      })
+      if (this.editorContent !== this.book.notes)
+        this.$store.dispatch("updateNotes", { id: this.book.id, notes: this.editorContent})
     },
     updateBookmark() {
-      return new Promise((resolve, _) => {
-        if (this.bookmark !== this.book.bookmark) {
-          resolve(
-            this.$store.dispatch("updateBookmark", {
-              id: this.book.id,
-              bookmark: this.bookmark
-            })
-          )
-          resolve()
-        }
-      })
+      if (this.bookmark !== this.book.bookmark)
+        this.$store.dispatch("updateBookmark", { id: this.book.id, bookmark: this.bookmark})
     },
     handleBookmarkInput(input) { // clamps the bookmark to the 0 and pageCount
       if (!this.book.pageCount) return parseInt(this.bookmark) < 0 ? this.bookmark = "" : {}
-
       if(Number.isNaN(parseInt(input))) return this.bookmark = ""
       
       return this.bookmark = Math.min(Math.max(parseInt(input), 0), this.book.pageCount).toString()
