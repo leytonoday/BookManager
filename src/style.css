@@ -1,4 +1,4 @@
-Remove defaut padding and set global font
+/* Remove defaut padding and set global font */
 * {
   margin: 0;
   padding: 0;
