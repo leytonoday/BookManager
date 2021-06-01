@@ -12,7 +12,7 @@ html, body {
 /* This is applied to all of the template root elements */
 .root {
   height: 100%;
-  margin-top: 2em;
+  padding-top: 2em;
   width: 75%;
   margin-left: auto;
   margin-right: auto;
@@ -34,8 +34,7 @@ h1, label               { color: var(--themeText) !important; }
 }
 .fade-enter, .fade-leave-active {
   opacity: 0;
-}
-
+} 
 
 /* Global Media Queries */
 @media screen and (max-width: 1500px) {

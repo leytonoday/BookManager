@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from "../store"
-import { remote } from "electron"
 
 // Solution for NavigationDuplication error
 const originalPush = VueRouter.prototype.push
@@ -13,7 +12,7 @@ const routes = [
   {
     path: "/",
     name: "Home",
-    component: () => import("../views/Home.vue")
+    component: () => import("../views/Home.vue") // all components are lazy loaded
   },
   {
     path: "/bookscardview",
@@ -65,7 +64,10 @@ const routes = [
 const router = new VueRouter({
   mode: process.env.IS_ELECTRON ? 'hash' : 'history',
   base: process.env.BASE_URL,
-  routes
+  routes,
+  scrollBehavior () {
+    document.getElementById('app').scrollIntoView() // Router-links preserve the scroll position, so scroll to the top of the page on route change
+  }
 })
 
 export default router
