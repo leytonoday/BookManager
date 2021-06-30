@@ -25,66 +25,66 @@
       </div>
 
       <div class="vs-table-content">
-      <vs-table
-        :vs-theme="theme.name"
-        v-model="selected"
-        :key="rerenderKey"
-      >
-        <template #header>
-          <vs-input type="search" v-model="search" border placeholder="Search" />
-        </template>
-        <template #thead>
-          <vs-tr>
-            <vs-th>
-              <vs-checkbox
-                :indeterminate="selected.length == books.length"
-                v-model="allCheck"
-                @change="checkAll"
-              />
-            </vs-th>
-              <vs-th sort @click="sortData($event, 'title')"> Title </vs-th>
-              <vs-th sort @click="sortData($event, 'publishedDate')"> Date Published </vs-th>
-              <vs-th sort @click="sortData($event, 'dateAdded')"> Date Added </vs-th>
-              <vs-th sort @click="sortData($event, 'isbn')"> ISBN </vs-th>
-              <vs-th sort @click="sortData($event, 'id')"> ID </vs-th>
-              <vs-th sort @click="sortData($event, 'bookmark')"> Bookmark </vs-th>
-              <vs-th sort @click="sortData($event, 'read')"> Read </vs-th>
-          </vs-tr>
-        </template>
-        <template #tbody>
-          <vs-tr
-            :key="i"
-            v-for="(book, i) in $vs.getSearch(sortedBooks, search)"
-            :data="book"
-            :is-selected="!!selected.includes(book)"
-          >
-            <vs-td checkbox>
-              <vs-checkbox :val="book" v-model="selected" />
-            </vs-td>
-            <vs-td>
-              {{ book.title.length > 50 ? truncateTitle(book.title) : book.title }} <!-- some book titles are too long, this solves that issue -->
-            </vs-td>
-            <vs-td>
-              {{ book.publishedDate || "N/A" }}
-            </vs-td>
-            <vs-td>
-             {{ book.dateAdded }}
-            </vs-td>
-            <vs-td>
-             {{ book.isbn || "N/A" }}
-            </vs-td>
-            <vs-td>
-             {{ book.id }}
-            </vs-td>
-            <vs-td>
-              {{ book.bookmark ? "Page " + book.bookmark : "N/A" }}
-            </vs-td>
-            <vs-td>
-             {{ book.read ? "Read" : "Unread"}}
-            </vs-td>
-          </vs-tr>
-        </template>
-      </vs-table>
+        <vs-table
+          :vs-theme="theme.name"
+          v-model="selected"
+          :key="rerenderKey"
+        >
+          <template #header>
+            <vs-input type="search" v-model="search" border placeholder="Search" />
+          </template>
+          <template #thead>
+            <vs-tr>
+              <vs-th>
+                <vs-checkbox
+                  :indeterminate="selected.length == books.length"
+                  v-model="allCheck"
+                  @change="checkAll"
+                />
+              </vs-th>
+                <vs-th sort @click="sortData($event, 'title')"> Title </vs-th>
+                <vs-th sort @click="sortData($event, 'publishedDate')"> Date Published </vs-th>
+                <vs-th sort @click="sortData($event, 'dateAdded')"> Date Added </vs-th>
+                <vs-th sort @click="sortData($event, 'isbn')"> ISBN </vs-th>
+                <vs-th sort @click="sortData($event, 'id')"> ID </vs-th>
+                <vs-th sort @click="sortData($event, 'bookmark')"> Bookmark </vs-th>
+                <vs-th sort @click="sortData($event, 'read')"> Read </vs-th>
+            </vs-tr>
+          </template>
+          <template #tbody>
+            <vs-tr
+              :key="i"
+              v-for="(book, i) in $vs.getSearch(sortedBooks, search)"
+              :data="book"
+              :is-selected="!!selected.includes(book)"
+            >
+              <vs-td checkbox>
+                <vs-checkbox :val="book" v-model="selected" />
+              </vs-td>
+              <vs-td>
+                {{ book.title.length > 50 ? truncateTitle(book.title) : book.title }} <!-- some book titles are too long, this solves that issue -->
+              </vs-td>
+              <vs-td>
+                {{ book.publishedDate || "N/A" }}
+              </vs-td>
+              <vs-td>
+              {{ book.dateAdded }}
+              </vs-td>
+              <vs-td>
+              {{ book.isbn || "N/A" }}
+              </vs-td>
+              <vs-td>
+              {{ book.id }}
+              </vs-td>
+              <vs-td>
+                {{ book.bookmark ? "Page " + book.bookmark : "N/A" }}
+              </vs-td>
+              <vs-td>
+              {{ book.read ? "Read" : "Unread"}}
+              </vs-td>
+            </vs-tr>
+          </template>
+        </vs-table>
       </div>
     </div>
 
@@ -99,7 +99,7 @@
       </div>
       <template #footer>
         <div class="con-footer has-text-centered">
-          <vs-button size="xl" style="float: left" @click="{dialogFunction(); dialogActive = false; }" transparent> Confirm </vs-button>
+          <vs-button size="xl" style="float: left" @click="{ dialogFunction(); dialogActive = false; }" transparent> Confirm </vs-button>
           <vs-button size="xl" style="float: right" @click="dialogActive = false" dark transparent> Cancel </vs-button>
         </div>
       </template>
@@ -135,7 +135,15 @@ export default {
 
   mounted() {
     this.sortedBooks = this.books // load books when user visits the page
-    this.rerenderKey += 1 // I do this because when re-moutned.  For some reason, the table columns change width and it's ugly. This re-renders and fixes that
+    this.rerenderKey++ // I do this because when re-moutned.  For some reason, the table columns change width and it's ugly. This re-renders and fixes that
+  },
+
+  watch: {
+    books() {
+      console.log("shuold be renrendered")
+      this.sortedBooks = this.books
+      this.rerenderKey++
+    }
   },
 
   methods: {

@@ -5,9 +5,9 @@ import router             from "./router"
 import store              from "./store"
 import Vue                from "vue"
 import App                from "./App.vue"
-import                    "vuesax/dist/vuesax.css" 
 import                    "./style.css"
 import                    "bulma/css/bulma.css"
+import                    "vuesax/dist/vuesax.css"
 
 Vue.config.productionTip = false
 Vue.use(Vuesax)

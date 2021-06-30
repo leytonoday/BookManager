@@ -21,6 +21,7 @@ const mutations = { // These edit the state directly
   DELETE_BOOK (state, payload) {
     const index = state.books.findIndex(book => book.id == payload.id)
     state.books.splice(index, 1)
+    console.log(payload.title + "has been deleted");
   },
   SET_RESPONSE_STATUS (state, payload) {
     state.responseStatus = payload

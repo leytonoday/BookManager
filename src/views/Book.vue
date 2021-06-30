@@ -255,6 +255,7 @@ export default {
         ipcRenderer.send("precloseComplete")
       }
     })
+    this.updateNotesCheck()
   },
 
   beforeRouteLeave(to, from, next) {
@@ -276,6 +277,11 @@ export default {
         id: this.book.id,
         read: !this.book.read,
       })
+    },
+    updateNotesCheck() { // Attempt to update the notes every two seconds. This will minimize any issues with the app forcibly being closed and notes not being saved.
+      if (router.currentRoute.name !== "Book") return
+      this.updateNotes()
+      setTimeout(this.updateNotesCheck, 2000)
     },
     updateNotes() {
       if (this.editorContent !== this.book.notes)
