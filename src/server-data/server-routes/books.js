@@ -90,7 +90,6 @@ const updateNotesRoute = async (req, res) => {
   books[index].notes = notes
   res.status(200).send(books[index])
   store.set("books", books)
-  console.log("notes updated")
 }
 
 const updateBookmarkRoute = async (req, res) => {

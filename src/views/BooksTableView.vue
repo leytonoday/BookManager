@@ -140,7 +140,6 @@ export default {
 
   watch: {
     books() {
-      console.log("shuold be renrendered")
       this.sortedBooks = this.books
       this.rerenderKey++
     }
