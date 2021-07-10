@@ -29,6 +29,7 @@
 "use strict"
 
 import { mapGetters, mapActions } from "vuex"
+import isImageUrl                 from "is-image-url"
 
 export default {
   name: "BookListItem",
