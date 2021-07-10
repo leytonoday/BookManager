@@ -5,8 +5,8 @@
 </template>
 
 <script>
-import Chart from "chart.js"
-import randomColor from "randomcolor"
+import randomColor  from "randomcolor"
+import Chart        from "chart.js"
 
 export default {
   name: "PieChart",

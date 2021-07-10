@@ -111,7 +111,7 @@
 "use strict"
 
 import { mapGetters } from "vuex"
-import { notify } from "../utils/utils.js"
+import { notify }     from "../utils/utils.js"
 
 export default {
   name: "BooksTableView",

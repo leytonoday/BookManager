@@ -1,7 +1,7 @@
-import Vue from "vue"
-import Vuex from "vuex"
-import books from "./modules/books"
 import themes from "./modules/themes"
+import books  from "./modules/books"
+import Vuex   from "vuex"
+import Vue    from "vue"
 
 Vue.use(Vuex)
 

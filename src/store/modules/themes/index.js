@@ -1,5 +1,5 @@
-import Store from "electron-store"
 import titlebar from "../../../components/titlebar/WindowTitlebar.js"
+import Store    from "electron-store"
 
 const store = new Store()
 
@@ -29,6 +29,7 @@ const mutations = {
         if (!store.get("theme")) {
             state.theme = state.dark // dark is default
             store.set("theme", state.theme)
+            titlebar.updateBackground()
         }
         else 
             state.theme = store.get("theme")

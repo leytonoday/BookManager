@@ -45,11 +45,11 @@
 <script>
 "use strict"
 
-import PieChart from "../components/statistics/PieChart"
-import LineChart from "../components/statistics/LineChart"
-import BarChart from "../components/statistics/BarChart"
-import DoughnutChart from "../components/statistics/DoughnutChart"
 import { mapGetters } from "vuex"
+import DoughnutChart  from "../components/statistics/DoughnutChart"
+import LineChart      from "../components/statistics/LineChart"
+import PieChart       from "../components/statistics/PieChart"
+import BarChart       from "../components/statistics/BarChart"
 
 export default {
   name: "Statistics",

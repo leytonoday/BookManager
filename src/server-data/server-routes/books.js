@@ -1,10 +1,10 @@
 "use strict"
 
 const bodyParser  = require("body-parser")
-const Store       = require("electron-store")
-const Book        = require("../book.js")
 const express     = require("express")
+const Store       = require("electron-store")
 const axios       = require("axios")
+const Book        = require("../book.js")
 
 const store = new Store()
 if (!store.get("books")) store.set("books", [])

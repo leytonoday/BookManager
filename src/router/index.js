@@ -1,6 +1,6 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import store from "../store"
+import VueRouter  from 'vue-router'
+import store      from "../store"
+import Vue        from 'vue'
 
 // Solution for NavigationDuplication error
 const originalPush = VueRouter.prototype.push

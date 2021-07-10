@@ -5,9 +5,9 @@
 </template>
 
 <script>
-import Chart from "chart.js"
-import randomColor from "randomcolor"
 import { mapGetters } from "vuex"
+import randomColor    from "randomcolor"
+import Chart          from "chart.js"
 
 export default {
   name: "BarCHart",

@@ -1,7 +1,7 @@
 'use strict'
+import { ipcMain, app, protocol, BrowserWindow }  from 'electron'
 import installExtension, { VUEJS_DEVTOOLS }       from 'electron-devtools-installer'
 import { createProtocol }                         from 'vue-cli-plugin-electron-builder/lib'
-import { ipcMain, app, protocol, BrowserWindow }  from 'electron'
 import booksRouter                                from "./server-data/server-routes/books"
 import express                                    from "express"
 import Store                                      from "electron-store"

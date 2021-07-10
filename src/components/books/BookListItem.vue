@@ -28,9 +28,7 @@
 <script>
 "use strict"
 
-import isImageUrl     from "is-image-url"
-import { mapActions } from "vuex"
-import { mapGetters } from "vuex"
+import { mapGetters, mapActions } from "vuex"
 
 export default {
   name: "BookListItem",

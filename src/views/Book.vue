@@ -160,12 +160,12 @@
 <script>
 "use strict"
 
-import { ipcRenderer } from "electron"
-import isImageUrl from "is-image-url"
-import { mapGetters } from "vuex"
-import router from "../router"
-import { VueEditor, Quill } from "vue2-editor"
-import { ImageDrop } from "quill-image-drop-module"
+import { VueEditor, Quill }   from "vue2-editor"
+import { ipcRenderer }        from "electron"
+import { mapGetters }         from "vuex"
+import { ImageDrop }          from "quill-image-drop-module"
+import isImageUrl             from "is-image-url"
+import router                 from "../router"
 
 Quill.register("modules/imageDrop", ImageDrop)
 
@@ -180,7 +180,7 @@ export default {
   },
 
   components: {
-    VueEditor 
+    VueEditor,
   },
   
   data() {
@@ -296,6 +296,9 @@ export default {
       if(Number.isNaN(parseInt(input))) return this.bookmark = ""
       
       return this.bookmark = Math.min(Math.max(parseInt(input), 0), this.book.pageCount).toString()
+    },
+    openBookReader() {
+      this.$router.push(`/books/read/${this.book.id}`)
     }
   },
 }
