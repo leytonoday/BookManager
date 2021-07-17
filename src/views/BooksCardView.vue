@@ -19,10 +19,10 @@
         Delete All
         <template #animate ><i class="far fa-trash-alt"></i></template>
       </vs-button>
+      
+      <vs-input type="search" :vs-theme="theme.name" v-model="search" border placeholder="Search" style="margin-bottom: 1em;"/>
     </div>
     
-    <vs-input type="search" :vs-theme="theme.name" v-model="search" border placeholder="Search" style="margin-bottom: 1em;"/>
-
     <div v-if="books.length && !this.$vs.getSearch(this.filteredBooks, this.search).length">
       <p class="">No search results</p>
     </div>
@@ -100,6 +100,9 @@ export default {
           this.filteredBooks = this.books.filter(book => !book.read)
           break;
       }
+    },
+    books() {
+      this.filteredBooks = this.books
     }
   },
 
