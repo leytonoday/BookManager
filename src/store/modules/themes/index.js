@@ -8,7 +8,8 @@ const state = {
     dark: { name: "dark", background: "#262626", text: "white"},
     accent: "",
     defaultAccent: "#3AC47C",
-    theme: {} // current theme
+    theme: {}, // current theme
+    sidebarPosition: "left"
 }
 
 const mutations = {
@@ -40,6 +41,18 @@ const mutations = {
             store.set("accent", state.accent)
         }
         state.accent = store.get("accent")
+    },
+    SET_SIDEBAR_POSITION(state, payload) {
+        state.sidebarPosition = payload
+        store.set("sidebarPosition", payload)
+    },
+    LOAD_SIDEBAR_POSITION(state) {
+        if (!store.get("sidebarPosition")) {
+            state.sidebarPosition = "left"
+            store.set("sidebarPosition", "left")
+        }
+        else 
+            state.sidebarPosition = store.get("sidebarPosition")
     }
 }
 
@@ -56,13 +69,18 @@ const actions = {
     loadTheme({commit}) {
         commit("LOAD_THEME")
         commit("LOAD_ACCENT")
+        commit("LOAD_SIDEBAR_POSITION")
         if (Object.keys(state.theme).length === 0) commit("SET_THEME", "dark") // set dark as default
-    }
+    },
+    setSidebarPosition({commit}, position) {
+        commit("SET_SIDEBAR_POSITION", position)
+    },
 }
 
 const getters = {
     theme: state => state.theme,
-    accent: state => state.accent
+    accent: state => state.accent,
+    sidebarPosition: state => state.sidebarPosition
 }
 
 export default { state, mutations, actions, getters }

@@ -2,9 +2,9 @@
   <vue-status>
     <!-- This div will only render when the user is connected to the internet -->
     <div id="app" slot="online" :style="themeStyle">
-      <!-- Sidebar is present regardless of the router-view -->
+      <!-- The sidebar is present regardless of the router-view -->
       <div>
-        <sidebar />
+        <the-sidebar />
       </div>
       <transition mode="out-in" name="fade">
         <router-view />
@@ -29,7 +29,7 @@ import { ipcRenderer }  from "electron"
 import { GridLoader }   from 'vue-spinners-css'
 import { mapGetters }   from "vuex"
 import VueStatus        from 'vue-status'
-import Sidebar          from "./components/thesidebar/TheSidebar.vue"
+import TheSidebar          from "./components/thesidebar/TheSidebar.vue"
 
 export default {
   name: "App",
@@ -37,7 +37,7 @@ export default {
   components: {
     "vue-status": VueStatus,
     "grid-loader": GridLoader,
-    sidebar: Sidebar,
+    "the-sidebar": TheSidebar,
   },
 
   data() {
@@ -57,7 +57,8 @@ export default {
         "--themeText": this.theme.text,
         "--buttonText": this.buttonText(this.accent), // If the user choses a very bright accent, this will set the text back to a visible colour
         "--inputBackground": this.theme.name === "dark"? "": "white", // inputs are hard to see in lightmode, so this solves that
-        "--titleColor": this.theme.name === "dark" ? "white": "black", // Change colour of titles on pages for better readability
+        "--titleColour": this.theme.name === "dark" ? "white": "black", // Change colour of titles on pages for better readability
+        "--test": "red"
       }
     }
   },
@@ -112,12 +113,6 @@ export default {
   border-top-right-radius: 0.5em !important;
   background: var(--inputBackground) !important;
 }
-.vs-button {
-  color: var(--buttonText) !important;
-}
-.vs-dialog button {
-  color: var(--themeText) !important;
-}
 #GridLoader {
   width: 30%;
   position: absolute;
@@ -131,10 +126,5 @@ export default {
   top: 35%;
   transform: translate(-50%, -35%);
 }
-.title {
-  color: var(--titleColor) !important;
-}
-html {
-  overflow-y: hidden !important; /* removes second scrollbar bug on custom-electron-titlebar */
-}
+html { overflow-y: hidden !important; } /* removes second scrollbar bug on custom-electron-titlebar */
 </style>

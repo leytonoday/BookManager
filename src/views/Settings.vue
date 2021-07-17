@@ -6,10 +6,14 @@
     </h2>
 
     <div class="has-text-centered settingsBox" style="float: left">
-      <h2 class="title">Appearence</h2>
-      <vs-switch class="centre" style="width: 30%;" square :vs-theme="theme.name" v-model="themeChoice">
-        <template #off> Dark Mode </template>
-        <template #on> Light Mode </template>
+      <h2 class="title">Theme</h2>
+      <vs-switch class="centre" style="width: 6em;" square :vs-theme="theme.name" v-model="themeChoice">
+        <template #off> Dark </template>
+        <template #on> Light </template>
+        <template #circle>
+          <i v-if="!themeChoice" class="fas fa-moon" ></i>
+          <i v-else class="fas fa-sun" ></i>
+        </template>
       </vs-switch>
 
       <h2 class="title" style="margin-top: 1em;">Accent Colour</h2>
@@ -32,6 +36,16 @@
         Import Books
         <template #animate ><i class="fas fa-file-import"></i></template>
       </vs-button>
+
+      <h2 class="title" style="margin-top: 1em;">Sidebar Position</h2>
+      <vs-switch class="centre" style="width: 6em;" square :vs-theme="theme.name" v-model="sidebarPositionChoice">
+        <template #off> Right </template>
+        <template #on> Left </template>
+        <template #circle>
+          <i v-if="!sidebarPositionChoice" class="fas fa-arrow-right" ></i>
+          <i v-else class="fas fa-arrow-left" ></i>
+        </template>
+      </vs-switch>
     </div>
   </div>
 </template>
@@ -52,23 +66,27 @@ export default {
 
   data() {
     return {
-      themeChoice: false, // false = dark, true = light. Linked to the switch in the markup
+      themeChoice: null, // false = dark, true = light. Linked to the switch in the markup
       accentColour: this.$store.getters.accent,
+      sidebarPositionChoice: null // true = left, false = right 
     }
   },
 
   computed: {
-    ...mapGetters(["theme", "books", "responseStatus"]),
+    ...mapGetters(["theme", "books", "responseStatus", "sidebarPosition"]),
   },
 
   watch: {
     themeChoice() { this.$store.dispatch("setTheme", this.themeChoice ? "light": "dark") }, // If the theme switch is changed, alert the store 
     accentColour(newAccent) { this.$store.dispatch("setAccent", newAccent.hex) }, // When accent colour is changed, alert the store
-    responseStatus(newValue) { processResponseStatus(this, newValue) } // This runs whenever the responseStatus changes. In Settings.vue, this happens when importing books
+    responseStatus(newValue) { processResponseStatus(this, newValue) }, // This runs whenever the responseStatus changes. In Settings.vue, this happens when importing books
+    sidebarPositionChoice() { this.$store.dispatch("setSidebarPosition", this.sidebarPositionChoice ? "left": "right") } // When the sidebar position is changed, alert the store
   },
 
   mounted() {
     this.themeChoice = this.theme.name === "dark" ? false: true
+    this.sidebarPositionChoice = this.sidebarPosition === "left" ? true : false
+    console.log(this.sidebarPosition)
   },
   
   methods: {

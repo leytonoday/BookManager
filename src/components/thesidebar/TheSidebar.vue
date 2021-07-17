@@ -9,6 +9,8 @@
       open
       square
       :vs-theme="theme.name"
+      :left="sidebarLeft"
+      :right="sidebarRight"
     >
       <template #logo>
         <!-- ...img logo -->
@@ -87,7 +89,26 @@ export default {
   },
   
   computed: {
-    ...mapGetters(["theme", "accent"]),
+    ...mapGetters(["theme", "accent", "sidebarPosition"]),
+    activeComputed() { // This whole computed and then a watcher nonsense is so that the active property updates when the user navigates using the arrow shortcuts 
+      return this.$route.path
+    },
+    sidebarLeft() {
+      return this.$store.getters.sidebarPosition === "left"
+    },
+    sidebarRight() {
+      return this.$store.getters.sidebarPosition === "right"
+    }
   },
+
+  watch: {
+    activeComputed(newValue) {
+      this.active = newValue
+    },
+
+    sidebarPosition(nv) {
+      console.log(nv)
+    }
+  }
 };
 </script>

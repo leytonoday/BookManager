@@ -18,13 +18,14 @@ html, body {
   margin-right: auto;
 }
 
-
 /* Set theme */
 html                    { background: var(--themeBackground) !important;}
 h1, label               { color: var(--themeText) !important; }
 .vs-table__th__content  { color: var(--themeText); }
 .vs-table               { color: var(--themeText); }
-
+.vs-button              { color: var(--buttonText) !important; }
+.vs-dialog button       { color: var(--themeText) !important; }
+.title                  { color: var(--titleColour) !important; }
 
 /* Transition for router-link */
 .fade-enter-active, .fade-leave-active {
@@ -49,13 +50,11 @@ h1, label               { color: var(--themeText) !important; }
   html { font-size: 0.5em !important; }
 }
 
-
 /* Centers an element */
 .centre {
   margin-left: auto !important;
   margin-right: auto !important;
 }
-
 
 /* Used to make the ugly navbar nice */
 ::-webkit-scrollbar { 
