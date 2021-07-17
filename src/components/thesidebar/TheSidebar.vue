@@ -104,10 +104,6 @@ export default {
   watch: {
     activeComputed(newValue) {
       this.active = newValue
-    },
-
-    sidebarPosition(nv) {
-      console.log(nv)
     }
   }
 };

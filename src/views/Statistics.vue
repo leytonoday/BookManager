@@ -37,7 +37,7 @@
       </vs-row>
     </div>
     <div v-else class="grid has-text-centered">
-      No books in Library, statistics unavailable
+      <p class="subtitle"> No books in Library, statistics unavailable </p>
     </div>
   </div>
 </template>

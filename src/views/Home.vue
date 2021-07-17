@@ -157,7 +157,7 @@
         <br />
 
         <h2 class="title">Author</h2>
-        <p>This program was written by Leyton O'Day. Completed 13/05/2021. </p>
+        <p>This program was written by Leyton O'Day.</p>
         <p>Github - https://github.com/leytonoday</p>
         <p>Email - leytonodayabc123@gmail.com</p>
       </div>

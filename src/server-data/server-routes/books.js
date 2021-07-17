@@ -9,7 +9,7 @@ const Book        = require("../book.js")
 const store = new Store()
 if (!store.get("books")) store.set("books", [])
 
-const books = store.get("books")
+let books = store.get("books")
 const booksRouter = express.Router()
 booksRouter.use(bodyParser.json({limit: '100mb', extended: true}));
 booksRouter.use(bodyParser.urlencoded({limit: "100mb", extended: true, parameterLimit: 50000}));
@@ -76,6 +76,18 @@ const deleteAllBooksRoute = async (_, res) => {
   store.set("books", books)
 }
 
+const deleteAllReadBooksRoute = async(_, res) => {
+  books = books.filter(book => !book.read)
+  res.sendStatus(200)
+  store.set("books", books)
+}
+
+const deleteAllUnreadBooksRoute = async(_, res) => {
+  books = books.filter(book => book.read)
+  res.sendStatus(200)
+  store.set("books", books)
+}
+
 const updateReadRoute = async (req, res) => {
   const {id, read} = req.body
   const index = books.findIndex(book => book.id == id)
@@ -101,6 +113,8 @@ const updateBookmarkRoute = async (req, res) => {
 }
 
 booksRouter.post("/delete/all", deleteAllBooksRoute)
+booksRouter.post("/delete/all/read", deleteAllReadBooksRoute)
+booksRouter.post("/delete/all/unread", deleteAllUnreadBooksRoute)
 booksRouter.post("/delete/:id", deleteBookRoute)
 booksRouter.post("/updateread", updateReadRoute)
 booksRouter.post("/updatenotes", updateNotesRoute)

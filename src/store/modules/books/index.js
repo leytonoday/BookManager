@@ -22,7 +22,6 @@ const mutations = { // These edit the state directly
   DELETE_BOOK (state, payload) {
     const index = state.books.findIndex(book => book.id == payload.id)
     state.books.splice(index, 1)
-    console.log(payload.title + "has been deleted");
   },
   SET_RESPONSE_STATUS (state, payload) {
     state.responseStatus = payload
@@ -35,6 +34,12 @@ const mutations = { // These edit the state directly
   },
   DELETE_ALL_BOOKS (state) {
     state.books = []
+  },
+  DELETE_ALL_READ_BOOKS (state) {
+    state.books = state.books.filter(book => !book.read)
+  },
+  DELETE_ALL_UNREAD_BOOKS (state) {
+    state.books = state.books.filter(book => book.read)
   },
   UPDATE_READ (state, payload) {
     const index = state.books.findIndex(book => book.id == payload.id)
@@ -74,10 +79,22 @@ const actions = {
   async setResponseStatus({commit}, result) {
     commit("SET_RESPONSE_STATUS", result)
   },
-  async deleteAllBooks({commit}) {
+  async deleteAllBooks({commit}, radioFilterValue) { // 1 = both, 2 = read, 3 = unread
     commit('START_LOADING')
-    const res = await axios.post(`${URLBase}/books/delete/all`)
-    commit("DELETE_ALL_BOOKS")
+    switch (radioFilterValue) {
+      case "1": 
+        await axios.post(`${URLBase}/books/delete/all`)
+        commit("DELETE_ALL_BOOKS")
+        break;
+      case "2": 
+        await axios.post(`${URLBase}/books/delete/all/read`)
+        commit("DELETE_ALL_READ_BOOKS")
+        break;
+      case "3":
+        await axios.post(`${URLBase}/books/delete/all/unread`)
+        commit("DELETE_ALL_UNREAD_BOOKS")
+        break;
+    }
     commit('END_LOADING')
   },
   async updateRead({commit}, bookData) {

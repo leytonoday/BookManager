@@ -86,7 +86,6 @@ export default {
   mounted() {
     this.themeChoice = this.theme.name === "dark" ? false: true
     this.sidebarPositionChoice = this.sidebarPosition === "left" ? true : false
-    console.log(this.sidebarPosition)
   },
   
   methods: {
