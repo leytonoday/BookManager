@@ -255,7 +255,7 @@ export default {
         ipcRenderer.send("precloseComplete")
       }
     })
-    this.updateNotesCheck()
+    this.updateNotesAndBookmarkCheck()
   },
 
   beforeRouteLeave(to, from, next) {
@@ -278,10 +278,12 @@ export default {
         read: !this.book.read,
       })
     },
-    updateNotesCheck() { // Attempt to update the notes every two seconds. This will minimize any issues with the app forcibly being closed and notes not being saved.
+    updateNotesAndBookmarkCheck() { // Attempt to update the notes and bookmark every two seconds. This will minimize any issues with the app forcibly being closed and notes not being saved.
       if (router.currentRoute.name !== "Book") return
       this.updateNotes()
-      setTimeout(this.updateNotesCheck, 2000)
+      this.updateBookmark()
+      console.log("test");
+      setTimeout(this.updateNotesAndBookmarkCheck, 2000)
     },
     updateNotes() {
       if (this.editorContent !== this.book.notes)
@@ -296,9 +298,6 @@ export default {
       if(Number.isNaN(parseInt(input))) return this.bookmark = ""
       
       return this.bookmark = Math.min(Math.max(parseInt(input), 0), this.book.pageCount).toString()
-    },
-    openBookReader() {
-      this.$router.push(`/books/read/${this.book.id}`)
     }
   },
 }
@@ -336,7 +335,6 @@ export default {
 }
 
 .quillWrapper >>> .ql-editor:focus {
-  background: var(--textAreaBackgroundFocus);
   height: 35em;
 }
 

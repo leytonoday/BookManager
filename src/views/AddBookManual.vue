@@ -103,10 +103,10 @@ export default {
       this.fieldErrors = this.validateForm(this.fields)
       if (Object.keys(this.fieldErrors).length) return notify(this, "Input Error", "Input all mandatory fields", "warning")
 
-      if (this.books.find(book => book.title === this.fields.title)) return notify(this, "Input Error", "A book with this title has alread been added.", "warning")
       if (this.fields.isbn && this.books.find(book => book.isbn === this.fields.isbn)) return notify(this, "Input Error", "A book with this ISBN has alread been added.", "warning")
+      if (!this.fields.isbn && this.books.find(book => book.title === this.fields.title)) return notify(this, "Input Error", "A book with this title has alread been added.", "warning")
 
-      this.fields.id = crypto.createHash("md5").update(this.fields.title).digest("hex")
+      this.fields.id = crypto.createHash("md5").update(this.fields.isbn || this.fields.title).digest("hex")
       this.fields.manual = true
       this.fields.addAsRead = this.addAsRead
 

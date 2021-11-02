@@ -75,7 +75,7 @@ export default {
       dialogActive: false,
       rerenderKey: 0,
       filteredBooks: [], // This is for the user to change between displaying the read books, unread books or both
-      radioFilterValue: 1,
+      radioFilterValue: "1",
     }
   },
 
@@ -92,7 +92,7 @@ export default {
 
   watch: {
     books(newValue) {
-      switch (this.radioFilterValue) { // When we delete books using the "Delete All" button we need the books to update
+      switch (this.radioFilterValue) { // When we delete books using the "Delete All Books" button we need the books to update
         case "1": 
           this.filteredBooks = newValue
           break;
