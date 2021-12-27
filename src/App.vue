@@ -29,7 +29,7 @@ import { ipcRenderer }  from "electron"
 import { GridLoader }   from 'vue-spinners-css'
 import { mapGetters }   from "vuex"
 import VueStatus        from 'vue-status'
-import TheSidebar          from "./components/thesidebar/TheSidebar.vue"
+import TheSidebar       from "./components/thesidebar/TheSidebar.vue"
 
 export default {
   name: "App",

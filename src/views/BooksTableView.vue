@@ -46,7 +46,7 @@
                 <vs-th sort @click="sortData($event, 'publishedDate')"> Date Published </vs-th>
                 <vs-th sort @click="sortData($event, 'dateAdded')"> Date Added </vs-th>
                 <vs-th sort @click="sortData($event, 'isbn')"> ISBN </vs-th>
-                <vs-th sort @click="sortData($event, 'id')"> ID </vs-th>
+                <vs-th sort @click="sortData($event, 'rating')"> Rating </vs-th>
                 <vs-th sort @click="sortData($event, 'bookmark')"> Bookmark </vs-th>
                 <vs-th sort @click="sortData($event, 'read')"> Read </vs-th>
             </vs-tr>
@@ -68,13 +68,13 @@
                 {{ book.publishedDate || "N/A" }}
               </vs-td>
               <vs-td>
-              {{ book.dateAdded }}
+                {{ book.dateAdded }}
               </vs-td>
               <vs-td>
-              {{ book.isbn || "N/A" }}
+                {{ book.isbn || "N/A" }}
               </vs-td>
               <vs-td>
-              {{ book.id }}
+                {{ getRatingString(book) }}
               </vs-td>
               <vs-td>
                 {{ book.bookmark ? "Page " + book.bookmark : "N/A" }}
@@ -174,6 +174,11 @@ export default {
     },
     sortData(event, property) {
       return this.sortedBooks = this.$vs.sortData(event, this.books, property)
+    },
+    getRatingString(book) {
+      if (book.rating) 
+        return `${book.rating} / 5`
+      return "N/A"
     }
   }
 }

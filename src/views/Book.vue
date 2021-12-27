@@ -38,6 +38,11 @@
           <vue-editor :editorOptions="editorSettings" :editor-toolbar="customtToolbar" v-model="editorContent" :style="themeStyle" />
         </div>
 
+        <div class="infoBox">
+          <h2>Rating:</h2>
+          <star-rating v-model="rating" clearable text-class="customRatingText" :border-width="2" :star-size="25" :increment="0.5" :active-color="accent"  />
+        </div>
+
         <div v-if="book.authors" class="infoBox">
           <h2>Author(s):</h2>
           <p>
@@ -164,8 +169,10 @@ import { VueEditor, Quill }   from "vue2-editor"
 import { ipcRenderer }        from "electron"
 import { mapGetters }         from "vuex"
 import { ImageDrop }          from "quill-image-drop-module"
+import StarRating             from 'vue-star-rating'
 import isImageUrl             from "is-image-url"
 import router                 from "../router"
+
 
 Quill.register("modules/imageDrop", ImageDrop)
 
@@ -181,13 +188,15 @@ export default {
 
   components: {
     VueEditor,
+    StarRating,
   },
   
   data() {
     return {
       dialogActive: false,
-      bookmark: "init",
+      bookmark: "init", //init value
       editorContent: "",
+      rating: -1, // init value
       customtToolbar: [
         ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
         ['blockquote', 'code-block'],
@@ -247,6 +256,7 @@ export default {
   mounted() {
     this.editorContent = this.book.notes // this is to load the notes when mounted
     this.bookmark = this.book.bookmark
+    this.rating = this.book.rating
     ipcRenderer.removeAllListeners("appClosing")
     ipcRenderer.on("appClosing", async (_) => {
       if (router.currentRoute.name === "Book") {
@@ -267,6 +277,12 @@ export default {
     next()
   },
 
+  watch: {
+    rating(newRating) {
+      this.$store.dispatch("updateRating", { id: this.book.id, rating: newRating})
+    }
+  },
+
   methods: {
     deleteBook(book) {
       this.$router.back()
@@ -282,7 +298,6 @@ export default {
       if (router.currentRoute.name !== "Book") return
       this.updateNotes()
       this.updateBookmark()
-      console.log("test");
       setTimeout(this.updateNotesAndBookmarkCheck, 2000)
     },
     updateNotes() {
@@ -421,6 +436,19 @@ export default {
   margin-right: 0.5em;
   color: var(--bookmarkColour);
   transition: 0.5s ease;
+}
+
+.bookInfo >>> .vue-star-rating-star {
+  margin: 0.1em;
+}
+
+.bookInfo >>> .customRatingText {
+  color: var(--themeText);
+  font-size: 1.5em;
+  border: white 1px solid;
+  padding-left: 0.2em;
+  padding-right: 0.2em;
+  border-radius: 0.3em;
 }
 
 </style>

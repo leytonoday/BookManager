@@ -52,6 +52,11 @@ const mutations = { // These edit the state directly
   UPDATE_BOOKMARK(state, payload) {
     const index = state.books.findIndex(book => book.id === payload.id)
     state.books[index].bookmark = payload.bookmark
+  },
+  UPDATE_RATING(state, payload) {
+    const index = state.books.findIndex(book => book.id === payload.id)
+    state.books[index].rating = payload.rating
+    console.log("rating set to " +  state.books[index].rating)
   }
 }
 
@@ -112,26 +117,28 @@ const actions = {
       }
     })
   },
-  async updateBookmark({commit}, bookmark) {
+  async updateBookmark({commit}, bookData) {
     return new Promise (async (resolve, reject) => {
       try {
-        const res = await axios.post(`${URLBase}/books/updatebookmark`, bookmark)
+        const res = await axios.post(`${URLBase}/books/updatebookmark`, bookData)
         commit("UPDATE_BOOKMARK", res.data)
         resolve(res)
       } catch (err) {
         reject(err)
       }
     })
+  },
+  async updateRating({commit}, bookData) {
+    const res = await axios.post(`${URLBase}/books/updaterating`, bookData)
+    commit("UPDATE_RATING", res.data)
   }
-
-  
 }
 
 const getters = {
   books: state => state.books,
   responseStatus: state => state.responseStatus,
   loading: state => state.loading,
-  bookFromId: state => id => state.books.find(book => book.id === id)
+  bookFromId: state => id => state.books.find(book => book.id === id),
 }
 
 export default {state, mutations, actions, getters}

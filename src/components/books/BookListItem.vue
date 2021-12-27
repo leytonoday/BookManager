@@ -14,10 +14,13 @@
         <vs-button v-if="book.read" success icon>
           <i class="fa fa-check"></i>
         </vs-button>
+        <vs-button v-if="book.rating" shadow primary>
+          {{book.rating}} / 5 <i style="margin-left: 0.2em" class="far fa-star"></i>
+        </vs-button>
         <vs-button v-if="book.bookmark || book.bookmark === 0" shadow primary>
           <i class="fas fa-bookmark" :style="{ color: accent , 'margin-right': '0.5em'}"></i>
           <span class="span" :style="{ color: theme.text }">
-            p. {{ book.bookmark }}
+            p. {{ book.bookmark }} 
           </span>
         </vs-button>
       </template>

@@ -120,10 +120,10 @@ export default {
                 this.$store.dispatch("addBook", book)
               } else { // auto addition
                 if (book.isbn.match(/[a-zA-Z]/g)) { // If there are letters in the ISBN, add using the title as the search query
-                  this.$store.dispatch("addBook", {"isbn": "", "searchQuery": book.title,  "addAsRead": book.read, "notes": book.notes, "bookmark": book.bookmark})
+                  this.$store.dispatch("addBook", {"isbn": "", "searchQuery": book.title,  "addAsRead": book.read, "notes": book.notes, "bookmark": book.bookmark, "rating": book.rating})
                 } else {
                   /*Sometimes the ISBNs have letters in them for someson, Such as a GB: prefix. so if there are NO letters, just add using ISBN*/
-                  this.$store.dispatch("addBook", {"isbn": book.isbn, "searchQuery": "",  "addAsRead": book.read, "notes": book.notes, "bookmark": book.bookmark})
+                  this.$store.dispatch("addBook", {"isbn": book.isbn, "searchQuery": "",  "addAsRead": book.read, "notes": book.notes, "bookmark": book.bookmark,  "rating": book.rating})
                 }
               }
             }
