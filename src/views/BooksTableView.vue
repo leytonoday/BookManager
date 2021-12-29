@@ -6,19 +6,27 @@
     </h2>
     <div>
       <div class="has-text-centered" style="float: left; margin-top: 0.3em;">
-        <vs-button style="display: inline; margin: 0.5em;" gradient v-if="selected.length && selected.length < 2" @click="openBook(selected[0].id)">
+        <vs-button class="bookControls" gradient v-if="selected.length && selected.length < 2" @click="openBook(selected[0].id)">
           Open
           <template #animate ><i class="fa fa-book-open"></i></template>
         </vs-button>
-        <vs-button style="display: inline; margin: 0.5em;" gradient v-if="(selected.length > 1 || selected.length == 1 && !selected[0].read) && oneReadOrUnread(false)" @click="markRead(true);">
-          Mark Read
-          <template #animate><i class="fas fa-check"></i></template>
-        </vs-button>
-        <vs-button style="display: inline; margin: 0.5em;" gradient v-if="(selected.length > 1 || selected.length == 1 && selected[0].read) && oneReadOrUnread(true)" @click="markRead(false)">
-          Mark Unread
+
+        <vs-button class="bookControls" v-if="selected.length >= 1" gradient @click="setReadStatus(0)">
+          Mark as Unread
           <template #animate ><i class="fas fa-times"></i></template>
         </vs-button>
-        <vs-button style="display: inline; margin: 0.5em;" gradient v-if="selected.length" danger @click="dialogFunction = deleteSelected; dialogActive = true;">
+
+        <vs-button class="bookControls" v-if="selected.length >= 1" gradient @click="setReadStatus(1);">
+          Mark as Reading
+          <template #animate><i class="fas fa-check"></i></template>
+        </vs-button>
+
+        <vs-button class="bookControls" v-if="selected.length >= 1" gradient @click="setReadStatus(2);">
+          Mark as Read
+          <template #animate><i class="fas fa-check"></i></template>
+        </vs-button>
+
+        <vs-button class="bookControls" gradient v-if="selected.length" danger @click="dialogFunction = deleteSelected; dialogActive = true;">
           Delete
           <template #animate ><i class="far fa-trash-alt"></i></template>
         </vs-button>
@@ -38,7 +46,6 @@
               <vs-th>
                 <vs-checkbox
                   :indeterminate="selected.length == books.length"
-                  v-model="allCheck"
                   @change="checkAll"
                 />
               </vs-th>
@@ -48,7 +55,7 @@
                 <vs-th sort @click="sortData($event, 'isbn')"> ISBN </vs-th>
                 <vs-th sort @click="sortData($event, 'rating')"> Rating </vs-th>
                 <vs-th sort @click="sortData($event, 'bookmark')"> Bookmark </vs-th>
-                <vs-th sort @click="sortData($event, 'read')"> Read </vs-th>
+                <vs-th sort @click="sortData($event, 'readStatus')"> Read Status </vs-th>
             </vs-tr>
           </template>
           <template #tbody>
@@ -80,7 +87,7 @@
                 {{ book.bookmark ? "Page " + book.bookmark : "N/A" }}
               </vs-td>
               <vs-td>
-              {{ book.read ? "Read" : "Unread"}}
+                {{readStatusToString(book.readStatus)}}
               </vs-td>
             </vs-tr>
           </template>
@@ -123,7 +130,6 @@ export default {
       rerenderKey: 0,       // table has a key. If this value is changed, the whole table re-renders. This is used when the user deleted an item, and to also remove the expand
       search: "",           // stores any search
       sortedBooks: [],      // stores the stored books specified by the th sortData functions
-      allCheck: false,      // Used to display an "all checked" check box
       selected: [],         // Array to hold all selected fields
       dialogFunction: null,
     }
@@ -146,11 +152,23 @@ export default {
   },
 
   methods: {
+    readStatusToString(readStatus) {
+      let status = ""
+      switch(readStatus) {
+        case 0:
+          status = "Unread"
+          break
+        case 1:
+          status = "Reading"
+          break
+        case 2:
+          status = "Read"
+          break
+      }
+      return status
+    },
     truncateTitle(title) {
       return title.substring(0, 50) + "..."
-    },
-    oneReadOrUnread(read) { // Returns true if there is at least one book that is read or unread (depending upon the param)
-      return this.selected.some(i => i.read === read)
     },
     openBook(id) {
       this.$router.push(`/books/${id}`)
@@ -159,14 +177,14 @@ export default {
       this.selected.forEach(book => this.$store.dispatch("deleteBook", book))
       this.selected.length = 0
     },
-    markRead(read) {
+    setReadStatus(status) {
       if (!this.dialogActive && this.selected.length > 1) {
-        this.dialogFunction = () => this.markRead(read)
+        this.dialogFunction = () => this.setReadStatus(status)
         this.dialogActive = true
       }
       else {
-        this.selected.forEach(select => this.$store.dispatch("updateRead", {"id": select.id, "read": read}))
-        return notify(this, "Success", `The selected book(s) have been marked as ${read ? "read" : "unread"}`, "success")
+        this.selected.forEach(select => this.$store.dispatch("updateReadStatus", {"id": select.id, "readStatus": status}))
+        return notify(this, "Success", `The selected book(s) have been marked as ${this.readStatusToString(status).toLowerCase()}`, "success")
       }
     },
     checkAll() {
@@ -187,5 +205,9 @@ export default {
 <style scoped>
 .vs-input-parent >>> .vs-input  { width: 100%; }
 #booksList { max-width: 100%; }
+.bookControls {
+  display: inline; 
+  margin: 0.5em;
+}
 </style>
 

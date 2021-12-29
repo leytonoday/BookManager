@@ -33,10 +33,9 @@
             </template>
           </vs-table>
 
+          <br />
+
           <div class="parent">
-            <vs-checkbox style="margin: 1.5em 0 1em 0;" :v-theme="theme.name" v-model="addAsRead">
-              Add as read
-            </vs-checkbox>
             <vs-button gradient :disabled="loading" :loading="loading" size="xl">
               Add Book
               <template #animate ><i class="fas fa-paper-plane"></i></template>
@@ -63,7 +62,6 @@ export default {
     return {
       isbn: "",
       searchQuery: "",
-      addAsRead: false,
       searchResults: [],
       selectedSearchResult: null,
       loadingSearchResults: false,
@@ -95,22 +93,26 @@ export default {
       this.loadingSearchResults = false
       this.searchResults = res.data.items
     }, 200),
-
+    addFromSearchResult() {
+        this.selectedSearchResult.fromSearch = true
+        this.$store.dispatch("addBook", this.selectedSearchResult)
+    },
+    addFromSearchQuery() {
+      this.$store.dispatch("addBook", {"isbn": this.isbn, "searchQuery": this.searchQuery})
+    },
     submitForm(event) {
       event.preventDefault()
       if (this.selectedSearchResult) {
-        this.selectedSearchResult.addAsRead = this.addAsRead
-        this.selectedSearchResult.fromSearch = true
-        this.$store.dispatch("addBook", this.selectedSearchResult)
+        this.addFromSearchResult();
       }
       else {
-        if (this.books.find(book => !book.manual && (book.isbn === this.isbn))) return notify(this, "Input Error", "A book with this ISBN has alread been added.", "warning")
+        if (this.books.find(book => !book.manual && (book.isbn === this.isbn))) return notify(this, "Input Error", "A book with this ISBN has already been added.", "warning")
         if (!this.isbn && !this.searchQuery) {
           this.clearInput()
           notify(this, "Input Error", "ISBN or search query required to add book", "warning")
           return
         }
-        this.$store.dispatch("addBook", {"isbn": this.isbn, "searchQuery": this.searchQuery, "addAsRead": this.addAsRead})
+        this.addFromSearchQuery()
         this.clearInput()
       }
     },

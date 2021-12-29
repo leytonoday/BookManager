@@ -2,7 +2,7 @@
   <div id="box" class="container">
     <vs-card @click="$router.push(bookLink)" :vs-theme="theme.name" type="4"> 
       <template #title>
-        <h3>{{ book.title.length > 50? truncateTitle(book.title) : book.title }}</h3>
+        <h3>{{ book.title.length > TEXT_LENGTH_LIMIT? truncateTitle(book.title) : book.title }}</h3>
       </template>
       <template #img>
         <img :src="bookImage" alt=""/>
@@ -11,10 +11,16 @@
         <p>{{ authors }}</p>
       </template>
       <template #interactions>
-        <vs-button v-if="book.read" success icon>
+        <vs-button v-if="book.readStatus === 2" success icon>
           <i class="fa fa-check"></i>
         </vs-button>
-        <vs-button v-if="book.rating" shadow primary>
+        <vs-button v-if="book.readStatus === 1" warn icon>
+          <i class="fas fa-minus"></i>
+        </vs-button>
+        <vs-button v-if="book.readStatus === 0" danger icon>
+          <i class="fas fa-times"></i>
+        </vs-button>
+        <vs-button v-if="book.rating" shadow primary class="rating">
           {{book.rating}} / 5 <i style="margin-left: 0.2em" class="far fa-star"></i>
         </vs-button>
         <vs-button v-if="book.bookmark || book.bookmark === 0" shadow primary>
@@ -40,6 +46,7 @@ export default {
   data() {
     return {
       modelActive: false,
+      TEXT_LENGTH_LIMIT: 50
     };
   },
 
@@ -55,7 +62,7 @@ export default {
     authors() {
       if (!this.book.authors) return
       let authorsString = typeof this.book.authors === "string" ? this.book.authors : this.book.authors.join(", ") 
-      let lengthLimit = 50
+      let lengthLimit = this.TEXT_LENGTH_LIMIT
       if (authorsString && authorsString.length > lengthLimit) return (authorsString.substring(0, lengthLimit)) + "..."
       else return authorsString
     },
@@ -79,7 +86,7 @@ export default {
   methods: {
     ...mapActions(["deleteBook"]),
     truncateTitle(title) {
-      return title.substring(0, 50) + "..."
+      return title.substring(0, this.TEXT_LENGTH_LIMIT) + "..."
     }
   }
 };
@@ -91,5 +98,8 @@ export default {
 .vs-card-content >>> .vs-card {
   margin-left: auto !important;
   margin-right: auto !important;
+}
+.rating {
+  color: var(--themeText) !important;
 }
 </style>

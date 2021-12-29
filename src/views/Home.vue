@@ -54,8 +54,6 @@
         <h2 class="title">Adding a book</h2>
         <p>
           This is how you populate your Library, and begin recording your reading progress. 
-          In both cases, if you have already read the book, you can tick the checkbox next
-          to the "Add Book" button to mark the book as read before it is added. 
         </p>
         <br/>
         
@@ -118,9 +116,10 @@
       <div class="instructions">
         <h2 class="title">Your Library</h2>
         <p>Your Library is where all your books are stored. Here, you can manage,
-          track, and make notes on all the books you have stored. To mark a book as 
-          read, you can either: click the "Read" checkbox on the book when you open it,
-          or you can select the book in Tabular view and click "Mark as Read"
+          track, and make notes on all the books you have stored. To mark your book 
+          as read, reading or unread, you can simply change the option on the Book page
+          using the select menu. You can also add your own bookmarks, and personal 
+          review using the start system. 
         </p>
         <br/>
 

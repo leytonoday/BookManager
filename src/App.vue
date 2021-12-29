@@ -58,7 +58,7 @@ export default {
         "--buttonText": this.buttonText(this.accent), // If the user choses a very bright accent, this will set the text back to a visible colour
         "--inputBackground": this.theme.name === "dark"? "": "white", // inputs are hard to see in lightmode, so this solves that
         "--titleColour": this.theme.name === "dark" ? "white": "black", // Change colour of titles on pages for better readability
-        "--test": "red"
+        "--selectMenuBackground": this.theme.name === "dark" ? "#1e2023": "white"
       }
     }
   },
@@ -92,11 +92,10 @@ export default {
     // Changes the colour of the scrollbar to the accent colour
     dynamicScrollbarWorkaround(trackColour, thumbColour) {
       let link = document.createElement("style")
-      link.type = "text/css"
-      link.id = "custom-scroll"
+      link.id = "customScroll"
       link.innerHTML = `::-webkit-scrollbar {background: ${trackColour};} ::-webkit-scrollbar-thumb {background: ${thumbColour};};`
 
-      let curID = document.getElementById('custom-scroll')
+      let curID = document.getElementById('customScroll')
       if(curID == undefined)
         document.head.append(link)
       else
@@ -112,6 +111,10 @@ export default {
   border-top-left-radius: 0.5em !important;
   border-top-right-radius: 0.5em !important;
   background: var(--inputBackground) !important;
+}
+/* Fix vuesax error, where the select menu doesn't obey the theme*/
+.vs-select__options.vs-component--primary { 
+  background: #1e2023 !important; 
 }
 #GridLoader {
   width: 30%;

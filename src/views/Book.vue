@@ -12,16 +12,15 @@
       </div>
 
       <div class="bookInfo">
-        <div style="width: 50%; display: flex; justify-content: left">
-          <vs-checkbox
-            :v-theme="theme.name"
-            v-model="book.read"
-            @click="updateRead()"
-          >
-            Read
-          </vs-checkbox>
+        <div class="bookControls">
 
-          <vs-button type="button" gradient danger @click="dialogActive = true">
+          <vs-select v-model="readStatus" :vs-theme="theme.name">
+            <vs-option label="Unread" :vs-theme="theme.name" :value="0">Unread</vs-option>
+            <vs-option label="Reading" :vs-theme="theme.name" :value="1">Reading</vs-option>
+            <vs-option label="Read" :vs-theme="theme.name" :value="2">Read</vs-option>
+          </vs-select>
+
+          <vs-button class="deleteButton" type="button" gradient danger @click="dialogActive = true">
             Delete
             <template #animate><i class="far fa-trash-alt"></i></template>
           </vs-button>
@@ -40,7 +39,10 @@
 
         <div class="infoBox">
           <h2>Rating:</h2>
-          <star-rating v-model="rating" clearable text-class="customRatingText" :border-width="2" :star-size="25" :increment="0.5" :active-color="accent"  />
+          <star-rating class="starRating" v-model="rating" text-class="customRatingText" :border-width="2" :star-size="25" :increment="0.5" :active-color="accent"/>
+          <vs-button gradient danger @click="clearRating">
+            Clear Rating
+          </vs-button>
         </div>
 
         <div v-if="book.authors" class="infoBox">
@@ -173,7 +175,6 @@ import StarRating             from 'vue-star-rating'
 import isImageUrl             from "is-image-url"
 import router                 from "../router"
 
-
 Quill.register("modules/imageDrop", ImageDrop)
 
 export default {
@@ -187,12 +188,13 @@ export default {
   },
 
   components: {
-    VueEditor,
-    StarRating,
+    "vue-editor": VueEditor,
+    "star-rating": StarRating,
   },
   
   data() {
     return {
+      readStatus: 0,
       dialogActive: false,
       bookmark: "init", //init value
       editorContent: "",
@@ -257,6 +259,7 @@ export default {
     this.editorContent = this.book.notes // this is to load the notes when mounted
     this.bookmark = this.book.bookmark
     this.rating = this.book.rating
+    this.readStatus = this.book.readStatus
     ipcRenderer.removeAllListeners("appClosing")
     ipcRenderer.on("appClosing", async (_) => {
       if (router.currentRoute.name === "Book") {
@@ -280,19 +283,22 @@ export default {
   watch: {
     rating(newRating) {
       this.$store.dispatch("updateRating", { id: this.book.id, rating: newRating})
+    },
+    readStatus(newStatus) {
+      this.$store.dispatch("updateReadStatus", {
+        id: this.book.id,
+        readStatus: newStatus,
+      })
     }
   },
 
   methods: {
+    clearRating() {
+      this.rating = undefined;
+    },
     deleteBook(book) {
       this.$router.back()
       this.$store.dispatch("deleteBook", book)
-    },
-    updateRead() {
-      this.$store.dispatch("updateRead", {
-        id: this.book.id,
-        read: !this.book.read,
-      })
     },
     updateNotesAndBookmarkCheck() { // Attempt to update the notes and bookmark every two seconds. This will minimize any issues with the app forcibly being closed and notes not being saved.
       if (router.currentRoute.name !== "Book") return
@@ -323,9 +329,6 @@ export default {
 @import '~quill/dist/quill.core.css';
 @import '~quill/dist/quill.snow.css';
 
-.quillWrapper >>> .ql-picker-options {
-  background: var(--textAreaBackroundDefault) !important;
-}
 .quillWrapper >>> .ql-picker-item {
   color: var(--themeText) !important;
 }
@@ -445,10 +448,30 @@ export default {
 .bookInfo >>> .customRatingText {
   color: var(--themeText);
   font-size: 1.5em;
-  border: white 1px solid;
+  border: var(--themeText) 1px solid;
   padding-left: 0.2em;
   padding-right: 0.2em;
   border-radius: 0.3em;
+}
+
+.starRating {
+  float: left;
+  margin-right: 1em;
+}
+
+.vs-select-content >>> .vs-select {
+  width: 10em;
+}
+
+.bookControls {
+  width: 50%; 
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start; 
+}
+
+.bookControls .deleteButton {
+  min-width: 6em;
 }
 
 </style>

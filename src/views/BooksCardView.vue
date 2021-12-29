@@ -5,13 +5,16 @@
     <p class="subtitle has-text-centered" v-if="!books.length">No books have been added</p>
     <div v-if="books.length" style="text-align: center">
       <div class="radioFilter" style="display: inline-block;">
-        <vs-radio v-model="radioFilterValue" val="1">
-          Both
+        <vs-radio v-model="radioFilterValue" val="3">
+          All 
         </vs-radio>
         <vs-radio v-model="radioFilterValue" val="2">
           Read
-          </vs-radio>
-        <vs-radio v-model="radioFilterValue" val="3">
+        </vs-radio>
+        <vs-radio v-model="radioFilterValue" val="1">
+          Reading
+        </vs-radio>
+        <vs-radio v-model="radioFilterValue" val="0">
           Unread
         </vs-radio>
       </div>
@@ -24,7 +27,11 @@
     </div>
     
     <div v-if="filteredBooks.length && !searchedBooks.length">
-      <p class="">No search results</p>
+      <p>No search results</p>
+    </div>
+
+    <div v-if="books.length && !filteredBooks.length">
+      <p class="subtitle has-text-centered" style="margin-top: 2em">No books match the filter</p>
     </div>
 
     <stack class="centre" :column-min-width="320" :gutter-width="8" :gutter-height="35" monitor-images-loaded>
@@ -75,7 +82,7 @@ export default {
       dialogActive: false,
       rerenderKey: 0,
       filteredBooks: [], // This is for the user to change between displaying the read books, unread books or both
-      radioFilterValue: "1",
+      radioFilterValue: "3", // all books
     }
   },
 
@@ -91,37 +98,33 @@ export default {
   },
 
   watch: {
-    books(newValue) {
-      switch (this.radioFilterValue) { // When we delete books using the "Delete All Books" button we need the books to update
-        case "1": 
-          this.filteredBooks = newValue
-          break;
-        case "2": 
-          this.filteredBooks = newValue.filter(book => book.read)
-          break;
-        case "3":
-          this.filteredBooks = newValue.filter(book => !book.read)
-          break;
-      }
+    books() {
+      this.filterBooks(this.radioFilterValue) // When we delete books using the "Delete All Books" button we need the books to update
     },
     radioFilterValue(newValue) { // When we switch options, update the books in accordance to the filter of read === true
-      switch (newValue) {
-        case "1": 
-          this.filteredBooks = this.books
-          break;
-        case "2": 
-          this.filteredBooks = this.books.filter(book => book.read)
-          break;
-        case "3":
-          this.filteredBooks = this.books.filter(book => !book.read)
-          break;
-      }
+      this.filterBooks(newValue)
     }
   },
 
   methods: {
-    ...mapActions(["deleteAllBooks"])
-  },
+    ...mapActions(["deleteAllBooks"]),
+    filterBooks(filter) {
+      switch (filter) {
+        case "0":
+          this.filteredBooks = this.books.filter(book => book.readStatus === 0) // unread
+          break;
+        case "1":
+          this.filteredBooks = this.books.filter(book => book.readStatus === 1) // reading
+          break;
+        case "2": 
+          this.filteredBooks = this.books.filter(book => book.readStatus === 2) // read
+          break;
+        case "3": 
+          this.filteredBooks = this.books // all books
+          break;
+      }
+    }
+  }
 }
 </script>
 

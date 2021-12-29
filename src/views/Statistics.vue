@@ -11,7 +11,7 @@
         <vs-col vs-type="flex" vs-justify="center" vs-align="center" w="6">
           <h2 class="title">Reading Progress</h2>
           <p class="subtitle">Displaying the books read or unread in your Library</p>
-          <pie-chart :inputData="getReadStats(books)" :id="'readStats'" :colours="[accent, ]"/>
+          <pie-chart :inputData="getReadStats(books)" :id="'readStats'" :colours="[accent, HalfHexDimColour(accent), theme.background]"/>
         </vs-col>
 
         <vs-col vs-type="flex" vs-justify="center" vs-align="center" w="6">
@@ -19,7 +19,6 @@
           <p class="subtitle">Displaying the published date of all books in your Libray</p>
           <line-chart :inputData="getPublishedDates(books)" :id="'publishedDates'" :label="'Published Dates'"/>
         </vs-col>
-
       </vs-row>
 
       <vs-row>
@@ -66,6 +65,12 @@ export default {
   },
 
   methods: {
+    HalfHexDimColour(colour) {
+      let number = Number(colour.replace("#", "0x"))
+      number /= 2
+      return "#" + number.toString(16)
+    },
+
     getTotalBooks(books) {
       return Object.keys(books).length
     },
@@ -73,7 +78,8 @@ export default {
     getReadStats(books) { // returns map of read and unread book quantities
       return {
         "Read": this.getReadCount(books),
-        "Unread": Object.keys(books).length - this.getReadCount(books)
+        "Reading": this.getReadingCount(books),
+        "Unread": this.getUnreadCount(books)
       }
     },
 
@@ -97,8 +103,18 @@ export default {
       return frequencies
     },
 
-    getReadCount(books) { // returns the amount of books that have been read
-      const read = books.filter(book => book.read === true)
+    getUnreadCount(books) {
+      const read = books.filter(book => book.readStatus === 0)
+      return Object.keys(read).length
+    },
+
+    getReadingCount(books) {
+      const read = books.filter(book => book.readStatus === 1)
+      return Object.keys(read).length
+    },
+
+    getReadCount(books) {
+      const read = books.filter(book => book.readStatus === 2)
       return Object.keys(read).length
     },
 

@@ -1,13 +1,13 @@
 "use strict"
 
 class Book {
-  constructor(id, isbn, data, addAsRead, notes, bookmark, rating) {
+  constructor(id, isbn, data, notes, bookmark, rating, readStatus) {
     this.id = id
     this.isbn = isbn
-    this.read = addAsRead
+    this.readStatus = readStatus || 0,//addAsRead ? 2 : 0 // unread: 0, reading: 1, read: 2 
     this.notes = notes
     this.bookmark = bookmark || ""
-    this.rating = rating
+    this.rating = rating || undefined
     this.dateAdded = new Date(Date.now()).toISOString().slice(0, 10)
     Object.assign(this, data)
   }

@@ -97,6 +97,17 @@ export default {
       link.click()
       notify(this, "Export Success", `${this.books.length} have been exported`, "success")
     },
+    checkBooksAlreadyInLibrary(book) {
+      if (this.books.find(i => i.title === book.title)) {
+        notify(this, "Input Error", "A book with this title has already been added.", "warning")
+        return true
+      }
+      if (book.isbn && this.books.find(i => i.isbn === book.isbn)){
+        notify(this, "Input Error", "A book with this ISBN has already been added.", "warning")
+        return true
+      }
+      return false
+    },
     importBooks() {
       let input = document.createElement("input")
       input.type = "file"
@@ -108,25 +119,20 @@ export default {
           try {
               const importedBooks = JSON.parse(reader.result)
               for (let book of importedBooks) {
-              if (book.manual) { // manual addition 
-                if (this.books.find(i => i.title === book.title)) {
-                  notify(this, "Input Error", "A book with this title has alread been added.", "warning")
-                  continue
-                }
-                if (book.isbn && this.books.find(i => i.isbn === book.isbn)){
-                  notify(this, "Input Error", "A book with this ISBN has alread been added.", "warning")
-                  continue
-                }
-                this.$store.dispatch("addBook", book)
-              } else { // auto addition
-                if (book.isbn.match(/[a-zA-Z]/g)) { // If there are letters in the ISBN, add using the title as the search query
-                  this.$store.dispatch("addBook", {"isbn": "", "searchQuery": book.title,  "addAsRead": book.read, "notes": book.notes, "bookmark": book.bookmark, "rating": book.rating})
-                } else {
-                  /*Sometimes the ISBNs have letters in them for someson, Such as a GB: prefix. so if there are NO letters, just add using ISBN*/
-                  this.$store.dispatch("addBook", {"isbn": book.isbn, "searchQuery": "",  "addAsRead": book.read, "notes": book.notes, "bookmark": book.bookmark,  "rating": book.rating})
+                if (book.manual) { // manual addition 
+                  if (this.checkBooksAlreadyInLibrary(book))
+                    continue;
+                  this.$store.dispatch("addBook", book)
+                } 
+                else { // auto addition
+                  if (book.isbn.match(/[a-zA-Z]/g)) { // If there are letters in the ISBN, add using the title as the search query
+                    this.$store.dispatch("addBook", {"isbn": "", "searchQuery": book.title, "notes": book.notes, "bookmark": book.bookmark, "rating": book.rating, "readStatus": book.readStatus})
+                  } else {
+                    /*Sometimes the ISBNs have letters in them for someson, Such as a GB: prefix. so if there are NO letters, just add using ISBN*/
+                    this.$store.dispatch("addBook", {"isbn": book.isbn, "searchQuery": "", "notes": book.notes, "bookmark": book.bookmark,  "rating": book.rating, "readStatus": book.readStatus})
+                  }
                 }
               }
-            }
           } catch (e) {
             notify(this, "Import Failure", "Could not parse books from the given file", "danger")
             return
