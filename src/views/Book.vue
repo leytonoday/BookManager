@@ -38,7 +38,7 @@
         </div>
 
         <div class="infoBox">
-          <h2>Rating:</h2>
+          <h2>Your Rating:</h2>
           <star-rating class="starRating" v-model="rating" text-class="customRatingText" :border-width="2" :star-size="25" :increment="0.5" :active-color="accent"/>
           <vs-button gradient danger @click="clearRating">
             Clear Rating

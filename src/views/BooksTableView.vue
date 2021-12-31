@@ -53,7 +53,7 @@
                 <vs-th sort @click="sortData($event, 'publishedDate')"> Date Published </vs-th>
                 <vs-th sort @click="sortData($event, 'dateAdded')"> Date Added </vs-th>
                 <vs-th sort @click="sortData($event, 'isbn')"> ISBN </vs-th>
-                <vs-th sort @click="sortData($event, 'rating')"> Rating </vs-th>
+                <vs-th sort @click="sortData($event, 'rating')"> Your Rating </vs-th>
                 <vs-th sort @click="sortData($event, 'bookmark')"> Bookmark </vs-th>
                 <vs-th sort @click="sortData($event, 'readStatus')"> Read Status </vs-th>
             </vs-tr>
