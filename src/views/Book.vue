@@ -241,9 +241,7 @@ export default {
     },
     themeStyle() {
       return {
-        "--textAreaBackgroundFocus":
-          this.theme.name === "dark" ? "#404040" : "white",
-        "--textAreaBackroundDefault": this.theme.background,
+        "--themeBackground": this.theme.background,
         "--themeText": this.theme.text,
         "--accent": this.accent,
       }
@@ -329,16 +327,20 @@ export default {
 @import '~quill/dist/quill.core.css';
 @import '~quill/dist/quill.snow.css';
 
-.quillWrapper >>> .ql-picker-item {
+/* .quillWrapper >>> .ql-picker-item {
   color: var(--themeText) !important;
+} */
+
+.quillWrapper >>> .ql-picker-options {
+  background: var(--themeBackground);
 }
 
 .quillWrapper >>> .ql-snow.ql-toolbar .ql-picker-label:hover {
-  color: var(--themeText) !important;
+  color: var(--accent) !important;
 }
 
-.quillWrapper >>>  .ql-picker-label .ql-active {
-    color: var(--themeText) !important;
+.quillWrapper >>> .ql-picker-label.ql-active {
+  color: var(--accent) !important;
 }
 
 .quillWrapper >>> .ql-editor {
@@ -361,17 +363,21 @@ export default {
 }
 
 .quillWrapper >>> .ql-toolbar .ql-stroke {
-    fill: none;
-    stroke: var(--themeText) !important;
+  fill: none;
+  stroke: var(--themeText) !important;
 }
 
 .quillWrapper >>> .ql-toolbar .ql-fill {
-    fill: var(--themeText) !important;
-    stroke: none;
+  fill: var(--themeText) !important;
+  stroke: none;
 }
 
 .quillWrapper >>>  .ql-toolbar .ql-picker {
-    color: var(--themeText) !important;
+  color: var(--themeText) !important;
+}
+
+.quillWrapper >>> .ql-picker-item:hover {
+  color: var(--accent) !important;
 }
 
 .quillWrapper >>> .ql-toolbar {
@@ -389,10 +395,6 @@ export default {
 
 .quillWrapper >>> .ql-toolbar button:hover {
   stroke: var(--accent) !important;
-}
-
-.quillWrapper >>> .ql-fullscreen:after {
-  content: '<i class="fas fa-expand-alt"></i>';
 }
 
 /* Book image */

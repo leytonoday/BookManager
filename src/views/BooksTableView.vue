@@ -18,7 +18,7 @@
 
         <vs-button class="bookControls" v-if="selected.length >= 1" gradient @click="setReadStatus(1);">
           Mark as Reading
-          <template #animate><i class="fas fa-check"></i></template>
+          <template #animate><i class="fas fa-minus"></i></template>
         </vs-button>
 
         <vs-button class="bookControls" v-if="selected.length >= 1" gradient @click="setReadStatus(2);">
