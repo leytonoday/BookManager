@@ -16,7 +16,7 @@ Features include:
 - Automatic addition of book data, just search the book name and pick from the search results, and click to see a preview! See figure 1
 - Beautiful pinterest-esque stacking book cards in the Card View. See figure 2
 - Efficient Tabular View for managing and editing several books at once. See figure 3
-- Bookmarking and note taking, with a rich text editor! See figure 4
+- Bookmarking, personal star rating, and note taking with a rich text editor! See figure 4
 - Statistics to analyse your reading habits and your libraries growth. See figure 5
 - Fully customizable accent colour, and a crisp light mode available. See figure 6 and 7
 - Finally, for those obscure books that aren't documented by the Google Books API, you can manually input their details
@@ -57,23 +57,23 @@ Once built, go to dist_electron, and run the "Book Manager Setup 0.1.0" installe
 
 ### Figure 1
 Auto add book, with search 
-![figure 1](https://user-images.githubusercontent.com/36010516/118420483-e065c080-b6b6-11eb-817d-7ae8b18aa16a.png)
+![1](https://user-images.githubusercontent.com/36010516/147797917-7ee5c692-f757-4aad-899e-973e0d259776.png)
 
 ### Figure 2
 Card View of Library
-![figure 2](https://user-images.githubusercontent.com/36010516/118420487-e22f8400-b6b6-11eb-9f31-d6dcfdb42650.png)
+![2](https://user-images.githubusercontent.com/36010516/147797918-8fe7987b-23fd-4167-9286-fd2c5862a128.png)
 
 ### Figure 3
 Tabular View of Library
-![figure 3](https://user-images.githubusercontent.com/36010516/118420492-e3f94780-b6b6-11eb-9635-6db9eadaaeb1.png)
+![3](https://user-images.githubusercontent.com/36010516/147797926-7a1424b6-3c49-4fa7-986f-847d339a77a9.png)
 
 ### Figure 4
 Book details, with rich text notes and bookmark
-![figure 4](https://user-images.githubusercontent.com/36010516/118420495-e5c30b00-b6b6-11eb-9457-0900bde82971.png)
+![4](https://user-images.githubusercontent.com/36010516/147797931-5424e588-a49f-44c0-bd73-c189c9df7591.png)
 
 ### Figure 5
 Library statistics
-![figure 5](https://user-images.githubusercontent.com/36010516/118420497-e8256500-b6b6-11eb-9b5d-10d066ae3535.png)
+![5](https://user-images.githubusercontent.com/36010516/147797940-b70737dd-b334-4c60-89f3-32d7e5c258aa.png)
 
 ### Figure 6
 Settings and customization
@@ -81,7 +81,7 @@ Settings and customization
 
 ### Figure 7
 Light mode example
-![figure 7](https://user-images.githubusercontent.com/36010516/118420505-ecea1900-b6b6-11eb-8b03-5e9dcf5da134.png)
+![7](https://user-images.githubusercontent.com/36010516/147797941-bad7ecac-b60f-4341-b582-006240464730.png)
 
 
 ## Contributing
