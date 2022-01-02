@@ -7,7 +7,7 @@ const state = {
     light: { name: "light", background: "#ededf2", text: "black" },
     dark: { name: "dark", background: "#262626", text: "white"},
     accent: "",
-    defaultAccent: "#3AC47C",
+    defaultAccent: "#4F9EAF",
     theme: {}, // current theme
     sidebarPosition: "left"
 }

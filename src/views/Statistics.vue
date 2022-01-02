@@ -11,7 +11,7 @@
         <vs-col vs-type="flex" vs-justify="center" vs-align="center" w="6">
           <h2 class="title">Reading Progress</h2>
           <p class="subtitle">Displaying the books read or unread in your Library</p>
-          <pie-chart :inputData="getReadStats(books)" :id="'readStats'" :colours="[accent, HalfHexDimColour(accent), theme.background]"/>
+          <pie-chart :inputData="getReadStats(books)" :id="'readStats'" :colours="[accent, AddTransparancyToHex(accent), theme.background]"/>
         </vs-col>
 
         <vs-col vs-type="flex" vs-justify="center" vs-align="center" w="6">
@@ -65,10 +65,8 @@ export default {
   },
 
   methods: {
-    HalfHexDimColour(colour) {
-      let number = Number(colour.replace("#", "0x"))
-      number /= 2
-      return "#" + number.toString(16)
+    AddTransparancyToHex(colour) { // 128 in hex is 80. This is a 50% opacity.
+      return colour + "80"
     },
 
     getTotalBooks(books) {
