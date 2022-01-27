@@ -70,17 +70,10 @@ export default {
       return `/books/${this.book.id}`
     },
     bookImage() {
-      if (this.book.imageLinks && this.book.imageLinks.thumbnail) 
-        return this.book.imageLinks.thumbnail
-
-      if (this.book.manual && !isImageUrl(this.book.imageLink)) 
-        return require(`../../assets/books/image-not-available.png`)
-      
-      if (this.book.manual) 
+      if (this.book.manual)
         return this.book.imageLink
-
-      return require(`../../assets/books/image-not-available.png`)
-    }
+      return this.book.newFrontCover || `https://books.google.com/books/content?id=${this.book.id}&printsec=frontcover&img=1&zoom=1edge=curl&source=gbs_api`
+    },
   },
   
   methods: {

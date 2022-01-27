@@ -6,6 +6,8 @@ const Store       = require("electron-store")
 const axios       = require("axios")
 const Book        = require("../book.js")
 
+const gis         = require("g-i-s")
+
 const store = new Store()
 if (!store.get("books")) store.set("books", [])
 
@@ -13,6 +15,26 @@ let books = store.get("books")
 const booksRouter = express.Router()
 booksRouter.use(bodyParser.json({limit: '100mb', extended: true}));
 booksRouter.use(bodyParser.urlencoded({limit: "100mb", extended: true, parameterLimit: 50000}));
+
+async function imageURLToBase64(url) {
+  const response = await axios.get(url)
+  return Buffer.from(response.data, "binary").toString("base64")
+}
+
+async function hasFrontCover(bookId) {
+  const actualfrontCover = await imageURLToBase64(`https://books.google.com/books/content?id=${bookId}&printsec=frontcover&img=1&zoom=1edge=curl&source=gbs_api`)
+  const noFrontCover = await imageURLToBase64("https://books.google.com/books/content?id=abc&printsec=frontcover&img=1&zoom=1edge=curl&source=gbs_api")
+  return actualfrontCover !== noFrontCover
+}
+
+function replaceFrontCover(isbn) {
+  return new Promise(async resolve => {
+    gis(isbn, (_, results) => {
+      console.log(isbn + " cover replaced")
+      resolve(results[0].url || null)
+    })
+  })
+}
 
 async function makeBook(req) {
   return new Promise(async (resolve, reject) => {
@@ -41,7 +63,13 @@ async function makeBook(req) {
       const errorCheckedIsbn = isbn || bookRes.data.items[0].volumeInfo.industryIdentifiers ? bookRes.data.items[0].volumeInfo.industryIdentifiers[0].identifier : ""
       newBook = new Book(bookRes.data.items[0].id, errorCheckedIsbn, bookRes.data.items[0].volumeInfo, notes, bookmark, rating, readStatus)
     }
-    if (newBook.publishedDate) newBook.publishedDate = new Date(Date.parse(newBook.publishedDate)).toISOString().slice(0, 10) // format date for consistency
+    if (newBook.publishedDate) 
+      newBook.publishedDate = new Date(Date.parse(newBook.publishedDate)).toISOString().slice(0, 10) // format date for consistency
+
+    // If the book isn't manual, check if the front cover exists, and isn't an "image not found" one. If it is, replace it
+    if (!req.body.manual && !(await hasFrontCover(newBook.id)))
+      newBook.newFrontCover = await replaceFrontCover(newBook.isbn, newBook.title)
+    
     resolve(newBook)
   })
 }

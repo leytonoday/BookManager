@@ -8,7 +8,7 @@
       <h1 class="title has-text-centered">{{ this.book.title }}</h1>
 
       <div class="bookImage" style="margin-top: 2em;">
-        <img slot="image" style="float: right; margin-right: 3em;" :src="bookURL" />
+        <img slot="image" style="float: right; margin-right: 3em; min-height: 755px; min-width: 575px; max-height: 850px; max-width: 600px;" :src="bookImage" />
       </div>
 
       <div class="bookInfo">
@@ -172,7 +172,6 @@ import { ipcRenderer }        from "electron"
 import { mapGetters }         from "vuex"
 import { ImageDrop }          from "quill-image-drop-module"
 import StarRating             from 'vue-star-rating'
-import isImageUrl             from "is-image-url"
 import router                 from "../router"
 
 Quill.register("modules/imageDrop", ImageDrop)
@@ -231,13 +230,10 @@ export default {
     book() {
       return this.$store.getters.bookFromId(this.id)
     },
-    bookURL() {
-      if (!this.book.manual)
-        return `https://books.google.com/books/content?id=${this.book.id}&printsec=frontcover&img=1&zoom=1edge=curl&source=gbs_api`
-      if (!isImageUrl(this.book.imageLink)) {
-        return require(`../assets/books/image-not-available.png`)
-      }
-      return this.book.imageLink
+    bookImage() {
+      if (this.book.manual)
+        return this.book.imageLink
+      return this.book.newFrontCover || `https://books.google.com/books/content?id=${this.book.id}&printsec=frontcover&img=1&zoom=1edge=curl&source=gbs_api`
     },
     themeStyle() {
       return {
