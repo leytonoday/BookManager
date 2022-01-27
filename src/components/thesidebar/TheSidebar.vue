@@ -70,6 +70,11 @@
         <template #icon><i class="fas fa-cog"></i></template>
         Settings
       </vs-sidebar-item>
+      
+      <vs-sidebar-item to="/help" id="/help">
+        <template #icon><i class="fas fa-question-circle"></i></template>
+        Help
+      </vs-sidebar-item>
     </vs-sidebar>
   </div>
 </template>

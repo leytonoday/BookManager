@@ -8,7 +8,7 @@
       <h1 class="title has-text-centered">{{ this.book.title }}</h1>
 
       <div class="bookImage" style="margin-top: 2em;">
-        <img slot="image" style="float: right; margin-right: 3em; min-height: 755px; min-width: 575px; max-height: 850px; max-width: 600px;" :src="bookImage" />
+        <img slot="image" style="float: right; margin-right: 3em; width: 35em;" :src="bookImage" />
       </div>
 
       <div class="bookInfo">

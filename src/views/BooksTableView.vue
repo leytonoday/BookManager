@@ -32,7 +32,7 @@
         </vs-button>
       </div>
 
-      <div class="vs-table-content">
+      <div style="margin-bottom: 2em"> <!-- Margin here to add a little filler to the bottom of the page -->
         <vs-table
           :vs-theme="theme.name"
           v-model="selected"
