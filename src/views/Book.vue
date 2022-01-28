@@ -139,23 +139,17 @@
           <vs-button
             size="xl"
             style="float: left"
+            transparent
             @click="
               {
                 dialogActive = false;
                 deleteBook(book);
               }
             "
-            transparent
           >
             Confirm
           </vs-button>
-          <vs-button
-            size="xl"
-            style="float: right"
-            @click="dialogActive = false"
-            dark
-            transparent
-          >
+          <vs-button size="xl" style="float: right" @click="dialogActive = false" dark transparent>
             Cancel
           </vs-button>
         </div>
@@ -254,7 +248,7 @@ export default {
     this.bookmark = this.book.bookmark
     this.rating = this.book.rating
     this.readStatus = this.book.readStatus
-    ipcRenderer.removeAllListeners("appClosing")
+    ipcRenderer.removeAllListeners("appClosing") // don't think this line is needed
     ipcRenderer.on("appClosing", async (_) => {
       if (router.currentRoute.name === "Book") {
         this.updateNotes()

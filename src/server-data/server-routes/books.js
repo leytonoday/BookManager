@@ -29,10 +29,8 @@ async function hasFrontCover(bookId) {
 
 function replaceFrontCover(isbn) {
   return new Promise(async resolve => {
-    gis(isbn, (_, results) => {
-      console.log(isbn + " cover replaced")
-      resolve(results[0].url || null)
-    })
+    gis(isbn, (_, results) => 
+      resolve(results[0].url || null))
   })
 }
 
@@ -103,24 +101,6 @@ const deleteAllBooksRoute = async (_, res) => {
   store.set("books", books)
 }
 
-const deleteAllUnreadBooksRoute = async(_, res) => {
-  books = books.filter(book => book.readStatus !== 0)
-  res.sendStatus(200)
-  store.set("books", books)
-}
-
-const deleteAllReadingBooksRoute = async(_, res) => {
-  books = books.filter(book => book.readStatus !== 1)
-  res.sendStatus(200)
-  store.set("books", books)
-}
-
-const deleteAllReadBooksRoute = async(_, res) => {
-  books = books.filter(book => book.readStatus !== 2)
-  res.sendStatus(200)
-  store.set("books", books)
-}
-
 const updateReadStatusRoute = async (req, res) => {
   const {id, readStatus} = req.body
   const index = books.findIndex(book => book.id == id)
@@ -154,9 +134,6 @@ const updateRatingRoute = async (req, res) => {
 }
 
 booksRouter.post("/delete/all", deleteAllBooksRoute)
-booksRouter.post("/delete/all/read", deleteAllReadBooksRoute)
-booksRouter.post("/delete/all/reading", deleteAllReadingBooksRoute)
-booksRouter.post("/delete/all/unread", deleteAllUnreadBooksRoute)
 booksRouter.post("/delete/:id", deleteBookRoute)
 booksRouter.post("/updatereadstatus", updateReadStatusRoute)
 booksRouter.post("/updatenotes", updateNotesRoute)

@@ -35,15 +35,6 @@ const mutations = { // These edit the state directly
   DELETE_ALL_BOOKS (state) {
     state.books = []
   },
-  DELETE_ALL_READ_BOOKS (state) {
-    state.books = state.books.filter(book => book.readStatus !== 2)
-  },
-  DELETE_ALL_READING_BOOKS (state) {
-    state.books = state.books.filter(book => book.readStatus !== 1)
-  },
-  DELETE_ALL_UNREAD_BOOKS (state) {
-    state.books = state.books.filter(book => book.readStatus !== 0)
-  },
   UPDATE_READ_STATUS (state, payload) {
     const index = state.books.findIndex(book => book.id == payload.id)
     state.books[index].readStatus = payload.readStatus
@@ -76,7 +67,6 @@ const actions = {
     try {
       const res = await axios.post(`${URLBase}/books`, bookData)
       commit("ADD_BOOK", res.data)
-      console.log(res.data.readStatus)
       commit("SET_RESPONSE_STATUS", 200) // success
       commit('END_LOADING')
     } catch (err) {
@@ -87,26 +77,10 @@ const actions = {
   async setResponseStatus({commit}, result) {
     commit("SET_RESPONSE_STATUS", result)
   },
-  async deleteAllBooks({commit}, radioFilterValue) { // 1 = both, 2 = read, 3 = unread
+  async deleteAllBooks({commit}, constraints) { 
     commit('START_LOADING')
-    switch (radioFilterValue) {
-      case "0":
-        await axios.post(`${URLBase}/books/delete/all/unread`)
-        commit("DELETE_ALL_UNREAD_BOOKS")
-        break;
-      case "1": 
-        await axios.post(`${URLBase}/books/delete/all/reading`)
-        commit("DELETE_ALL_READING_BOOKS")
-        break;
-      case "2": 
-        await axios.post(`${URLBase}/books/delete/all/read`)
-        commit("DELETE_ALL_READ_BOOKS")
-        break;
-      case "3": 
-        await axios.post(`${URLBase}/books/delete/all`)
-        commit("DELETE_ALL_BOOKS")
-        break;
-    }
+    await axios.post(`${URLBase}/books/delete/all`)
+    commit("DELETE_ALL_BOOKS")
     commit('END_LOADING')
   },
   async updateReadStatus({commit}, bookData) {

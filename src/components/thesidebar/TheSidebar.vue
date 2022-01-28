@@ -30,15 +30,21 @@
           </vs-sidebar-item>
         </template>
 
-        <vs-sidebar-item to="/bookscardview" id="/bookscardview">
+        <vs-sidebar-item to="/bookscardview/all" id="/bookscardview/all">
           <template #icon><i class="fas fa-images"></i></template>
           Card View
+        </vs-sidebar-item>
+
+        <vs-sidebar-item to="/bookscategoryview" id="/bookscategoryview">
+          <template #icon><i class="fas fa-tags"></i></template>
+          Category View
         </vs-sidebar-item>
 
         <vs-sidebar-item to="/bookstableview" id="/bookstableview">
           <template #icon><i class="fas fa-table"></i></template>
           Tabular View
         </vs-sidebar-item>
+
       </vs-sidebar-group>
 
       <vs-sidebar-group>

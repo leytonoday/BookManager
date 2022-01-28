@@ -38,16 +38,14 @@
 "use strict"
 
 import { mapGetters, mapActions } from "vuex"
-import isImageUrl                 from "is-image-url"
 
 export default {
   name: "BookListItem",
 
   data() {
     return {
-      modelActive: false,
       TEXT_LENGTH_LIMIT: 50
-    };
+    }
   },
 
   props: {
@@ -63,8 +61,10 @@ export default {
       if (!this.book.authors) return
       let authorsString = typeof this.book.authors === "string" ? this.book.authors : this.book.authors.join(", ") 
       let lengthLimit = this.TEXT_LENGTH_LIMIT
-      if (authorsString && authorsString.length > lengthLimit) return (authorsString.substring(0, lengthLimit)) + "..."
-      else return authorsString
+      if (authorsString && authorsString.length > lengthLimit) 
+        return (authorsString.substring(0, lengthLimit)) + "..."
+      else 
+      return authorsString
     },
     bookLink() {
       return `/books/${this.book.id}`

@@ -15,14 +15,20 @@ const routes = [
     component: () => import("../views/Home.vue") // all components are lazy loaded
   },
   {
-    path: "/bookscardview",
+    path: "/bookscardview/:category",
     name: "BookCardsView",
+    props: true,
     component: () => import("../views/BooksCardView.vue")
   },
   {
     path: "/bookstableview",
     name: "BookTable",
     component: () => import("../views/BooksTableView.vue")
+  },
+  {
+    path: "/bookscategoryview",
+    name: "BooksCategroyView",
+    component: () => import("../views/BooksCategoryView.vue")
   },
   {
     path: "/books/:id",

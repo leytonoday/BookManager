@@ -1,5 +1,5 @@
 <template>
-  <div class="root">
+  <div :style="themeStyle" class="root">
     <div class="has-text-centered">
       <h1 class="title">Help</h1>
       <p class="subtitle">Instructions and Author Information</p>
@@ -193,8 +193,20 @@
 <script>
 "use strict"
 
+import { mapGetters, mapActions } from "vuex"
+
 export default {
-  name: "Help"
+  name: "Help",
+
+  computed: {
+    ...mapGetters(["theme"]),
+    themeStyle() {
+      return {
+        "--infoBoxHeaderBackground": this.theme.name === "dark"? "#404040" : "white",
+        "--themeText": this.theme.text,
+      }
+    }
+  }
 }
 </script>
 
@@ -206,9 +218,10 @@ export default {
   -webkit-box-shadow: 0px 10px 13px -7px #000000,
   0px 0px 18px 8px rgba(0, 0, 0, 0.3);
   box-shadow: 0px 10px 13px -7px #000000, 0px 0px 18px 8px rgba(0, 0, 0, 0.3);
+  color: var(--themeText);
 }
 .infoBoxHeader {
-  background: rgb(65, 64, 64);
+  background: var(--infoBoxHeaderBackground);
   border-top-right-radius: 0.6em;
   border-top-left-radius: 0.6em;
   padding: 0.5em;

@@ -2,7 +2,7 @@
   <div class="root">
     <h1 class="title has-text-centered">Library</h1>
     <h2 class="subtitle has-text-centered">
-      Manage your Library in a tabular format
+      View your Library in tabular format
     </h2>
     <div>
       <div class="has-text-centered" style="float: left; margin-top: 0.3em;">
@@ -27,7 +27,7 @@
         </vs-button>
 
         <vs-button class="bookControls" gradient v-if="selected.length" danger @click="dialogFunction = deleteSelected; dialogActive = true;">
-          Delete
+          Delete {{selected.length === books.length ? "All" : ""}}
           <template #animate ><i class="far fa-trash-alt"></i></template>
         </vs-button>
       </div>
