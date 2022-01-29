@@ -3,7 +3,7 @@
     <h1 class="title has-text-centered">Add Book Automatically</h1>
     <h2 class="subtitle has-text-centered">Input the book ISBN or a search query and we will attempt to add to your library automatically</h2>
 
-    <div v-if="unreadLimit && getUnreadCount() >= unreadLimit" style="text-align: left" >
+    <div v-if="unreadLimit && getUnreadCount() >= unreadLimit">
       <vs-alert color="warn">
         <template #title>
           Notice: Unread Limit Reached
@@ -16,8 +16,8 @@
     <div class="container">
       <div class="center content-inputs">
         <form @submit="submitForm">
-          <vs-input id="vs-input" :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || (searchQuery.length > 0)" border type="number" class="centre" primary :vs-theme="theme.name" label-placeholder="ISBN" v-model="isbn" />
-          <vs-input id="vs-input" :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || (isbn.length > 0)" border type="search" style="margin-top: 3em"  class="centre" primary :vs-theme="theme.name" label-placeholder="Search" v-model="searchQuery" @input="searchInput"/>
+          <vs-input id="vs-input" :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || loading || (searchQuery.length > 0)" border type="number" class="centre" primary :vs-theme="theme.name" label-placeholder="ISBN" v-model="isbn" />
+          <vs-input id="vs-input" :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || loading || (isbn.length > 0)" border type="search" style="margin-top: 3em"  class="centre" primary :vs-theme="theme.name" label-placeholder="Search" v-model="searchQuery" @input="searchInput"/>
           
           <p v-if="loadingSearchResults">Loading results...</p>
           <vs-table v-model="selectedSearchResult" :vs-theme="theme.name" v-if="searchQuery.length && !loadingSearchResults" :key="searchQuery.length">

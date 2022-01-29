@@ -41,21 +41,9 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["books", "theme"]),
-    categories() {
-      const categories = []
-      for(const book of this.books) {
-        if (!book.categories) 
-          continue
-        for (const category of book.categories) {
-          if (!categories.includes(category.toLowerCase())) 
-            categories.push(category.toLowerCase())
-        }
-      }
-      return categories
-    },
+    ...mapGetters(["books", "theme", "categories"]),
     searchedCategories() {
-      return this.categories.filter(i => i.includes(this.search.toLowerCase()))
+      return this.categories.filter(i => i.includes(this.search))
     }
   },
 
@@ -66,7 +54,7 @@ export default {
         if (!book.categories) 
           continue
         for (const category of book.categories) {
-          if (category.toLowerCase() == givenCategory.toLowerCase()) 
+          if (category == givenCategory) 
             count++
         }
       }

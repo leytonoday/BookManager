@@ -51,6 +51,14 @@ const mutations = { // These edit the state directly
     const index = state.books.findIndex(book => book.id === payload.id)
     state.books[index].rating = payload.rating
   },
+  SET_PAGE_COUNT(state, payload) {
+    const index = state.books.findIndex(book => book.id === payload.id)
+    state.books[index].pageCount = payload.pageCount
+  },
+  SET_CATEGORIES(state, payload) {
+    const index = state.books.findIndex(book => book.id === payload.id)
+    state.books[index].categories = payload.categories
+  }
 }
 
 const actions = {
@@ -74,10 +82,10 @@ const actions = {
       commit('END_LOADING')
     }
   },
-  async setResponseStatus({commit}, result) {
+  setResponseStatus({commit}, result) {
     commit("SET_RESPONSE_STATUS", result)
   },
-  async deleteAllBooks({commit}, constraints) { 
+  async deleteAllBooks({commit}) { 
     commit('START_LOADING')
     await axios.post(`${URLBase}/books/delete/all`)
     commit("DELETE_ALL_BOOKS")
@@ -113,6 +121,14 @@ const actions = {
     const res = await axios.post(`${URLBase}/books/updaterating`, bookData)
     commit("UPDATE_RATING", res.data)
   },
+  async setPageCount({commit}, bookData) {
+    const result = await axios.post(`${URLBase}/books/setPageCount`, bookData)
+    commit("SET_PAGE_COUNT", result.data)
+  },
+  async setCategories({commit}, bookData) {
+    const result = await axios.post(`${URLBase}/books/setCategories`, bookData)
+    commit("SET_CATEGORIES", result.data)
+  }
 }
 
 const getters = {
@@ -120,6 +136,32 @@ const getters = {
   responseStatus: state => state.responseStatus,
   loading: state => state.loading,
   bookFromId: state => id => state.books.find(book => book.id === id),
+  booksFromCategory: state => givenCategory => {
+    if (givenCategory === "all") 
+      return state.books
+    const books = []
+    for(const book of state.books) {
+      if (!book.categories) 
+        continue
+      for (const category of book.categories) {
+        if (givenCategory === category) 
+        books.push(book)
+      }
+    }
+    return books
+  },
+  categories: state => {
+    const categories = []
+    for(const book of state.books) {
+      if (!book.categories) 
+        continue
+      for (const category of book.categories) {
+        if (!categories.includes(category)) 
+          categories.push(category)
+      }
+    }
+    return categories
+  },
 }
 
 export default {state, mutations, actions, getters}

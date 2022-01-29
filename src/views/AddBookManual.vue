@@ -3,7 +3,7 @@
     <h1 class="title has-text-centered">Add Book Manually</h1>
     <h2 class="subtitle has-text-centered">Input the book info manually and it will be added to your library</h2>
 
-    <div v-if="unreadLimit && getUnreadCount() >= unreadLimit" style="text-align: left" >
+    <div v-if="unreadLimit && getUnreadCount() >= unreadLimit">
       <vs-alert color="warn">
         <template #title>
           Notice: Unread Limit Reached
@@ -26,20 +26,20 @@
           <div style="width: 100%; display: block;">
             <div style="float: left; width: 50%; padding: 1em;">
               <p class="subtitle has-text-centered"> Mandatory </p>
-              <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="unreadLimit && getUnreadCount() >= unreadLimit" border type="text" class="centre" primary :vs-theme="theme.name" label-placeholder="Title" v-model="fields.title"/>
-              <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="unreadLimit && getUnreadCount() >= unreadLimit" border type="text" class="centre" primary :vs-theme="theme.name" label-placeholder="Author(s)" v-model="fields.authors"/>
-              <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="unreadLimit && getUnreadCount() >= unreadLimit" border type="date" class="centre" primary :vs-theme="theme.name" label-placeholder="Published Date" v-model="fields.publishedDate"/>
-              <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="unreadLimit && getUnreadCount() >= unreadLimit" border type="text" class="centre" primary :vs-theme="theme.name" label-placeholder="Description" v-model="fields.description"/>
-              <vs-input id="vs-input" :disabled="unreadLimit && getUnreadCount() >= unreadLimit" border type="url" class="centre" primary :vs-theme="theme.name" label-placeholder="Image Link" v-model="fields.imageLink"/>
+              <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || (loading)" border type="text" class="centre" primary :vs-theme="theme.name" label-placeholder="Title" v-model="fields.title"/>
+              <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || (loading)" border type="text" class="centre" primary :vs-theme="theme.name" label-placeholder="Author(s) (Comma Separated)" v-model="fields.authors"/>
+              <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || (loading)" border type="date" class="centre" primary :vs-theme="theme.name" label-placeholder="Published Date" v-model="fields.publishedDate"/>
+              <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || (loading)" border type="text" class="centre" primary :vs-theme="theme.name" label-placeholder="Description" v-model="fields.description"/>
+              <vs-input id="vs-input" :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || (loading)" border type="url" class="centre" primary :vs-theme="theme.name" label-placeholder="Image Link" v-model="fields.imageLink"/>
             </div>
 
             <div style="float: right; width: 50%; padding: 1em;">
               <p class="subtitle has-text-centered"> Optional </p>
-              <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="unreadLimit && getUnreadCount() >= unreadLimit" border type="text" class="centre" primary :vs-theme="theme.name" label-placeholder="Publisher" v-model="fields.publisher"/>
-              <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="unreadLimit && getUnreadCount() >= unreadLimit" border type="number" class="centre" primary :vs-theme="theme.name" label-placeholder="Page Count" v-model="fields.pageCount"/>
-              <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="unreadLimit && getUnreadCount() >= unreadLimit" border type="text" class="centre" primary :vs-theme="theme.name" label-placeholder="Language" v-model="fields.language"/>
-              <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="unreadLimit && getUnreadCount() >= unreadLimit" border type="text" class="centre" primary :vs-theme="theme.name" label-placeholder="Categories" v-model="fields.categories"/>
-              <vs-input id="vs-input" :disabled="unreadLimit && getUnreadCount() >= unreadLimit" border type="number" class="centre" primary :vs-theme="theme.name" label-placeholder="ISBN" v-model="fields.isbn"/>
+              <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || (loading)" border type="text" class="centre" primary :vs-theme="theme.name" label-placeholder="Publisher" v-model="fields.publisher"/>
+              <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || (loading)" border type="number" class="centre" primary :vs-theme="theme.name" label-placeholder="Page Count" v-model="fields.pageCount"/>
+              <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || (loading)" border type="text" class="centre" primary :vs-theme="theme.name" label-placeholder="Language" v-model="fields.language"/>
+              <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || (loading)" border type="text" class="centre" primary :vs-theme="theme.name" label-placeholder="Categories (Comma Separated)" v-model="fields.categories"/>
+              <vs-input id="vs-input" :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || (loading)" border type="number" class="centre" primary :vs-theme="theme.name" label-placeholder="ISBN" v-model="fields.isbn"/>
             </div>
           </div>
 
@@ -115,8 +115,8 @@ export default {
       this.fields.id = crypto.createHash("md5").update(this.fields.isbn || this.fields.title).digest("hex")
       this.fields.manual = true
 
-      this.fields.authors = [this.fields.authors]
-      this.fields.categories = [this.fields.categories || "Unknown"]
+      this.fields.authors = this.fields.authors.split(",")
+      this.fields.categories = this.fields.categories ? this.fields.categories.split(",") : []
 
       this.$store.dispatch("addBook", this.fields)
       this.clearInput()

@@ -9,6 +9,7 @@ class Book {
     this.bookmark = bookmark || ""
     this.rating = rating || undefined
     this.dateAdded = new Date(Date.now()).toISOString().slice(0, 10)
+    this.categories = []
     Object.assign(this, data)
   }
 }

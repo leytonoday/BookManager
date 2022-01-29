@@ -7,6 +7,16 @@
 
       <h1 class="title has-text-centered">{{ this.book.title }}</h1>
 
+      <div v-if="!bookCategories.length">
+        <vs-alert color="warn">
+          <template #title>
+            Notice: Not Categorised
+          </template>
+            This book is not in any categories. Therefore it will not appear in the Category View. Please assign this book a category with the select below.
+        </vs-alert>
+        <br/>
+      </div>
+
       <div class="bookImage" style="margin-top: 2em;">
         <img slot="image" style="float: right; margin-right: 3em; width: 35em;" :src="bookImage" />
       </div>
@@ -66,6 +76,19 @@
           <p>{{ book.publisher }}</p>
         </div>
 
+        <div class="infoBox">
+          <h2>Categories:</h2>
+          <vs-select placeholder="Categories" class="categoriesSelect" :vs-theme="theme.name" multiple filter v-model="bookCategories">
+            <vs-option v-for="category in categories" :key="category" :label="category" :value="category">
+              {{category}}
+            </vs-option>
+          </vs-select>
+          <div style="display: flex; flex-direction: row;">
+            <vs-input style="width: 16.5em" placeholder="New Category" primary border v-model="newCategory" />
+            <vs-button gradient primary @click="addNewCategory">Add</vs-button>
+          </div>
+        </div>
+
         <div v-if="book.publishedDate" class="infoBox">
           <h2>Date Published:</h2>
           <p>{{ book.publishedDate }}</p>
@@ -93,23 +116,12 @@
 
         <div v-if="book.pageCount" class="infoBox">
           <h2>Page Count:</h2>
-          <p>{{ book.pageCount }}</p>
+          <vs-input id="vs-input" type="number" border primary :vs-theme="theme.name" placeholder="Page Count" v-model="pageCount"/>
         </div>
 
         <div v-if="book.language" class="infoBox">
           <h2>Language:</h2>
           <p>{{ book.language }}</p>
-        </div>
-
-        <div v-if="book.categories" class="infoBox">
-          <h2>Categories:</h2>
-          <p>
-            {{
-              (typeof this.book.categories === "string"
-                ? this.book.categories
-                : this.book.categories.join(", ")) || "N/A"
-            }}
-          </p>
         </div>
 
         <div class="infoBox">
@@ -201,12 +213,13 @@ export default {
         [{ 'align': [] }],
 
         ['clean']                                         // remove formatting button
-      ]
+      ],
+      newCategory: ""
     }
   },
 
   computed: {
-    ...mapGetters(["theme", "accent", "lastLibraryView"]),
+    ...mapGetters(["theme", "accent", "categories"]),
     book() {
       return this.$store.getters.bookFromId(this.id)
     },
@@ -225,6 +238,23 @@ export default {
     bookmarkColour() {
       return {
         "--bookmarkColour" : this.bookmark.length > 0 ? this.accent : ""
+      }
+    },
+    pageCount: {
+      set(newValue) {
+        this.$store.dispatch("setPageCount", {id: this.book.id, pageCount: newValue})
+      },
+      get() {
+        return this.book.pageCount
+      }
+    },
+    bookCategories: {
+      set(newValue) {
+        this.$store.dispatch("setCategories", {id: this.book.id, categories: newValue})
+      },
+      get() {
+        if (!this.book.categories) return []
+        return this.book.categories
       }
     }
   },
@@ -263,6 +293,9 @@ export default {
         id: this.book.id,
         readStatus: newStatus,
       })
+    },
+    categoriesTest(a) {
+      console.log(a)
     }
   },
 
@@ -307,6 +340,12 @@ export default {
       else if (this.book.industryIdentifiers) 
         return this.book.industryIdentifiers.filter(i => i.type === "ISBN_13")[0].identifier
       return null
+    },
+    addNewCategory() {
+      if (this.newCategory === "") 
+        return
+      this.bookCategories = [...this.bookCategories, this.newCategory]
+      this.newCategory = ""
     }
   },
 }
@@ -316,10 +355,6 @@ export default {
 @import "~vue2-editor/dist/vue2-editor.css";
 @import '~quill/dist/quill.core.css';
 @import '~quill/dist/quill.snow.css';
-
-/* .quillWrapper >>> .ql-picker-item {
-  color: var(--themeText) !important;
-} */
 
 .quillWrapper >>> .ql-picker-options {
   background: var(--themeBackground);
@@ -419,6 +454,7 @@ export default {
 .vs-input-parent >>> .vs-input {
   width: 100%;
   text-align: center;
+  color: var(--themeText);
 }
 
 .vs-input-parent {
@@ -465,5 +501,15 @@ export default {
 .bookControls .deleteButton {
   min-width: 6em;
 }
+
+/* Fix vuesax error, where the select menu doesn't obey the theme*/
+.vs-select__option.isMultiple.isHover {
+  background: #1e2023 !important;
+}
+
+.vs-select-content.categoriesSelect >>> .vs-select{
+  width: 20em;
+}
+
 
 </style>

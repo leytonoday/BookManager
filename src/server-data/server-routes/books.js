@@ -85,7 +85,7 @@ const addBookRoute = async (req, res) => {
   }
 }
 
-const deleteBookRoute = async (req, res) => {
+const deleteBookRoute = (req, res) => {
   const book = books.find(book => book.id == req.params.id)
   if (!book) return res.status(404).send(`Erorr 404: There is no book with id ${req.params.id}`)
 
@@ -95,13 +95,13 @@ const deleteBookRoute = async (req, res) => {
   store.set("books", books)
 }
 
-const deleteAllBooksRoute = async (_, res) => {
+const deleteAllBooksRoute = (_, res) => {
   books.length = 0
   res.sendStatus(200)
   store.set("books", books)
 }
 
-const updateReadStatusRoute = async (req, res) => {
+const updateReadStatusRoute = (req, res) => {
   const {id, readStatus} = req.body
   const index = books.findIndex(book => book.id == id)
   books[index].readStatus = readStatus
@@ -109,7 +109,7 @@ const updateReadStatusRoute = async (req, res) => {
   store.set("books", books)
 }
 
-const updateNotesRoute = async (req, res) => {
+const updateNotesRoute = (req, res) => {
   const {id, notes} = req.body
   const index = books.findIndex(book => book.id === id)
   books[index].notes = notes
@@ -117,7 +117,7 @@ const updateNotesRoute = async (req, res) => {
   store.set("books", books)
 }
 
-const updateBookmarkRoute = async (req, res) => {
+const updateBookmarkRoute = (req, res) => {
   const {id, bookmark} = req.body
   const index = books.findIndex(book => book.id === id)
   books[index].bookmark = bookmark
@@ -125,11 +125,27 @@ const updateBookmarkRoute = async (req, res) => {
   store.set("books", books)
 }
 
-const updateRatingRoute = async (req, res) => {
+const updateRatingRoute = (req, res) => {
   const {id, rating} = req.body
   const index = books.findIndex(book => book.id === id)
   books[index].rating = rating
   res.status(200).send(books[index])
+  store.set("books", books)
+}
+
+const setPageCountRoute = (req, res) => {
+  const {id, pageCount} = req.body
+  const index = books.findIndex(book => book.id === id)
+  books[index].pageCount = pageCount
+  res.status(200).send(req.body)
+  store.set("books", books)
+}
+
+const setCategoriesRoute = (req, res) => {
+  const {id, categories} = req.body
+  const index = books.findIndex(book => book.id === id)
+  books[index].categories = categories
+  res.status(200).send(req.body)
   store.set("books", books)
 }
 
@@ -139,6 +155,8 @@ booksRouter.post("/updatereadstatus", updateReadStatusRoute)
 booksRouter.post("/updatenotes", updateNotesRoute)
 booksRouter.post("/updatebookmark", updateBookmarkRoute)
 booksRouter.post("/updaterating", updateRatingRoute)
+booksRouter.post("/setPageCount", setPageCountRoute)
+booksRouter.post("/setCategories", setCategoriesRoute)
 booksRouter.route("/")
   .get(getBooksRoute)
   .post(bodyParser.json(), addBookRoute)

@@ -3,9 +3,20 @@
     <vs-button v-if="category !== 'all'" gradient style="position: absolute;" @click="$router.back()">
       <i class="fas fa-arrow-left" style="margin-right: 0.5em;"></i> Back
     </vs-button>
-    <h1 class="title has-text-centered">{{category !== "all" ? capitalize(category) + " ": ""}}Library</h1>
+    <h1 class="title has-text-centered">{{category !== "all" ? category + " ": ""}}Library</h1>
     <h2 class="subtitle has-text-centered">View your Library in card format</h2>
     <p class="subtitle has-text-centered" v-if="!books.length">No books have been added</p>
+
+    <div v-if="uncategorisedBooks().length">
+      <vs-alert color="warn">
+        <template #title>
+          Notice: Books Not Categorised
+        </template>
+          The following books are not categorised, and therefore they will not appear in the Category View: {{uncategorisedBooks()}} <br/> 
+          To categorise these books, manually add the categories on the book's page. 
+      </vs-alert>
+      <br/>
+    </div>
 
     <div v-if="books.length" style="text-align: center">
       <div class="radioFilter" style="display: inline-block;">
@@ -76,14 +87,14 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["books", "theme", "loading"]),
+    ...mapGetters(["books", "theme", "loading", "booksFromCategory"]),
     searchedBooks() {
       return this.$vs.getSearch(this.filteredBooks, this.search)
     },
   },
 
   mounted() {
-    this.filteredBooks = this.getBooksByCategory(this.category)
+    this.filteredBooks = this.booksFromCategory(this.category)
   },
 
   watch: {
@@ -99,37 +110,25 @@ export default {
     filterBooks(filter) {
       switch (filter) {
         case "0":
-          this.filteredBooks = this.getBooksByCategory(this.category).filter(book => book.readStatus === 0) // unread
+          this.filteredBooks = this.booksFromCategory(this.category).filter(book => book.readStatus === 0) // unread
           break;
         case "1":
-          this.filteredBooks = this.getBooksByCategory(this.category).filter(book => book.readStatus === 1) // reading
+          this.filteredBooks = this.booksFromCategory(this.category).filter(book => book.readStatus === 1) // reading
           break;
         case "2": 
-          this.filteredBooks = this.getBooksByCategory(this.category).filter(book => book.readStatus === 2) // read
+          this.filteredBooks = this.booksFromCategory(this.category).filter(book => book.readStatus === 2) // read
           break;
         case "3": 
-          this.filteredBooks = this.getBooksByCategory(this.category) // all books
+          this.filteredBooks = this.booksFromCategory(this.category) // all books
           break;
       }
     },
-    getBooksByCategory(givenCategory) {
-      if (givenCategory === "all") 
-        return this.books
-      const categories = []
-      for(const book of this.books) {
-        if (!book.categories) 
-          continue
-        for (const category of book.categories) {
-          if (givenCategory.toLowerCase() === category.toLowerCase()) 
-            categories.push(book)
-        }
-      }
-      return categories
-    },
-    capitalize(input){
-      return input.toLowerCase().replace(/\b./g, (a) => 
-        a.toUpperCase()
-      )
+    uncategorisedBooks() {
+      const uncategorised = []
+      for(const book of this.books) 
+        if (!book.categories.length)
+          uncategorised.push(`${book.title} (${book.isbn})`)
+      return uncategorised.join(", ")
     }
   }
 }
