@@ -34,7 +34,7 @@
 
         <div class="infoBox">
           <h2>Notes:</h2>
-          <vue-editor :editorOptions="editorSettings" :editor-toolbar="customtToolbar" v-model="editorContent" :style="themeStyle" />
+          <vue-editor :editor-toolbar="customtToolbar" v-model="editorContent" :style="themeStyle" />
         </div>
 
         <div class="infoBox">
@@ -81,9 +81,14 @@
           <p>{{ book.averageRating ? book.averageRating + " / 5" : "N/A" }}</p>
         </div>
 
-        <div class="infoBox">
-          <h2>ISBN:</h2>
-          <p>{{ book.isbn || "N/A" }}</p>
+        <div v-if="getISBN10()" class="infoBox">
+          <h2>ISBN 10:</h2>
+          <p>{{ getISBN10() || "N/A" }}</p>
+        </div>
+
+        <div v-if="getISBN13()" class="infoBox">
+          <h2>ISBN 13:</h2>
+          <p>{{ getISBN13() || "N/A" }}</p>
         </div>
 
         <div class="infoBox">
@@ -118,14 +123,7 @@
       <p>Book not loaded yet</p>
     </div>
 
-    <vs-dialog
-      :vs-theme="theme.name"
-      blur
-      prevent-close
-      width="30%"
-      not-center
-      v-model="dialogActive"
-    >
+    <vs-dialog :vs-theme="theme.name" blur prevent-close width="30%" not-center v-model="dialogActive">
       <template #header>
         <h4 class="not-margin">
           <b>Are you sure?</b>
@@ -136,16 +134,12 @@
       </div>
       <template #footer>
         <div class="con-footer has-text-centered">
-          <vs-button
-            size="xl"
-            style="float: left"
-            transparent
+          <vs-button size="xl" style="float: left" transparent
             @click="
               {
                 dialogActive = false;
                 deleteBook(book);
-              }
-            "
+              }"
           >
             Confirm
           </vs-button>
@@ -161,14 +155,11 @@
 <script>
 "use strict"
 
-import { VueEditor, Quill }   from "vue2-editor"
 import { ipcRenderer }        from "electron"
 import { mapGetters }         from "vuex"
-import { ImageDrop }          from "quill-image-drop-module"
+import { VueEditor }          from "vue2-editor"
 import StarRating             from 'vue-star-rating'
 import router                 from "../router"
-
-Quill.register("modules/imageDrop", ImageDrop)
 
 export default {
   name: "Book",
@@ -210,12 +201,7 @@ export default {
         [{ 'align': [] }],
 
         ['clean']                                         // remove formatting button
-      ],
-      editorSettings: {
-        modules: {
-          imageDrop: true
-        }
-      }
+      ]
     }
   },
 
@@ -307,6 +293,20 @@ export default {
       if(Number.isNaN(parseInt(input))) return this.bookmark = ""
       
       return this.bookmark = Math.min(Math.max(parseInt(input), 0), this.book.pageCount).toString()
+    },
+    getISBN10() {
+      if (this.book.isbn.length === 10)
+        return this.book.isbn
+      else if (this.book.industryIdentifiers) 
+        return this.book.industryIdentifiers.filter(i => i.type === "ISBN_10")[0].identifier
+      return null
+    },
+    getISBN13() {
+      if (this.book.isbn.length === 13)
+        return this.book.isbn
+      else if (this.book.industryIdentifiers) 
+        return this.book.industryIdentifiers.filter(i => i.type === "ISBN_13")[0].identifier
+      return null
     }
   },
 }

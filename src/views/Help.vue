@@ -72,6 +72,7 @@
           </p>
         </div>
       </div>
+
       <br/>
 
       <div class="infoBoxOuter">
@@ -81,9 +82,26 @@
         <div class="infoBoxBody">
           <p> 
             You can toggle between a light theme and a dark theme! Although, dark mode is 
-            superior ;>3. You can also change the accent colour of the application using the built-in 
+            superior ;>3. 
+            <br /><br />
+            You can also change the accent colour of the application using the built-in 
             colour picker. If you grow tiresome of your accent choice, you can always just reset 
             to the default, which is a lovely light green.
+            <br /><br />
+            The position of the sidebar can be set to the left or the right.
+          </p>
+        </div>
+      </div>
+
+      <br/>
+
+      <div class="infoBoxOuter">
+        <div class="infoBoxHeader">
+            User Limitations
+        </div>
+        <div class="infoBoxBody">
+          <p> 
+            To ensure productivity and prevent an infinitely growing list of unread books, you can set a limit of unread books in your Library.  
           </p>
         </div>
       </div>
