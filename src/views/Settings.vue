@@ -16,7 +16,9 @@
         </template>
       </vs-switch>
 
-      <h2 class="title" style="margin-top: 1em;">Accent Colour</h2>
+      <br />
+
+      <h2 class="title">Accent Colour</h2>
       <chrome-picker class="centre" v-model="accentColour" />
 
       <vs-button gradient style="margin-top: 1em" class="centre" size="large" @click="resetAccent">
@@ -37,7 +39,15 @@
         <template #animate ><i class="fas fa-file-import"></i></template>
       </vs-button>
 
-      <h2 class="title" style="margin-top: 1em;">Sidebar Position</h2>
+      <br />
+
+      <h2 class="title">Unread Books Limit</h2>
+      <p class="subtitle">Unlimited if not specified</p>
+      <vs-input id="vs-input" type="number" border primary :vs-theme="theme.name" placeholder="Unread Limit" v-model="unreadLimit" @input="handleUnreadLimitInput"/>
+
+      <br />
+
+      <h2 class="title">Sidebar Position</h2>
       <vs-switch class="centre" style="width: 6em;" square :vs-theme="theme.name" v-model="sidebarPositionChoice">
         <template #off> Right </template>
         <template #on> Left </template>
@@ -46,6 +56,10 @@
           <i v-else class="fas fa-arrow-left" ></i>
         </template>
       </vs-switch>
+
+      <br />
+
+
     </div>
   </div>
 </template>
@@ -68,7 +82,8 @@ export default {
     return {
       themeChoice: null, // false = dark, true = light. Linked to the switch in the markup
       accentColour: this.$store.getters.accent,
-      sidebarPositionChoice: null // true = left, false = right 
+      sidebarPositionChoice: null, // true = left, false = right
+      unreadLimit: ""
     }
   },
 
@@ -86,6 +101,7 @@ export default {
   mounted() {
     this.themeChoice = this.theme.name === "dark" ? false: true
     this.sidebarPositionChoice = this.sidebarPosition === "left" ? true : false
+    this.unreadLimit = this.$store.getters.unreadLimit
   },
   
   methods: {
@@ -143,7 +159,16 @@ export default {
       }
       input.click()
     },
-    resetAccent() { this.$store.dispatch("resetAccent") }
+    resetAccent() { 
+      this.$store.dispatch("resetAccent") 
+    },
+    handleUnreadLimitInput(input) {
+      if(Number.isNaN(parseInt(input)))
+        this.unreadLimit = ""
+      else 
+        this.unreadLimit = parseInt(input) < 0 ? 0: parseInt(input)
+      this.$store.dispatch("setUnreadLimit", this.unreadLimit)
+    }
   }
 };
 </script>
@@ -162,5 +187,15 @@ export default {
 }
 @media screen and (max-width: 700px) {
   .vc-chrome { width: 25%; }
+}
+
+.vs-input-parent >>> .vs-input {
+  width: 100%;
+  text-align: center;
+}
+.vs-input-parent {
+  width: 7em;
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>

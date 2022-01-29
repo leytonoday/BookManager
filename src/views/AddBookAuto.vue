@@ -2,11 +2,22 @@
   <div class="root">
     <h1 class="title has-text-centered">Add Book Automatically</h1>
     <h2 class="subtitle has-text-centered">Input the book ISBN or a search query and we will attempt to add to your library automatically</h2>
+
+    <div v-if="unreadLimit && getUnreadCount() >= unreadLimit" style="text-align: left" >
+      <vs-alert color="warn">
+        <template #title>
+          Notice: Unread Limit Reached
+        </template>
+          Before you can add another book, you must read the current unread books in your Library. To change this limit, go to the settings. 
+      </vs-alert>
+      <br/>
+    </div>
+
     <div class="container">
       <div class="center content-inputs">
         <form @submit="submitForm">
-          <vs-input id="vs-input" :disabled="searchQuery.length > 0" border type="number" class="centre" primary :vs-theme="theme.name" label-placeholder="ISBN" v-model="isbn" />
-          <vs-input @input="searchInput" id="vs-input" :disabled="isbn.length > 0" border type="search" style="margin-top: 3em"  class="centre" primary :vs-theme="theme.name" label-placeholder="Search" v-model="searchQuery" />
+          <vs-input id="vs-input" :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || (searchQuery.length > 0)" border type="number" class="centre" primary :vs-theme="theme.name" label-placeholder="ISBN" v-model="isbn" />
+          <vs-input id="vs-input" :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || (isbn.length > 0)" border type="search" style="margin-top: 3em"  class="centre" primary :vs-theme="theme.name" label-placeholder="Search" v-model="searchQuery" @input="searchInput"/>
           
           <p v-if="loadingSearchResults">Loading results...</p>
           <vs-table v-model="selectedSearchResult" :vs-theme="theme.name" v-if="searchQuery.length && !loadingSearchResults" :key="searchQuery.length">
@@ -34,9 +45,9 @@
           </vs-table>
 
           <br />
-
+          
           <div class="parent">
-            <vs-button gradient :disabled="loading" :loading="loading" size="xl">
+            <vs-button gradient :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || loading" :loading="loading" size="xl">
               Add Book
               <template #animate ><i class="fas fa-paper-plane"></i></template>
             </vs-button>    
@@ -69,7 +80,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["responseStatus", "loading", "books", "theme"]),
+    ...mapGetters(["responseStatus", "loading", "books", "theme", "unreadLimit"]),
   },
 
   watch: {
@@ -136,6 +147,9 @@ export default {
       else
         return authorsString
     },
+    getUnreadCount() {
+      return this.books.filter(i => i.readStatus === 0).length
+    }
   }
 }
 </script>

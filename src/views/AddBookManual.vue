@@ -2,6 +2,17 @@
   <div class="root">
     <h1 class="title has-text-centered">Add Book Manually</h1>
     <h2 class="subtitle has-text-centered">Input the book info manually and it will be added to your library</h2>
+
+    <div v-if="unreadLimit && getUnreadCount() >= unreadLimit" style="text-align: left" >
+      <vs-alert color="warn">
+        <template #title>
+          Notice: Unread Limit Reached
+        </template>
+          Before you can add another book, you must read the current unread books in your Library. To change this limit, go to the settings. 
+      </vs-alert>
+      <br/>
+    </div>
+
     <div class="container">
       <div class="center content-inputs">
         <div class="has-text-centered">
@@ -15,26 +26,26 @@
           <div style="width: 100%; display: block;">
             <div style="float: left; width: 50%; padding: 1em;">
               <p class="subtitle has-text-centered"> Mandatory </p>
-              <vs-input id="vs-input" style="margin-bottom: 3em;" border type="text" class="centre" primary :vs-theme="theme.name" label-placeholder="Title" v-model="fields.title"/>
-              <vs-input id="vs-input" style="margin-bottom: 3em;"  border type="text" class="centre" primary :vs-theme="theme.name" label-placeholder="Author(s)" v-model="fields.authors"/>
-              <vs-input id="vs-input" style="margin-bottom: 3em;" border type="date" class="centre" primary :vs-theme="theme.name" label-placeholder="Published Date" v-model="fields.publishedDate"/>
-              <vs-input id="vs-input" style="margin-bottom: 3em;" border type="text" class="centre" primary :vs-theme="theme.name" label-placeholder="Description" v-model="fields.description"/>
-              <vs-input id="vs-input"  border type="url" class="centre" primary :vs-theme="theme.name" label-placeholder="Image Link" v-model="fields.imageLink"/>
+              <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="unreadLimit && getUnreadCount() >= unreadLimit" border type="text" class="centre" primary :vs-theme="theme.name" label-placeholder="Title" v-model="fields.title"/>
+              <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="unreadLimit && getUnreadCount() >= unreadLimit" border type="text" class="centre" primary :vs-theme="theme.name" label-placeholder="Author(s)" v-model="fields.authors"/>
+              <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="unreadLimit && getUnreadCount() >= unreadLimit" border type="date" class="centre" primary :vs-theme="theme.name" label-placeholder="Published Date" v-model="fields.publishedDate"/>
+              <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="unreadLimit && getUnreadCount() >= unreadLimit" border type="text" class="centre" primary :vs-theme="theme.name" label-placeholder="Description" v-model="fields.description"/>
+              <vs-input id="vs-input" :disabled="unreadLimit && getUnreadCount() >= unreadLimit" border type="url" class="centre" primary :vs-theme="theme.name" label-placeholder="Image Link" v-model="fields.imageLink"/>
             </div>
 
             <div style="float: right; width: 50%; padding: 1em;">
               <p class="subtitle has-text-centered"> Optional </p>
-              <vs-input id="vs-input" style="margin-bottom: 3em;" border type="text" class="centre" primary :vs-theme="theme.name" label-placeholder="Publisher" v-model="fields.publisher"/>
-              <vs-input id="vs-input" style="margin-bottom: 3em;" border type="number" class="centre" primary :vs-theme="theme.name" label-placeholder="Page Count" v-model="fields.pageCount"/>
-              <vs-input id="vs-input" style="margin-bottom: 3em;" border type="text" class="centre" primary :vs-theme="theme.name" label-placeholder="Language" v-model="fields.language"/>
-              <vs-input id="vs-input" style="margin-bottom: 3em;" border type="text" class="centre" primary :vs-theme="theme.name" label-placeholder="Categories" v-model="fields.categories"/>
-              <vs-input id="vs-input" border type="number" class="centre" primary :vs-theme="theme.name" label-placeholder="ISBN" v-model="fields.isbn"/>
+              <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="unreadLimit && getUnreadCount() >= unreadLimit" border type="text" class="centre" primary :vs-theme="theme.name" label-placeholder="Publisher" v-model="fields.publisher"/>
+              <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="unreadLimit && getUnreadCount() >= unreadLimit" border type="number" class="centre" primary :vs-theme="theme.name" label-placeholder="Page Count" v-model="fields.pageCount"/>
+              <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="unreadLimit && getUnreadCount() >= unreadLimit" border type="text" class="centre" primary :vs-theme="theme.name" label-placeholder="Language" v-model="fields.language"/>
+              <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="unreadLimit && getUnreadCount() >= unreadLimit" border type="text" class="centre" primary :vs-theme="theme.name" label-placeholder="Categories" v-model="fields.categories"/>
+              <vs-input id="vs-input" :disabled="unreadLimit && getUnreadCount() >= unreadLimit" border type="number" class="centre" primary :vs-theme="theme.name" label-placeholder="ISBN" v-model="fields.isbn"/>
             </div>
           </div>
 
           <div class="parent">
             <br />
-            <vs-button gradient  :disabled="loading" :loading="loading" size="xl">
+            <vs-button gradient :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || (loading)" :loading="loading" size="xl">
               Add Book
               <template #animate ><i class="fas fa-paper-plane"></i></template>
             </vs-button>    
@@ -83,7 +94,7 @@ export default {
   },
   
   computed: {
-    ...mapGetters(["responseStatus", "loading", "books", "theme"])
+    ...mapGetters(["responseStatus", "loading", "books", "theme", "unreadLimit"])
   },
 
   watch: {
@@ -121,6 +132,9 @@ export default {
     },
     clearInput() {
       Object.keys(this.fields).forEach(i => this.fields[i] = "")
+    },
+    getUnreadCount() {
+      return this.books.filter(i => i.readStatus === 0).length
     }
   }
 }

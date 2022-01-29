@@ -66,6 +66,7 @@ export default {
   created() {
     this.$store.dispatch("getBooks")
     this.$store.dispatch("loadTheme")
+    this.$store.dispatch("loadSettings")
     // There are no pre-closing operations to be done usually, only on Book.vue (saving notes). So here, just send the event to close immediately
     ipcRenderer.on("appClosing", _ => ipcRenderer.send('precloseComplete'))
 

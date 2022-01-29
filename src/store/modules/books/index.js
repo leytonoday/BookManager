@@ -9,7 +9,7 @@ const URLBase = isDevelopment
 const state = {
   books: [],
   responseStatus: undefined,
-  loading: false
+  loading: false,
 }
 
 const mutations = { // These edit the state directly
@@ -50,7 +50,7 @@ const mutations = { // These edit the state directly
   UPDATE_RATING(state, payload) {
     const index = state.books.findIndex(book => book.id === payload.id)
     state.books[index].rating = payload.rating
-  }
+  },
 }
 
 const actions = {
@@ -112,7 +112,7 @@ const actions = {
   async updateRating({commit}, bookData) {
     const res = await axios.post(`${URLBase}/books/updaterating`, bookData)
     commit("UPDATE_RATING", res.data)
-  }
+  },
 }
 
 const getters = {
