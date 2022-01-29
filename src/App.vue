@@ -113,9 +113,11 @@ export default {
   border-top-right-radius: 0.5em !important;
   background: var(--inputBackground) !important;
 }
-/* Fix vuesax error, where the select menu doesn't obey the theme*/
+/* Fix vuesax error, where the select menu doesn't obey the theme.
+Make it transparent so it can fade into the appropriate colour using 
+my selectColourWorkaround method*/
 .vs-select__options.vs-component--primary { 
-  background: #1e2023 !important; 
+  background: transparent; 
 }
 #GridLoader {
   width: 30%;

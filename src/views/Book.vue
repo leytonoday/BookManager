@@ -24,7 +24,7 @@
       <div class="bookInfo">
         <div class="bookControls">
 
-          <vs-select v-model="readStatus" :vs-theme="theme.name">
+          <vs-select v-model="readStatus" :vs-theme="theme.name" >
             <vs-option label="Unread" :vs-theme="theme.name" :value="0">Unread</vs-option>
             <vs-option label="Reading" :vs-theme="theme.name" :value="1">Reading</vs-option>
             <vs-option label="Read" :vs-theme="theme.name" :value="2">Read</vs-option>
@@ -83,10 +83,10 @@
               {{category}}
             </vs-option>
           </vs-select>
-          <div style="display: flex; flex-direction: row;">
-            <vs-input style="width: 16.5em" placeholder="New Category" primary border v-model="newCategory" />
-            <vs-button gradient primary @click="addNewCategory">Add</vs-button>
-          </div>
+        </div>
+        <div style="display: flex; flex-direction: row;">
+          <vs-input style="width: 16.5em;" placeholder="New Category" border :vs-theme="theme.name" primary v-model="newCategory" />
+          <vs-button gradient primary @click="addNewCategory">Add</vs-button>
         </div>
 
         <div v-if="book.publishedDate" class="infoBox">
@@ -214,7 +214,7 @@ export default {
 
         ['clean']                                         // remove formatting button
       ],
-      newCategory: ""
+      newCategory: "",
     }
   },
 
@@ -264,6 +264,7 @@ export default {
     this.bookmark = this.book.bookmark
     this.rating = this.book.rating
     this.readStatus = this.book.readStatus
+
     ipcRenderer.removeAllListeners("appClosing") // don't think this line is needed
     ipcRenderer.on("appClosing", async (_) => {
       if (router.currentRoute.name === "Book") {
@@ -273,6 +274,10 @@ export default {
       }
     })
     this.updateNotesAndBookmarkCheck()
+
+    const elements = [...document.getElementsByClassName("vs-icon-arrow"), ...document.getElementsByClassName("vs-select")]
+    for (const element of elements)
+      element.onclick = this.selectColourWorkaround
   },
 
   beforeRouteLeave(to, from, next) {
@@ -294,14 +299,11 @@ export default {
         readStatus: newStatus,
       })
     },
-    categoriesTest(a) {
-      console.log(a)
-    }
   },
 
   methods: {
     clearRating() {
-      this.rating = undefined;
+      this.rating = undefined
     },
     deleteBook(book) {
       this.$router.back()
@@ -346,6 +348,13 @@ export default {
         return
       this.bookCategories = [...this.bookCategories, this.newCategory]
       this.newCategory = ""
+    },
+    selectColourWorkaround() {
+      const selects = document.getElementsByClassName("vs-select__options")
+      console.log("ran")
+      for(let select of selects) {
+        select.style.background = this.theme.name === "dark" ? "#1e2023" : "white" 
+      }
     }
   },
 }
@@ -490,6 +499,9 @@ export default {
 .vs-select-content >>> .vs-select {
   width: 10em;
 }
+.vs-select-content.categoriesSelect >>> .vs-select{
+  width: 25em;
+}
 
 .bookControls {
   width: 50%; 
@@ -501,15 +513,5 @@ export default {
 .bookControls .deleteButton {
   min-width: 6em;
 }
-
-/* Fix vuesax error, where the select menu doesn't obey the theme*/
-.vs-select__option.isMultiple.isHover {
-  background: #1e2023 !important;
-}
-
-.vs-select-content.categoriesSelect >>> .vs-select{
-  width: 20em;
-}
-
 
 </style>
