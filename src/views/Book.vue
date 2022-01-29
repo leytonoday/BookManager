@@ -79,7 +79,7 @@
         <div class="infoBox">
           <h2>Categories:</h2>
           <vs-select placeholder="Categories" class="categoriesSelect" :vs-theme="theme.name" multiple filter v-model="bookCategories">
-            <vs-option v-for="category in categories" :key="category" :label="category" :value="category">
+            <vs-option v-for="category in categories" :key="category" :label="category" :value="category" :vs-theme="theme.name">
               {{category}}
             </vs-option>
           </vs-select>
@@ -286,6 +286,10 @@ export default {
     this.updateBookmark()
     ipcRenderer.removeAllListeners("appClosing")
     ipcRenderer.on("appClosing", (_) => ipcRenderer.send("precloseComplete"))
+
+    const select = document.getElementsByClassName("vs-select__options")[0]
+    if (!select) // removes the select after using shortcuts to cross the pages. 
+      select.parentNode.removeChild(select)
     next()
   },
 
