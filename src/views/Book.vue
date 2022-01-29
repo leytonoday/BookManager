@@ -56,49 +56,49 @@
           </p>
         </div>
 
-        <div class="infoBox">
+        <div v-if="book.description" class="infoBox">
           <h2>Description:</h2>
-          <p>{{ book.description || "N/A" }}</p>
+          <p>{{ book.description }}</p>
         </div>
 
-        <div class="infoBox">
+        <div v-if="book.publisher" class="infoBox">
           <h2>Publisher:</h2>
-          <p>{{ book.publisher || "N/A" }}</p>
+          <p>{{ book.publisher }}</p>
         </div>
 
-        <div class="infoBox">
+        <div v-if="book.publishedDate" class="infoBox">
           <h2>Date Published:</h2>
-          <p>{{ book.publishedDate || "N/A" }}</p>
+          <p>{{ book.publishedDate }}</p>
         </div>
 
-        <div class="infoBox">
+        <div v-if="book.dateAdded" class="infoBox">
           <h2>Date Added:</h2>
           <p>{{ book.dateAdded }}</p>
         </div>
 
-        <div class="infoBox">
+        <div v-if="book.averageRating" class="infoBox">
           <h2>Average Rating:</h2>
-          <p>{{ book.averageRating ? book.averageRating + " / 5" : "N/A" }}</p>
+          <p>{{ book.averageRating + " / 5" }}</p>
         </div>
 
         <div v-if="getISBN10()" class="infoBox">
           <h2>ISBN 10:</h2>
-          <p>{{ getISBN10() || "N/A" }}</p>
+          <p>{{ getISBN10() }}</p>
         </div>
 
         <div v-if="getISBN13()" class="infoBox">
           <h2>ISBN 13:</h2>
-          <p>{{ getISBN13() || "N/A" }}</p>
+          <p>{{ getISBN13() }}</p>
         </div>
 
-        <div class="infoBox">
+        <div v-if="book.pageCount" class="infoBox">
           <h2>Page Count:</h2>
-          <p>{{ book.pageCount || "N/A" }}</p>
+          <p>{{ book.pageCount }}</p>
         </div>
 
-        <div class="infoBox">
+        <div v-if="book.language" class="infoBox">
           <h2>Language:</h2>
-          <p>{{ book.language || "N/A" }}</p>
+          <p>{{ book.language }}</p>
         </div>
 
         <div v-if="book.categories" class="infoBox">
@@ -115,7 +115,7 @@
         <div class="infoBox">
           <h2>Book ID:</h2>
           <p>{{ book.id }}</p>
-          <!-- no n/a here, this will always be available -->
+          <!-- no v-if here, this will always be available -->
         </div>
       </div>
     </div>
