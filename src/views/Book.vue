@@ -84,10 +84,10 @@
             </vs-option>
           </vs-select>
         </div>
-        <div style="display: flex; flex-direction: row;">
+        <form style="display: flex; flex-direction: row;" @submit="addNewCategory()">
           <vs-input style="width: 21.5em;" placeholder="New Category" border :vs-theme="theme.name" primary v-model="newCategory" />
           <vs-button gradient primary @click="addNewCategory">Add</vs-button>
-        </div>
+        </form>
 
         <div v-if="book.publishedDate" class="infoBox">
           <h2>Date Published:</h2>
@@ -348,7 +348,7 @@ export default {
       return null
     },
     addNewCategory() {
-      if (this.newCategory === "") 
+      if (this.newCategory === "" || this.bookCategories.includes(this.newCategory)) 
         return
       this.bookCategories.push(this.newCategory)
       this.newCategory = ""
