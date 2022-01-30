@@ -78,14 +78,14 @@
 
         <div class="infoBox">
           <h2>Categories:</h2>
-          <vs-select placeholder="Categories" class="categoriesSelect" :vs-theme="theme.name" multiple filter v-model="bookCategories">
+          <vs-select :key="categorySelectKey" placeholder="Categories" class="categoriesSelect" :vs-theme="theme.name" multiple filter v-model="bookCategories">
             <vs-option v-for="category in categories" :key="category" :label="category" :value="category" :vs-theme="theme.name">
               {{category}}
             </vs-option>
           </vs-select>
         </div>
         <div style="display: flex; flex-direction: row;">
-          <vs-input style="width: 16.5em;" placeholder="New Category" border :vs-theme="theme.name" primary v-model="newCategory" />
+          <vs-input style="width: 21.5em;" placeholder="New Category" border :vs-theme="theme.name" primary v-model="newCategory" />
           <vs-button gradient primary @click="addNewCategory">Add</vs-button>
         </div>
 
@@ -215,6 +215,7 @@ export default {
         ['clean']                                         // remove formatting button
       ],
       newCategory: "",
+      categorySelectKey: 0
     }
   },
 
@@ -249,7 +250,7 @@ export default {
       }
     },
     bookCategories: {
-      set(newValue) {
+      set(newValue) {        
         this.$store.dispatch("setCategories", {id: this.book.id, categories: newValue})
       },
       get() {
@@ -275,9 +276,7 @@ export default {
     })
     this.updateNotesAndBookmarkCheck()
 
-    const elements = [...document.getElementsByClassName("vs-icon-arrow"), ...document.getElementsByClassName("vs-select")]
-    for (const element of elements)
-      element.onclick = this.selectColourWorkaround
+    this.setSelectClickHandler()
   },
 
   beforeRouteLeave(to, from, next) {
@@ -287,9 +286,7 @@ export default {
     ipcRenderer.removeAllListeners("appClosing")
     ipcRenderer.on("appClosing", (_) => ipcRenderer.send("precloseComplete"))
 
-    const select = document.getElementsByClassName("vs-select__options")[0]
-    if (!select) // removes the select after using shortcuts to cross the pages. 
-      select.parentNode.removeChild(select)
+    this.removeSelects()
     next()
   },
 
@@ -303,6 +300,9 @@ export default {
         readStatus: newStatus,
       })
     },
+    "bookCategories.length"() {
+        this.$store.dispatch("setCategories", {id: this.book.id, categories: this.bookCategories})
+    }
   },
 
   methods: {
@@ -350,15 +350,25 @@ export default {
     addNewCategory() {
       if (this.newCategory === "") 
         return
-      this.bookCategories = [...this.bookCategories, this.newCategory]
+      this.bookCategories.push(this.newCategory)
       this.newCategory = ""
+      this.categorySelectKey++
+      setTimeout(this.setSelectClickHandler, 200)
     },
     selectColourWorkaround() {
       const selects = document.getElementsByClassName("vs-select__options")
-      console.log("ran")
-      for(let select of selects) {
+      for(let select of selects)
         select.style.background = this.theme.name === "dark" ? "#1e2023" : "white" 
-      }
+    },
+    setSelectClickHandler() {
+      const elements = [...document.getElementsByClassName("vs-icon-arrow"), ...document.getElementsByClassName("vs-select")]
+      for (const element of elements)
+        element.onclick = this.selectColourWorkaround
+    },
+    removeSelects() {
+      const select = document.getElementsByClassName("vs-select__options")[0]
+      if (select) // removes the select menu after using shortcuts to cross the pages. 
+        select.parentNode.removeChild(select)
     }
   },
 }
