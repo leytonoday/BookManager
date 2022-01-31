@@ -116,7 +116,7 @@ export default {
 /* Fix vuesax error, where the select menu doesn't obey the theme.
 Make it transparent so it can fade into the appropriate colour using 
 my selectColourWorkaround method*/
-.vs-select__options.vs-component--primary { 
+html .vs-select__options.vs-component--primary { 
   background: transparent; 
 }
 #GridLoader {

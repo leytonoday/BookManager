@@ -5,7 +5,6 @@ const express     = require("express")
 const Store       = require("electron-store")
 const axios       = require("axios")
 const Book        = require("../book.js")
-
 const gis         = require("g-i-s")
 
 const store = new Store()
@@ -21,8 +20,8 @@ async function imageURLToBase64(url) {
   return Buffer.from(response.data, "binary").toString("base64")
 }
 
-async function hasFrontCover(bookId) {
-  const actualfrontCover = await imageURLToBase64(`https://books.google.com/books/content?id=${bookId}&printsec=frontcover&img=1&zoom=1edge=curl&source=gbs_api`)
+async function hasFrontCover(id) {
+  const actualfrontCover = await imageURLToBase64(`https://books.google.com/books/content?id=${id}&printsec=frontcover&img=1&zoom=1edge=curl&source=gbs_api`)
   const noFrontCover = await imageURLToBase64("https://books.google.com/books/content?id=abc&printsec=frontcover&img=1&zoom=1edge=curl&source=gbs_api")
   return actualfrontCover !== noFrontCover
 }
@@ -34,6 +33,13 @@ function replaceFrontCover(isbn) {
   })
 }
 
+async function getFrontCover(isbn, id) {
+  if (await hasFrontCover(id)) 
+    return `https://books.google.com/books/content?id=${id}&printsec=frontcover&img=1&zoom=1edge=curl&source=gbs_api`
+  else 
+    return await replaceFrontCover(isbn)
+}
+
 async function makeBook(req) {
   return new Promise(async (resolve, reject) => {
     let newBook = {}
@@ -42,12 +48,12 @@ async function makeBook(req) {
       if(books.find(book => book.id === req.body.id)) return reject(409) // already added
 
       const errorCheckedIsbn = req.body.volumeInfo.industryIdentifiers ? req.body.volumeInfo.industryIdentifiers[0].identifier : ""
-      newBook = new Book(req.body.id, errorCheckedIsbn, req.body.volumeInfo, req.body.bookmark, req.body.rating, req.body.readStatus) 
+      newBook = new Book(req.body.volumeInfo, req.body.id, errorCheckedIsbn, req.body.bookmark, req.body.rating, req.body.readStatus) 
     }
     
-    else if (req.body.manual) { // if the book details have been entered manually  
+    else if (req.body.manual) { // if the book details have been entered manually
       const bookData = req.body
-      newBook = new Book(req.body.id, req.body.isbn, bookData, bookData.notes, bookData.bookmark, bookData.rating, bookData.readStatus)
+      newBook = new Book(bookData, req.body.id, req.body.isbn, bookData.notes, bookData.bookmark, bookData.rating, bookData.readStatus)
     }
 
     else { // if the book is being added automatically using a search query or isbn using simply the submit button. This runs when imported also
@@ -59,15 +65,14 @@ async function makeBook(req) {
       if(books.find(book => book.id === bookRes.data.items[0].id)) return reject(409) // already added
 
       const errorCheckedIsbn = isbn || bookRes.data.items[0].volumeInfo.industryIdentifiers ? bookRes.data.items[0].volumeInfo.industryIdentifiers[0].identifier : ""
-      newBook = new Book(bookRes.data.items[0].id, errorCheckedIsbn, bookRes.data.items[0].volumeInfo, notes, bookmark, rating, readStatus)
+      newBook = new Book(bookRes.data.items[0].volumeInfo, bookRes.data.items[0].id, errorCheckedIsbn, notes, bookmark, rating, readStatus)
     }
     if (newBook.publishedDate) 
       newBook.publishedDate = new Date(Date.parse(newBook.publishedDate)).toISOString().slice(0, 10) // format date for consistency
 
-    // If the book isn't manual, check if the front cover exists, and isn't an "image not found" one. If it is, replace it
-    if (!req.body.manual && !(await hasFrontCover(newBook.id)))
-      newBook.newFrontCover = await replaceFrontCover(newBook.isbn, newBook.title)
-    
+    if (!newBook.frontCover)
+      newBook.frontCover = await getFrontCover(newBook.isbn, newBook.id)
+  
     resolve(newBook)
   })
 }
@@ -149,6 +154,14 @@ const setCategoriesRoute = (req, res) => {
   store.set("books", books)
 }
 
+const setBookFrontCoverURLRoute = (req, res) => {
+  const {id, url} = req.body
+  const index = books.findIndex(book => book.id === id)
+  books[index].frontCover = url
+  res.status(200).send(req.body)
+  store.set("books", books)
+}
+
 booksRouter.post("/delete/all", deleteAllBooksRoute)
 booksRouter.post("/delete/:id", deleteBookRoute)
 booksRouter.post("/updatereadstatus", updateReadStatusRoute)
@@ -157,6 +170,7 @@ booksRouter.post("/updatebookmark", updateBookmarkRoute)
 booksRouter.post("/updaterating", updateRatingRoute)
 booksRouter.post("/setPageCount", setPageCountRoute)
 booksRouter.post("/setCategories", setCategoriesRoute)
+booksRouter.post("/setBookFrontCoverURL", setBookFrontCoverURLRoute)
 booksRouter.route("/")
   .get(getBooksRoute)
   .post(bodyParser.json(), addBookRoute)

@@ -67,9 +67,7 @@ export default {
       return title.substring(0, this.TEXT_LENGTH_LIMIT) + "..."
     },
     bookImage(book) {
-      if (book.manual)
-        return book.imageLink
-      return book.newFrontCover || `https://books.google.com/books/content?id=${book.id}&printsec=frontcover&img=1&zoom=1edge=curl&source=gbs_api`
+      return book.frontCover
     }
   }
 };

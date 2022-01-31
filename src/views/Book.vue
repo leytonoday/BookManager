@@ -17,13 +17,15 @@
         <br/>
       </div>
 
-      <div class="bookImage" style="margin-top: 2em;">
-        <img slot="image" style="float: right; margin-right: 3em; width: 35em;" :src="bookImage" />
+      <div class="bookFrontCoverSide">
+        <div class="bookFrontCoverContainer">
+          <img class="bookFrontCover" slot="image" :src="bookFrontCover" />
+          <vs-input style="width: 50%" class="bookFrontCoverInput" :vs-theme="theme.name" border label-placeholder="Front Cover URL" v-model="bookFrontCoverURL"/>
+        </div>
       </div>
 
-      <div class="bookInfo">
+      <div class="bookInfoSide">
         <div class="bookControls">
-
           <vs-select v-model="readStatus" :vs-theme="theme.name" >
             <vs-option label="Unread" :vs-theme="theme.name" :value="0">Unread</vs-option>
             <vs-option label="Reading" :vs-theme="theme.name" :value="1">Reading</vs-option>
@@ -170,6 +172,7 @@
 import { ipcRenderer }        from "electron"
 import { mapGetters }         from "vuex"
 import { VueEditor }          from "vue2-editor"
+import { notify }             from "../utils/utils"
 import StarRating             from 'vue-star-rating'
 import router                 from "../router"
 
@@ -185,7 +188,7 @@ export default {
 
   components: {
     "vue-editor": VueEditor,
-    "star-rating": StarRating,
+    "star-rating": StarRating
   },
   
   data() {
@@ -224,10 +227,8 @@ export default {
     book() {
       return this.$store.getters.bookFromId(this.id)
     },
-    bookImage() {
-      if (this.book.manual)
-        return this.book.imageLink
-      return this.book.newFrontCover || `https://books.google.com/books/content?id=${this.book.id}&printsec=frontcover&img=1&zoom=1edge=curl&source=gbs_api`
+    bookFrontCover() {
+      return this.book.frontCover
     },
     themeStyle() {
       return {
@@ -250,12 +251,25 @@ export default {
       }
     },
     bookCategories: {
-      set(newValue) {        
+      set(newValue) {
         this.$store.dispatch("setCategories", {id: this.book.id, categories: newValue})
       },
       get() {
         if (!this.book.categories) return []
         return this.book.categories
+      }
+    },
+    bookFrontCoverURL: {
+      async set(newValue) {
+        if (newValue === "") 
+          notify(this, "Input Error", "URL cannot be empty", "warning")
+        else if (!(await this.isImageURLValid(newValue))) 
+          notify(this, "Input Error", "URL must be to a valid image", "warning")
+        else 
+          this.$store.dispatch("setBookFrontCoverURL", {id: this.book.id, url: newValue})
+      },
+      get() {
+        return this.bookFrontCover
       }
     }
   },
@@ -300,9 +314,6 @@ export default {
         readStatus: newStatus,
       })
     },
-    "bookCategories.length"() {
-        this.$store.dispatch("setCategories", {id: this.book.id, categories: this.bookCategories})
-    }
   },
 
   methods: {
@@ -351,9 +362,11 @@ export default {
       if (this.newCategory === "" || this.bookCategories.includes(this.newCategory)) 
         return
       this.bookCategories.push(this.newCategory)
+      this.$store.dispatch("setCategories", {id: this.book.id, categories: this.bookCategories})
       this.newCategory = ""
-      this.categorySelectKey++
-      setTimeout(this.setSelectClickHandler, 200)
+
+      this.categorySelectKey++ // refreshes the select, updating the list of visible categories. 
+      setTimeout(this.setSelectClickHandler, 150) // Once select is refreshed, set the click handler again to set the background as dark
     },
     selectColourWorkaround() {
       const selects = document.getElementsByClassName("vs-select__options")
@@ -369,6 +382,14 @@ export default {
       const select = document.getElementsByClassName("vs-select__options")[0]
       if (select) // removes the select menu after using shortcuts to cross the pages. 
         select.parentNode.removeChild(select)
+    },
+    async isImageURLValid(url) {
+      return new Promise(resolve => {
+        const image = new Image()
+        image.onload = () => resolve(image.width > 0)
+        image.onerror = () => resolve(false)
+        image.src = url
+      })
     }
   },
 }
@@ -446,15 +467,38 @@ export default {
 }
 
 /* Book image */
-.bookImage {
+.bookFrontCoverContainer {
+  position: relative;
+  margin-top: 2em; 
+  margin-right: 2em;
+  float: right;
+}
+.bookFrontCover {
+  float: right; 
+  width: 35em;
+  border-radius: 2em;
+  transition: 500ms all ease;
+}
+.bookFrontCoverContainer:hover .bookFrontCover {
+  opacity: 0.5;
+}
+.bookFrontCoverInput {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: 500ms all ease;
+}
+.bookFrontCoverContainer:hover .bookFrontCoverInput {
+  opacity: 1;
+}
+.bookFrontCoverSide {
   width: 50%;
   height: 100%;
   float: left;
 }
-.bookImage img {
-  border-radius: 2em;
-}
-.bookInfo {
+.bookInfoSide {
   width: 50%;
   height: 100%;
   float: right;

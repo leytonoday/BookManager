@@ -30,7 +30,7 @@
               <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || (loading)" border type="text" class="centre" primary :vs-theme="theme.name" label-placeholder="Author(s) (Comma Separated)" v-model="fields.authors"/>
               <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || (loading)" border type="date" class="centre" primary :vs-theme="theme.name" label-placeholder="Published Date" v-model="fields.publishedDate"/>
               <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || (loading)" border type="text" class="centre" primary :vs-theme="theme.name" label-placeholder="Description" v-model="fields.description"/>
-              <vs-input id="vs-input" :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || (loading)" border type="url" class="centre" primary :vs-theme="theme.name" label-placeholder="Image Link" v-model="fields.imageLink"/>
+              <vs-input id="vs-input" :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || (loading)" border type="url" class="centre" primary :vs-theme="theme.name" label-placeholder="Image Link" v-model="fields.frontCover"/>
             </div>
 
             <div style="float: right; width: 50%; padding: 1em;">
@@ -73,7 +73,7 @@ export default {
         authors: null,
         date: null,
         description: null,
-        imageLink: null,
+        frontCover: null,
       },
       fields: {
         // Mandatory
@@ -81,7 +81,7 @@ export default {
         authors: "",
         date: "",
         description: "",
-        imageLink: "",
+        frontCover: "",
 
         // Optional
         publisher: "",
@@ -127,7 +127,7 @@ export default {
       if (!fields.authors) errors.authors = "Author(s) Required"
       if (!fields.publishedDate) errors.publishedDate = "Published Date Required"
       if (!fields.description) errors.description = "Description Required"
-      if (!fields.imageLink) errors.imageLink = "Image Link Required"
+      if (!fields.frontCover) errors.frontCover = "Front Cover URL Required"
       return errors
     },
     clearInput() {

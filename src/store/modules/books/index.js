@@ -58,6 +58,10 @@ const mutations = { // These edit the state directly
   SET_CATEGORIES(state, payload) {
     const index = state.books.findIndex(book => book.id === payload.id)
     state.books[index].categories = payload.categories
+  },
+  SET_BOOK_FRONT_COVER_URL(state, payload) {
+    const index = state.books.findIndex(book => book.id === payload.id)
+    state.books[index].frontCover = payload.url
   }
 }
 
@@ -128,6 +132,10 @@ const actions = {
   async setCategories({commit}, bookData) {
     const result = await axios.post(`${URLBase}/books/setCategories`, bookData)
     commit("SET_CATEGORIES", result.data)
+  },
+  async setBookFrontCoverURL({commit}, bookData) {
+    const result = await axios.post(`${URLBase}/books/setBookFrontCoverURL`, bookData)
+    commit("SET_BOOK_FRONT_COVER_URL", result.data)
   }
 }
 

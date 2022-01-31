@@ -70,9 +70,7 @@ export default {
       return `/books/${this.book.id}`
     },
     bookImage() {
-      if (this.book.manual)
-        return this.book.imageLink
-      return this.book.newFrontCover || `https://books.google.com/books/content?id=${this.book.id}&printsec=frontcover&img=1&zoom=1edge=curl&source=gbs_api`
+      return this.book.frontCover
     },
   },
   
