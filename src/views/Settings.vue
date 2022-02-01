@@ -135,19 +135,7 @@ export default {
           try {
               const importedBooks = JSON.parse(reader.result)
               for (let book of importedBooks) {
-                if (book.manual) { // manual addition 
-                  if (this.checkBooksAlreadyInLibrary(book))
-                    continue;
-                  this.$store.dispatch("addBook", book)
-                } 
-                else { // auto addition
-                  if (book.isbn.match(/[a-zA-Z]/g)) { // If there are letters in the ISBN, add using the title as the search query
-                    this.$store.dispatch("addBook", {"isbn": "", "searchQuery": book.title, "notes": book.notes, "bookmark": book.bookmark, "rating": book.rating, "readStatus": book.readStatus})
-                  } else {
-                    /*Sometimes the ISBNs have letters in them for someson, Such as a GB: prefix. so if there are NO letters, just add using ISBN*/
-                    this.$store.dispatch("addBook", {"isbn": book.isbn, "searchQuery": "", "notes": book.notes, "bookmark": book.bookmark,  "rating": book.rating, "readStatus": book.readStatus})
-                  }
-                }
+                  this.$store.dispatch("addBook", { method: "import", input: book })
               }
           } catch (e) {
             notify(this, "Import Failure", "Could not parse books from the given file", "danger")

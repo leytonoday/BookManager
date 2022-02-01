@@ -32,7 +32,7 @@
                       <img :src="searchImage(result)">
                     </vs-avatar>
                     <p style="display: flex; align-items: center; margin: 0 1em 0 1em;">
-                      Author(s): {{result.volumeInfo.authors? authors(result.volumeInfo) : "N/A"}}, Published: {{result.volumeInfo.publishedDate || "N/A"}}, ISBN: {{result.volumeInfo.industryIdentifiers? result.volumeInfo.industryIdentifiers[0].identifier : "N/A"}}
+                      Author(s): {{result.volumeInfo.authors? authors(result.volumeInfo) : "N/A"}}, Published: {{result.volumeInfo.publishedDate || "N/A"}}, Identifier: {{getIdentifier(result.volumeInfo)}}
                     </p>
                     <vs-button type="button" :disabled="loading" :loading="loading" gradient @click="selectedSearchResult = result; submitForm($event)">
                       Add Book
@@ -104,28 +104,25 @@ export default {
       this.loadingSearchResults = false
       this.searchResults = res.data.items
     }, 200),
-    addFromSearchResult() {
-        this.selectedSearchResult.fromSearch = true
-        this.$store.dispatch("addBook", this.selectedSearchResult)
-    },
-    addFromSearchQuery() {
-      this.$store.dispatch("addBook", {"isbn": this.isbn, "searchQuery": this.searchQuery})
+    addBook(method, input) {
+      this.$store.dispatch("addBook", {method, input})
     },
     submitForm(event) {
       event.preventDefault()
-      if (this.selectedSearchResult) {
-        this.addFromSearchResult();
-      }
-      else {
-        if (this.books.find(book => !book.manual && (book.isbn === this.isbn))) return notify(this, "Input Error", "A book with this ISBN has already been added.", "warning")
-        if (!this.isbn && !this.searchQuery) {
-          this.clearInput()
-          notify(this, "Input Error", "ISBN or search query required to add book", "warning")
-          return
-        }
-        this.addFromSearchQuery()
+      if (this.books.find(book => !book.manual && (book.isbn === this.isbn))) 
+        return notify(this, "Input Error", "A book with this ISBN has already been added.", "warning")
+      if (!this.isbn && !this.searchQuery) {
         this.clearInput()
+        notify(this, "Input Error", "ISBN or search query required to add book", "warning")
+        return
       }
+
+      if (this.isbn)
+        this.addBook("isbn", this.isbn)
+      else 
+        this.addBook("search", this.selectedSearchResult ? this.selectedSearchResult.id : this.searchResults[0].id)
+
+      this.clearInput()
     },
     clearInput() {
       this.isbn = ""
@@ -149,7 +146,10 @@ export default {
     },
     getUnreadCount() {
       return this.books.filter(i => i.readStatus === 0).length
-    }
+    },
+    getIdentifier(volumeInfo) {
+      return volumeInfo.industryIdentifiers ? volumeInfo.industryIdentifiers[0].identifier : "N/A"
+    },
   }
 }
 </script>

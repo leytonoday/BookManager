@@ -6,6 +6,7 @@
       </vs-button>
 
       <h1 class="title has-text-centered">{{ this.book.title }}</h1>
+      <h2 class="subtitle has-text-centered" v-if="book.subtitle">{{ this.book.subtitle }}</h2>
 
       <div v-if="!bookCategories.length">
         <vs-alert color="warn">
@@ -106,14 +107,12 @@
           <p>{{ book.averageRating + " / 5" }}</p>
         </div>
 
-        <div v-if="getISBN10()" class="infoBox">
-          <h2>ISBN 10:</h2>
-          <p>{{ getISBN10() }}</p>
-        </div>
-
-        <div v-if="getISBN13()" class="infoBox">
-          <h2>ISBN 13:</h2>
-          <p>{{ getISBN13() }}</p>
+        <div v-if="identifiers.length">
+          <div v-for="identifier in identifiers" :key="identifier.identifier" class="infoBox">
+            
+            <h2>{{ identifier.type.replace("_", " ") }}</h2>
+            <p>{{ identifier.identifier }}</p>
+          </div>
         </div>
 
         <div v-if="book.pageCount" class="infoBox">
@@ -195,7 +194,6 @@ export default {
     return {
       readStatus: 0,
       dialogActive: false,
-      bookmark: "init", //init value
       editorContent: "",
       rating: -1, // init value
       customtToolbar: [
@@ -242,9 +240,14 @@ export default {
         "--bookmarkColour" : this.bookmark.length > 0 ? this.accent : ""
       }
     },
+    identifiers() {
+      if (this.book.manual)
+        return [{ type: "ISBN",  identifier: this.book.isbn }]
+      return this.book.industryIdentifiers;
+    },
     pageCount: {
       set(newValue) {
-        this.$store.dispatch("setPageCount", {id: this.book.id, pageCount: newValue})
+        this.$store.dispatch("setBookProperty", {id: this.book.id, pageCount: newValue})
       },
       get() {
         return this.book.pageCount
@@ -252,11 +255,18 @@ export default {
     },
     bookCategories: {
       set(newValue) {
-        this.$store.dispatch("setCategories", {id: this.book.id, categories: newValue})
+        this.$store.dispatch("setBookProperty", {id: this.book.id, categories: newValue})
       },
       get() {
-        if (!this.book.categories) return []
-        return this.book.categories
+        return this.book.categories || []
+      }
+    },
+    bookmark: {
+      set(newValue) {
+        this.$store.dispatch("setBookProperty", {id: this.book.id, bookmark: newValue})
+      },
+      get() {
+        return this.book.bookmark || ""
       }
     },
     bookFrontCoverURL: {
@@ -266,7 +276,7 @@ export default {
         else if (!(await this.isImageURLValid(newValue))) 
           notify(this, "Input Error", "URL must be to a valid image", "warning")
         else 
-          this.$store.dispatch("setBookFrontCoverURL", {id: this.book.id, url: newValue})
+          this.$store.dispatch("setBookProperty", {id: this.book.id, frontCover: newValue})
       },
       get() {
         return this.bookFrontCover
@@ -276,27 +286,24 @@ export default {
 
   mounted() {
     this.editorContent = this.book.notes // this is to load the notes when mounted
-    this.bookmark = this.book.bookmark
     this.rating = this.book.rating
     this.readStatus = this.book.readStatus
 
     ipcRenderer.removeAllListeners("appClosing") // don't think this line is needed
     ipcRenderer.on("appClosing", async (_) => {
       if (router.currentRoute.name === "Book") {
-        this.updateNotes()
-        this.updateBookmark()
+        this.setNotes()
         ipcRenderer.send("precloseComplete")
       }
     })
-    this.updateNotesAndBookmarkCheck()
+    this.setNotesCheck()
 
     this.setSelectClickHandler()
   },
 
   beforeRouteLeave(to, from, next) {
     // when the user moves pages, save the notes if edited
-    this.updateNotes()
-    this.updateBookmark()
+    this.setNotes()
     ipcRenderer.removeAllListeners("appClosing")
     ipcRenderer.on("appClosing", (_) => ipcRenderer.send("precloseComplete"))
 
@@ -306,10 +313,10 @@ export default {
 
   watch: {
     rating(newRating) {
-      this.$store.dispatch("updateRating", { id: this.book.id, rating: newRating})
+      this.$store.dispatch("setBookProperty", { id: this.book.id, rating: newRating})
     },
     readStatus(newStatus) {
-      this.$store.dispatch("updateReadStatus", {
+      this.$store.dispatch("setBookProperty", {
         id: this.book.id,
         readStatus: newStatus,
       })
@@ -324,39 +331,22 @@ export default {
       this.$router.back()
       this.$store.dispatch("deleteBook", book)
     },
-    updateNotesAndBookmarkCheck() { // Attempt to update the notes and bookmark every two seconds. This will minimize any issues with the app forcibly being closed and notes not being saved.
+    setNotesCheck() { // Attempt to set the notes  every two seconds. This will minimize any issues with the app forcibly being closed and notes not being saved.
       if (router.currentRoute.name !== "Book") return
-      this.updateNotes()
-      this.updateBookmark()
-      setTimeout(this.updateNotesAndBookmarkCheck, 2000)
+      this.setNotes()
+      setTimeout(this.setNotesCheck, 2000)
     },
-    updateNotes() {
+    setNotes() {
       if (this.editorContent !== this.book.notes)
-        this.$store.dispatch("updateNotes", { id: this.book.id, notes: this.editorContent})
-    },
-    updateBookmark() {
-      if (this.bookmark !== this.book.bookmark)
-        this.$store.dispatch("updateBookmark", { id: this.book.id, bookmark: this.bookmark})
+        this.$store.dispatch("setNotes", { id: this.book.id, notes: this.editorContent})
     },
     handleBookmarkInput(input) { // clamps the bookmark to the 0 and pageCount
-      if (!this.book.pageCount) return parseInt(this.bookmark) < 0 ? this.bookmark = "" : {}
-      if(Number.isNaN(parseInt(input))) return this.bookmark = ""
+      if (!this.book.pageCount) 
+        return parseInt(this.bookmark) < 0 ? this.bookmark = "" : input
+      if(Number.isNaN(parseInt(input))) 
+        return this.bookmark = ""
       
       return this.bookmark = Math.min(Math.max(parseInt(input), 0), this.book.pageCount).toString()
-    },
-    getISBN10() {
-      if (this.book.isbn.length === 10)
-        return this.book.isbn
-      else if (this.book.industryIdentifiers) 
-        return this.book.industryIdentifiers.filter(i => i.type === "ISBN_10")[0].identifier
-      return null
-    },
-    getISBN13() {
-      if (this.book.isbn.length === 13)
-        return this.book.isbn
-      else if (this.book.industryIdentifiers) 
-        return this.book.industryIdentifiers.filter(i => i.type === "ISBN_13")[0].identifier
-      return null
     },
     addNewCategory() {
       if (this.newCategory === "" || this.bookCategories.includes(this.newCategory)) 

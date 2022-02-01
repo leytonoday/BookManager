@@ -72,7 +72,7 @@
                 {{ book.title.length > 50 ? truncateTitle(book.title) : book.title }} <!-- some book titles are too long, this solves that issue -->
               </vs-td>
               <vs-td>
-                {{ book.publisher.replaceAll('"', "") || "N/A" }}
+                {{ book.publisher || "N/A" }}
               </vs-td>
               <vs-td>
                 {{ book.publishedDate || "N/A" }}
@@ -174,7 +174,10 @@ export default {
       this.$router.push(`/books/${id}`)
     },
     deleteSelected() {
-      this.selected.forEach(book => this.$store.dispatch("deleteBook", book))
+      if (this.selected.length === this.books.length)
+        this.$store.dispatch("deleteAllBooks")
+      else
+        this.selected.forEach(book => this.$store.dispatch("deleteBook", book))
       this.selected.length = 0
     },
     setReadStatus(status) {
@@ -183,7 +186,7 @@ export default {
         this.dialogActive = true
       }
       else {
-        this.selected.forEach(select => this.$store.dispatch("updateReadStatus", {"id": select.id, "readStatus": status}))
+        this.selected.forEach(select => this.$store.dispatch("setBookProperty", {id: select.id, readStatus: status}))
         return notify(this, "Success", `The selected book(s) have been marked as ${this.readStatusToString(status).toLowerCase()}`, "success")
       }
     },

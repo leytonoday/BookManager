@@ -39,7 +39,7 @@
               <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || (loading)" border type="number" class="centre" primary :vs-theme="theme.name" label-placeholder="Page Count" v-model="fields.pageCount"/>
               <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || (loading)" border type="text" class="centre" primary :vs-theme="theme.name" label-placeholder="Language" v-model="fields.language"/>
               <vs-input id="vs-input" style="margin-bottom: 3em;" :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || (loading)" border type="text" class="centre" primary :vs-theme="theme.name" label-placeholder="Categories (Comma Separated)" v-model="fields.categories"/>
-              <vs-input id="vs-input" :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || (loading)" border type="number" class="centre" primary :vs-theme="theme.name" label-placeholder="ISBN" v-model="fields.isbn"/>
+              <vs-input id="vs-input" :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || (loading)" border type="number" class="centre" primary :vs-theme="theme.name" label-placeholder="Identifier (ISBN)" v-model="fields.identifier"/>
             </div>
           </div>
 
@@ -88,7 +88,7 @@ export default {
         pageCount: "",
         language: "",
         categories: "",
-        isbn: "",
+        identifier: "",
       },
     }
   },
@@ -104,30 +104,30 @@ export default {
   },
 
   methods: {
-    submitForm(event) {
+    async submitForm(event) {
       event.preventDefault()
-      this.fieldErrors = this.validateForm(this.fields)
+      this.fieldErrors = await this.validateForm(this.fields)
       if (Object.keys(this.fieldErrors).length) return notify(this, "Input Error", "Input all mandatory fields", "warning")
 
-      if (this.fields.isbn && this.books.find(book => book.isbn === this.fields.isbn)) return notify(this, "Input Error", "A book with this ISBN has already been added.", "warning")
-      if (!this.fields.isbn && this.books.find(book => book.title === this.fields.title)) return notify(this, "Input Error", "A book with this title has already been added.", "warning")
+      if (this.fields.identifier && this.books.find(book => book.identifier === this.fields.identifier)) return notify(this, "Input Error", "A book with this ISBN has already been added.", "warning")
+      if (!this.fields.identifier && this.books.find(book => book.title === this.fields.title)) return notify(this, "Input Error", "A book with this title has already been added.", "warning")
 
-      this.fields.id = crypto.createHash("md5").update(this.fields.isbn || this.fields.title).digest("hex")
+      this.fields.id = crypto.createHash("md5").update(this.fields.identifier || this.fields.title).digest("hex")
       this.fields.manual = true
 
       this.fields.authors = this.fields.authors.split(",")
       this.fields.categories = this.fields.categories ? this.fields.categories.split(",") : []
 
-      this.$store.dispatch("addBook", this.fields)
+      this.$store.dispatch("addBook",  { method: "manual", input: this.fields }) 
       this.clearInput()
     },
-    validateForm(fields) {
+    async validateForm(fields) {
       const errors = {}
-      if (!fields.title) errors.title = "Title Required"
-      if (!fields.authors) errors.authors = "Author(s) Required"
-      if (!fields.publishedDate) errors.publishedDate = "Published Date Required"
-      if (!fields.description) errors.description = "Description Required"
-      if (!fields.frontCover) errors.frontCover = "Front Cover URL Required"
+      if (!(await this.isImageURLValid(fields.frontCover)))  errors.frontCover = "Valid Front Cover URL Required"
+      if (!fields.publishedDate)  errors.publishedDate = "Published Date Required"
+      if (!fields.description)    errors.description = "Description Required"
+      if (!fields.authors)        errors.authors = "Author(s) Required"
+      if (!fields.title)          errors.title = "Title Required"
       return errors
     },
     clearInput() {
@@ -135,6 +135,14 @@ export default {
     },
     getUnreadCount() {
       return this.books.filter(i => i.readStatus === 0).length
+    },
+    async isImageURLValid(url) {
+      return new Promise(resolve => {
+        const image = new Image()
+        image.onload = () => resolve(image.width > 0)
+        image.onerror = () => resolve(false)
+        image.src = url
+      })
     }
   }
 }

@@ -6,6 +6,15 @@ const URLBase = isDevelopment
   ? "/api"
   : "http://localhost:3000"
 
+function setBookProperty(books, bookData) {
+  const id = bookData.id
+  const propertyName = Object.keys(bookData)[1]
+  getBookFromId(books, id)[propertyName] = bookData[propertyName]
+}
+function getBookFromId(books, id) {
+  return books.find(book => book.id === id)
+}
+
 const state = {
   books: [],
   responseStatus: undefined,
@@ -13,7 +22,7 @@ const state = {
 }
 
 const mutations = { // These edit the state directly
-  SET_BOOKS (state, payload) {
+  LOAD_BOOKS (state, payload) {
     state.books = payload
   },
   ADD_BOOK (state, payload) {
@@ -35,49 +44,32 @@ const mutations = { // These edit the state directly
   DELETE_ALL_BOOKS (state) {
     state.books = []
   },
-  UPDATE_READ_STATUS (state, payload) {
-    const index = state.books.findIndex(book => book.id == payload.id)
-    state.books[index].readStatus = payload.readStatus
+
+  SET_BOOK_PROPERTY(state, payload) {
+    setBookProperty(state.books, payload)
   },
-  UPDATE_NOTES(state, payload) {
+
+  SET_NOTES(state, payload) {
     const index = state.books.findIndex(book => book.id === payload.id)
     state.books[index].notes = payload.notes
-  },
-  UPDATE_BOOKMARK(state, payload) {
-    const index = state.books.findIndex(book => book.id === payload.id)
-    state.books[index].bookmark = payload.bookmark
-  },
-  UPDATE_RATING(state, payload) {
-    const index = state.books.findIndex(book => book.id === payload.id)
-    state.books[index].rating = payload.rating
-  },
-  SET_PAGE_COUNT(state, payload) {
-    const index = state.books.findIndex(book => book.id === payload.id)
-    state.books[index].pageCount = payload.pageCount
-  },
-  SET_CATEGORIES(state, payload) {
-    const index = state.books.findIndex(book => book.id === payload.id)
-    state.books[index].categories = payload.categories
-  },
-  SET_BOOK_FRONT_COVER_URL(state, payload) {
-    const index = state.books.findIndex(book => book.id === payload.id)
-    state.books[index].frontCover = payload.url
   }
 }
 
 const actions = {
-  async getBooks({commit}) { // Destruct commit from the context
-    const res = await axios.get(`${URLBase}/books`)
-    commit("SET_BOOKS", res.data)
+  async loadBooks({commit}) { // Destruct commit from the context
+    const response = await axios.get(`${URLBase}/books`)
+    commit("LOAD_BOOKS", response.data)
   },
-  async deleteBook({commit}, book) {
-    const res = await axios.post(`${URLBase}/books/delete/${book.id}`, book)
-    commit("DELETE_BOOK", res.data)
+  setResponseStatus({commit}, result) {
+    commit("SET_RESPONSE_STATUS", result)
   },
+
   async addBook({commit}, bookData) {
     commit('START_LOADING')
     try {
+      console.log("request before")
       const res = await axios.post(`${URLBase}/books`, bookData)
+      console.log("request after")
       commit("ADD_BOOK", res.data)
       commit("SET_RESPONSE_STATUS", 200) // success
       commit('END_LOADING')
@@ -86,56 +78,32 @@ const actions = {
       commit('END_LOADING')
     }
   },
-  setResponseStatus({commit}, result) {
-    commit("SET_RESPONSE_STATUS", result)
+
+  async deleteBook({commit}, bookId) {
+    await axios.delete(`${URLBase}/books`, bookId)
+    commit("DELETE_BOOK", bookId)
   },
-  async deleteAllBooks({commit}) { 
+  async deleteAllBooks({commit}) {
     commit('START_LOADING')
-    await axios.post(`${URLBase}/books/delete/all`)
+    await axios.delete(`${URLBase}/books/deleteall`)
     commit("DELETE_ALL_BOOKS")
     commit('END_LOADING')
   },
-  async updateReadStatus({commit}, bookData) {
-    const res = await axios.post(`${URLBase}/books/updatereadstatus`, bookData)
-    commit("UPDATE_READ_STATUS", res.data)
+
+  async setBookProperty({commit}, bookData) {
+    await axios.patch(`${URLBase}/books/setbookproperty`, bookData)
+    commit("SET_BOOK_PROPERTY", bookData)
   },
-  async updateNotes({commit}, bookData) {
+  async setNotes({commit}, bookData) {
     return new Promise (async (resolve, reject) => {
       try {
-        const res = await axios.post(`${URLBase}/books/updatenotes`, bookData)
-        commit("UPDATE_NOTES", res.data)
-        resolve(res)
+        await axios.patch(`${URLBase}/books/setbookproperty`, bookData)
+        commit("SET_NOTES", bookData)
+        resolve(bookData)
       } catch (err) {
         reject(err)
       }
     })
-  },
-  async updateBookmark({commit}, bookData) {
-    return new Promise (async (resolve, reject) => {
-      try {
-        const res = await axios.post(`${URLBase}/books/updatebookmark`, bookData)
-        commit("UPDATE_BOOKMARK", res.data)
-        resolve(res)
-      } catch (err) {
-        reject(err)
-      }
-    })
-  },
-  async updateRating({commit}, bookData) {
-    const res = await axios.post(`${URLBase}/books/updaterating`, bookData)
-    commit("UPDATE_RATING", res.data)
-  },
-  async setPageCount({commit}, bookData) {
-    const result = await axios.post(`${URLBase}/books/setPageCount`, bookData)
-    commit("SET_PAGE_COUNT", result.data)
-  },
-  async setCategories({commit}, bookData) {
-    const result = await axios.post(`${URLBase}/books/setCategories`, bookData)
-    commit("SET_CATEGORIES", result.data)
-  },
-  async setBookFrontCoverURL({commit}, bookData) {
-    const result = await axios.post(`${URLBase}/books/setBookFrontCoverURL`, bookData)
-    commit("SET_BOOK_FRONT_COVER_URL", result.data)
   }
 }
 
