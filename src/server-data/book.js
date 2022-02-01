@@ -11,7 +11,18 @@ class Book {
     this.id             = id
     
     Object.assign(this, volumeInfo)
+
+    this.removeCategorySlashes()
   }
+  removeCategorySlashes() {
+    const correctedCategories = []
+    this.categories.map(i => {
+      const categories = i.split("/")
+      for (const category of categories) 
+        correctedCategories.push(category)
+    })
+    this.categories = correctedCategories
+  } 
 }
 
 module.exports = Book

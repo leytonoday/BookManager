@@ -88,7 +88,7 @@
           </vs-select>
         </div>
         <form style="display: flex; flex-direction: row;" @submit="addNewCategory()">
-          <vs-input style="width: 21.5em;" placeholder="New Category" border :vs-theme="theme.name" primary v-model="newCategory" />
+          <vs-input style="width: 26.5em;" placeholder="New Category" border :vs-theme="theme.name" primary v-model="newCategory" />
           <vs-button gradient primary @click="addNewCategory">Add</vs-button>
         </form>
 
@@ -237,7 +237,7 @@ export default {
     },
     bookmarkColour() {
       return {
-        "--bookmarkColour" : this.bookmark.length > 0 ? this.accent : ""
+        "--bookmarkColour" : this.bookmark ? this.accent : ""
       }
     },
     identifiers() {
@@ -266,7 +266,7 @@ export default {
         this.$store.dispatch("setBookProperty", {id: this.book.id, bookmark: newValue})
       },
       get() {
-        return this.book.bookmark || ""
+        return this.book.bookmark || null
       }
     },
     bookFrontCoverURL: {
@@ -342,11 +342,11 @@ export default {
     },
     handleBookmarkInput(input) { // clamps the bookmark to the 0 and pageCount
       if (!this.book.pageCount) 
-        return parseInt(this.bookmark) < 0 ? this.bookmark = "" : input
-      if(Number.isNaN(parseInt(input))) 
-        return this.bookmark = ""
+        return this.bookmark < 0 ? this.bookmark = null : input
+      if(Number.isNaN(input)) 
+        return this.bookmark = null
       
-      return this.bookmark = Math.min(Math.max(parseInt(input), 0), this.book.pageCount).toString()
+      return this.bookmark = Math.min(Math.max(input, 0), this.book.pageCount).toString()
     },
     addNewCategory() {
       if (this.newCategory === "" || this.bookCategories.includes(this.newCategory)) 
@@ -548,7 +548,7 @@ export default {
   width: 10em;
 }
 .vs-select-content.categoriesSelect >>> .vs-select{
-  width: 25em;
+  width: 30em;
 }
 
 .bookControls {
