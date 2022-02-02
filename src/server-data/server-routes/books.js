@@ -1,8 +1,8 @@
 "use strict"
 
-const { makeBook }  = require("../makeBook.js")
-const express       = require("express")
-const Store         = require("electron-store")
+const { createBook }  = require("../createBook.js")
+const express         = require("express")
+const Store           = require("electron-store")
 
 
 // Setup
@@ -40,13 +40,17 @@ function updateStore() {
 const getBooksRoute = (_, res) => res.status(200).send(books)
 const addBookRoute = async (req, res) => {
   try {
-    const newBook = await makeBook(books, req.body)
+    const newBook = await createBook(books, req.body)
     books.push(newBook)
     res.status(200).send(newBook) 
     updateStore()
   } catch (status) { // runs on status 409 and 404
     res.sendStatus(status)
   }
+}
+const setBookPropertyRoute = (req, res) => {
+  setBookProperty(req.body)
+  sendSuccessAndUpdateStore(res)
 }
 const deleteBookRoute = (req, res) => {
   const index = books.findIndex(book => book.id == req.body.id)
@@ -57,16 +61,13 @@ const deleteAllBooksRoute = (_, res) => {
   books.length = 0
   sendSuccessAndUpdateStore(res)
 }
-const setBookPropertyRoute = (req, res) => {
-  setBookProperty(req.body)
-  sendSuccessAndUpdateStore(res)
-}
+
+booksRouter.route("/")
+.get(getBooksRoute)
+.post(express.json(), addBookRoute)
+.patch(setBookPropertyRoute)
+.delete(deleteBookRoute)
 
 booksRouter.delete("/deleteall", deleteAllBooksRoute)
-booksRouter.patch("/setbookproperty", setBookPropertyRoute)
-booksRouter.route("/")
-  .get(getBooksRoute)
-  .post(express.json(), addBookRoute)
-  .delete(deleteBookRoute)
 
 module.exports = booksRouter

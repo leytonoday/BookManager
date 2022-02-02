@@ -9,7 +9,7 @@ const self = module.exports = {
     else if (responseStatus === 200) self.notify(that, "Success", "Your book has been added.", "success")
     else if (responseStatus === 404) self.notify(that, "Failure", "Your book could not be found.Try a newer ISBN or check spelling", "danger")
     else if (responseStatus === 409) self.notify(that, "Input Error", "A book with this title has already been added.", "warning")
-    else if (responseStatus === 500) self.notify(that, "Server Error", "Unable to connect to internal server. Try restarting", "danger")
+    else if (responseStatus === 500) self.notify(that, "Server Error", "Internal Server Error. Restart", "danger")
     else self.notify(that, "Unknown Response", "The server has returned an unknown response status", "danger")
     
     that.$store.dispatch("setResponseStatus", undefined)

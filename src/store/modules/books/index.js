@@ -35,20 +35,15 @@ const mutations = { // These edit the state directly
   SET_RESPONSE_STATUS (state, payload) {
     state.responseStatus = payload
   },
-  START_LOADING(state) {
-    state.loading = true
-  }, 
-  END_LOADING (state) {
-    state.loading = false
+  SET_LOADING (state, payload) {
+    state.loading = payload
   },
   DELETE_ALL_BOOKS (state) {
     state.books = []
   },
-
   SET_BOOK_PROPERTY(state, payload) {
     setBookProperty(state.books, payload)
   },
-
   SET_NOTES(state, payload) {
     const index = state.books.findIndex(book => book.id === payload.id)
     state.books[index].notes = payload.notes
@@ -56,7 +51,7 @@ const mutations = { // These edit the state directly
 }
 
 const actions = {
-  async loadBooks({commit}) { // Destruct commit from the context
+  async loadBooks({commit}) {
     const response = await axios.get(`${URLBase}/books`)
     commit("LOAD_BOOKS", response.data)
   },
@@ -65,17 +60,15 @@ const actions = {
   },
 
   async addBook({commit}, bookData) {
-    commit('START_LOADING')
+    commit('SET_LOADING', true)
     try {
-      console.log("request before")
       const res = await axios.post(`${URLBase}/books`, bookData)
-      console.log("request after")
       commit("ADD_BOOK", res.data)
       commit("SET_RESPONSE_STATUS", 200) // success
-      commit('END_LOADING')
+      commit('SET_LOADING', false)
     } catch (err) {
-      commit("SET_RESPONSE_STATUS", err.response.status) // could be 404 (not found) or 409 (conflict, used when book already exists)
-      commit('END_LOADING')
+      commit("SET_RESPONSE_STATUS", err.response.status) // could be 404 (not found), 409 (conflict, used when book already exists), or 500 (invalid addition method)
+      commit('SET_LOADING', false)
     }
   },
 
@@ -84,20 +77,20 @@ const actions = {
     commit("DELETE_BOOK", bookId)
   },
   async deleteAllBooks({commit}) {
-    commit('START_LOADING')
+    commit('SET_LOADING', true)
     await axios.delete(`${URLBase}/books/deleteall`)
     commit("DELETE_ALL_BOOKS")
-    commit('END_LOADING')
+    commit('SET_LOADING', false)
   },
 
   async setBookProperty({commit}, bookData) {
-    await axios.patch(`${URLBase}/books/setbookproperty`, bookData)
+    await axios.patch(`${URLBase}/books`, bookData)
     commit("SET_BOOK_PROPERTY", bookData)
   },
   async setNotes({commit}, bookData) {
     return new Promise (async (resolve, reject) => {
       try {
-        await axios.patch(`${URLBase}/books/setbookproperty`, bookData)
+        await axios.patch(`${URLBase}/books`, bookData)
         commit("SET_NOTES", bookData)
         resolve(bookData)
       } catch (err) {
@@ -116,26 +109,22 @@ const getters = {
     if (givenCategory === "all") 
       return state.books
     const books = []
-    for(const book of state.books) {
-      if (!book.categories) 
-        continue
-      for (const category of book.categories) {
-        if (givenCategory === category) 
-        books.push(book)
-      }
-    }
+    state.books.forEach(book => {
+      book.categories.forEach(category => {
+        if (givenCategory === category)
+          books.push(book)
+      })
+    })
     return books
   },
   categories: state => {
     const categories = []
-    for(const book of state.books) {
-      if (!book.categories) 
-        continue
-      for (const category of book.categories) {
-        if (!categories.includes(category)) 
+    state.books.forEach(book => {
+      book.categories.forEach(category => {
+        if (!categories.includes(category))
           categories.push(category)
-      }
-    }
+      })
+    })
     return categories
   },
 }

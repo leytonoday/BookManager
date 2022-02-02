@@ -120,8 +120,7 @@ export default {
       if (this.isbn)
         this.addBook("isbn", this.isbn)
       else 
-        this.addBook("search", this.selectedSearchResult ? this.selectedSearchResult.id : this.searchResults[0].id)
-
+        this.addBook("search", this.selectedSearchResult ? this.selectedSearchResult : this.searchResults[0])
       this.clearInput()
     },
     clearInput() {

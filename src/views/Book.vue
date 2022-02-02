@@ -195,7 +195,7 @@ export default {
       readStatus: 0,
       dialogActive: false,
       editorContent: "",
-      rating: -1, // init value
+      rating: null, // init value
       customtToolbar: [
         ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
         ['blockquote', 'code-block'],
