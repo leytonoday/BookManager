@@ -108,16 +108,16 @@
 
       <br />
 
-      <div class="infoBoxOuter" style="margin-bottom: 2em"> <!-- Margin here to add a little filler to the bottom of the page -->
+      <div class="infoBoxOuter">
         <div class="infoBoxHeader">
             Importing & Exporting
         </div>
         <div class="infoBoxBody">
           <p> 
             If you want to share your Library with others, you could export your books by clicking 
-          the Export button; this will export your books into a JSON file. If you are on the 
-          receiving end of this book JSON file, you only have to click import, and upload the file! 
-          Easy peasy.
+            the Export button; this will export your books into a JSON file. If you are on the 
+            receiving end of this book JSON file, you only have to click import, and upload the file! 
+            Easy peasy.
           </p>
         </div>
       </div>
@@ -156,14 +156,47 @@
 
       <div class="infoBoxOuter">
         <div class="infoBoxHeader">
+            Category View
+        </div>
+        <div class="infoBoxBody">
+          <p> 
+          You can access the Category View by going to Library -> Category View. Here,
+          the categories of all books are displayed so you can more easily browse your
+          library.
+          </p>
+        </div>
+      </div>
+
+      <br />
+
+      <div class="infoBoxOuter">
+        <div class="infoBoxHeader">
             Tabular View
         </div>
         <div class="infoBoxBody">
           <p> 
-          You can access the Tabular view by going to Library -> Tabular View. This is 
+          You can access the Tabular View by going to Library -> Tabular View. This is 
           for a more practical view of your libary. From here, you can operate on your books 
           in mass, as opposed to individually. You can sort, search, and traverse your Library
           easily using this feature!
+          </p>
+        </div>
+      </div>
+
+      <br />
+
+      <div class="infoBoxOuter">
+        <div class="infoBoxHeader">
+            Customization
+        </div>
+        <div class="infoBoxBody">
+          <p> 
+            To change a books front cover, hover over the image on the Book View and enter a new 
+            URL in the input.
+            <br /><br />
+            To change the page count, simply change the value in the text box and it will be saved.
+            <br /><br />
+            To chagne the categories of a book or to add new categories, use the select menu on the Book View.
           </p>
         </div>
       </div>
@@ -197,7 +230,7 @@
       <br /><br />
 
       <h2 class="title has-text-centered">Author</h2>
-      <div class="infoBoxOuter">
+      <div class="infoBoxOuter" style="margin-bottom: 2em"> <!-- Margin here to add a little filler to the bottom of the page -->
         <div class="infoBoxBody">
           <p>This program was written by Leyton O'Day.</p>
           <p>Github - https://github.com/leytonoday</p>
@@ -222,6 +255,7 @@ export default {
       return {
         "--infoBoxHeaderBackground": this.theme.name === "dark"? "#404040" : "white",
         "--themeText": this.theme.text,
+        "--boxShadowOpacity": this.theme === "dark" ? 0.2 : 0.4
       }
     }
   }
@@ -233,9 +267,7 @@ export default {
   border: grey 1px solid;
   border-radius: 0.8em;
   color: white;
-  -webkit-box-shadow: 0px 10px 13px -7px #000000,
-  0px 0px 18px 8px rgba(0, 0, 0, 0.3);
-  box-shadow: 0px 10px 13px -7px #000000, 0px 0px 18px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 10px 13px -7px #000000, 0px 0px 17px 3px rgba(0, 0, 0, var(--boxShadowOpacity));
   color: var(--themeText);
 }
 .infoBoxHeader {

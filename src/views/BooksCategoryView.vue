@@ -7,6 +7,8 @@
 
       <vs-input v-if="books.length" type="search" :vs-theme="theme.name" v-model="search" border placeholder="Search" style="margin: 1em 0 1em 0;"/>
     
+      <br />
+
       <stack class="centre" :column-min-width="300" :gutter-width="25" :gutter-height="25" monitor-images-loaded>
         <stack-item v-for="category in searchedCategories" :key="category">
           <book-category-item :category="category" :categoryCount="categoryBookCount(category)"/>

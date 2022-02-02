@@ -12,7 +12,7 @@ const routes = [
   {
     path: "/",
     name: "Home",
-    component: () => import("../views/Home.vue") // all components are lazy loaded
+    component: () => import("../views/Home.vue")
   },
   {
     path: "/bookscardview/:category",
@@ -34,7 +34,7 @@ const routes = [
     path: "/books/:id",
     name: "Book",
     props: true,
-    beforeEnter: (to, from, next) => {
+    beforeEnter: (to, _, next) => {
       if(!store.getters.bookFromId(to.params.id)) next("*") // if the user attemps to go to a book that doesn't exists, send them to "*" (not found)
       else next()
     },

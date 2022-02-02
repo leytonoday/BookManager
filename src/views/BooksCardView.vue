@@ -45,6 +45,8 @@
       <p class="subtitle has-text-centered" style="margin-top: 2em">No books match the filter</p>
     </div>
 
+    <br />
+
     <stack class="centre" :column-min-width="320" :gutter-width="8" :gutter-height="35" monitor-images-loaded>
       <stack-item v-for="(book, i) in searchedBooks" :key="i">
         <book-list-item :book="book" />

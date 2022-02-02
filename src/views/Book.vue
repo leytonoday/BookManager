@@ -60,12 +60,8 @@
 
         <div v-if="book.authors" class="infoBox">
           <h2>Author(s):</h2>
-          <p>
-            {{
-              (typeof this.book.authors === "string"
-                ? this.book.authors
-                : this.book.authors.join(", ")) || "N/A"
-            }}
+          <p> 
+            {{ this.book.authors.join(", ") }}
           </p>
         </div>
 

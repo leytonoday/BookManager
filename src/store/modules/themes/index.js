@@ -13,7 +13,7 @@ const state = {
 
 const mutations = {
   SET_THEME(state, payload) {
-    state.theme = state[payload] // smex
+    state.theme = state[payload]
     store.set("theme", state.theme)
     titlebar.updateBackground() // this has the affect of also injecting the titlebar into the application
   },

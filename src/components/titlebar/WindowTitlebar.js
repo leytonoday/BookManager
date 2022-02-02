@@ -1,7 +1,7 @@
 "use strict"
 
-import { Titlebar, Color } from 'custom-electron-titlebar'
-import Store from "electron-store"
+import { Titlebar, Color }  from 'custom-electron-titlebar'
+import Store                from "electron-store"
 
 const store = new Store()
 
@@ -10,7 +10,6 @@ const titlebar = new Titlebar({
   menu: null,
   titleHorizontalAlignment: "left",
 })
-
 
 export default {
   titlebar,

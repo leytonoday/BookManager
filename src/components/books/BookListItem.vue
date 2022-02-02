@@ -1,15 +1,19 @@
 <template>
-  <div id="box" class="container">
-    <vs-card @click="$router.push(bookLink)" :vs-theme="theme.name" type="4"> 
+  <div class="container">
+    <vs-card :style="themeStyle" @click="$router.push(bookLink)" :vs-theme="theme.name" type="4"> 
+      
       <template #title>
-        <h3>{{ book.title.length > TEXT_LENGTH_LIMIT? truncateTitle(book.title) : book.title }}</h3>
+        <h3>{{ getTitle(book) }}</h3>
       </template>
+
       <template #img>
         <img :src="bookImage" alt=""/>
       </template>
+
       <template #text>
         <p>{{ authors }}</p>
       </template>
+
       <template #interactions>
         <vs-button v-if="book.readStatus === 2" success icon>
           <i class="fa fa-check"></i>
@@ -30,6 +34,7 @@
           </span>
         </vs-button>
       </template>
+
     </vs-card>
   </div>
 </template>
@@ -57,14 +62,20 @@ export default {
 
   computed: {
     ...mapGetters(["theme", "accent"]),
+    themeStyle() {
+      return {
+        "--boxShadowOpacity": this.theme === "dark" ? 0.2 : 0.4
+      }
+    },
     authors() {
-      if (!this.book.authors) return
-      let authorsString = typeof this.book.authors === "string" ? this.book.authors : this.book.authors.join(", ") 
-      let lengthLimit = this.TEXT_LENGTH_LIMIT
-      if (authorsString && authorsString.length > lengthLimit) 
-        return (authorsString.substring(0, lengthLimit)) + "..."
-      else 
-      return authorsString
+      if (!this.book.authors.length) 
+        return
+      
+      const authors = this.getAuthors(this.book)
+      if (authors.length > this.TEXT_LENGTH_LIMIT) 
+        return this.truncate(authors)
+      else
+        return authors
     },
     bookLink() {
       return `/books/${this.book.id}`
@@ -76,19 +87,33 @@ export default {
   
   methods: {
     ...mapActions(["deleteBook"]),
-    truncateTitle(title) {
-      return title.substring(0, this.TEXT_LENGTH_LIMIT) + "..."
+    getTitle(book) {
+      if (book.title.length > this.TEXT_LENGTH_LIMIT)
+        return this.truncate(book.title)
+      else
+        return book.title 
+    },
+    getAuthors(book) {
+      return book.authors.join(", ") 
+    },
+    truncate(input) {
+      return input.substring(0, this.TEXT_LENGTH_LIMIT) + "..."
     }
   }
 };
 </script>
 
 <style scoped>
-.vs-card-content >>>.vs-card__text { width: 100%; }
-.vs-card-content >>> .vs-card__img img { transform: scale(1.1); }
+.vs-card-content >>>.vs-card__text { 
+  width: 100%; 
+}
+.vs-card-content >>> .vs-card__img img { 
+  transform: scale(1.1); 
+}
 .vs-card-content >>> .vs-card {
-  margin-left: auto !important;
-  margin-right: auto !important;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0px 0px 17px 3px rgba(0,0,0, var(--boxShadowOpacity));
 }
 .rating {
   color: var(--themeText) !important;
