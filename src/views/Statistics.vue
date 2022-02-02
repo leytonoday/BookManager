@@ -6,26 +6,29 @@
     </h2>
 
     <div v-if="books.length" class="center grid has-text-centered">
+
       <h2 class="title">Book Count: {{getTotalBooks(books)}}</h2>
       <vs-row>
         <vs-col vs-type="flex" vs-justify="center" vs-align="center" w="6">
           <h2 class="title">Reading Progress</h2>
-          <p class="subtitle">Displaying the books read or unread in your Library</p>
-          <pie-chart :inputData="getReadStats(books)" :id="'readStats'" :colours="[accent, AddTransparancyToHex(accent), theme.background]"/>
+          <p class="subtitle">Displaying the books read statuses in your Library</p>
+          <pie-chart :inputData="getReadStats(books)" :id="'readStats'" :colours="[theme.background, AddTransparancyToHex(accent), accent]"/>
         </vs-col>
 
         <vs-col vs-type="flex" vs-justify="center" vs-align="center" w="6">
           <h2 class="title">Book Age Variance</h2>
-          <p class="subtitle">Displaying the published date of all books in your Libray</p>
+          <p class="subtitle">Displaying the published dates of all books in your Libray</p>
           <line-chart :inputData="getPublishedDates(books)" :id="'publishedDates'" :label="'Published Dates'"/>
         </vs-col>
       </vs-row>
 
+      <br /> <br />
+
       <vs-row>
         <vs-col vs-type="flex" vs-justify="center" vs-align="center" w="6">
           <h2 class="title">Categories</h2>
-          <p class="subtitle">Displaying all categories in your Library</p>
-          <doughnut-chart :inputData="getCategoryFrequencies(books)" :id="'categoryFrequencies'" :displayLegend="false"/>
+          <p class="subtitle">Displaying category frqeuencies in your Library</p>
+          <doughnut-chart :inputData="getCategoryFrequencies()" :id="'categoryFrequencies'" :displayLegend="false"/>
         </vs-col>
 
         <vs-col vs-type="flex" vs-justify="center" vs-align="center" w="6">
@@ -34,7 +37,9 @@
           <bar-chart :inputData="getAdditionDates(books)" :id="'libAdditions'" :label="'Library Additions'" />
         </vs-col>
       </vs-row>
+      
     </div>
+
     <div v-else class="grid has-text-centered">
       <p class="subtitle"> No books in Library, statistics unavailable </p>
     </div>
@@ -54,14 +59,14 @@ export default {
   name: "Statistics",
 
   components: {
-    "pie-chart": PieChart,
+    "doughnut-chart": DoughnutChart,
     "line-chart": LineChart,
+    "pie-chart": PieChart,
     "bar-chart": BarChart,
-    "doughnut-chart": DoughnutChart
   },
 
   computed: {
-    ...mapGetters(["books", "theme", "accent"]),
+    ...mapGetters(["books", "theme", "accent", "categories", "booksFromCategory"]),
   },
 
   methods: {
@@ -75,65 +80,37 @@ export default {
 
     getReadStats(books) { // returns map of read and unread book quantities
       return {
-        "Read": this.getReadCount(books),
-        "Reading": this.getReadingCount(books),
-        "Unread": this.getUnreadCount(books)
+        "Unread": this.getReadStatusCount(books, 0),
+        "Reading": this.getReadStatusCount(books, 1),
+        "Read": this.getReadStatusCount(books, 2)
       }
     },
 
     getAdditionDates(books) { // returns map of the dates on which books where added, adding up any books that share a common addition date
       const dates = books.map(book => book.dateAdded).sort()
       const frequencies = {}
-      dates.forEach(dates => {
-        if (frequencies[dates]) frequencies[dates]++
-        else frequencies[dates] = 1
-      })
+      dates.forEach(dates => frequencies[dates] ? frequencies[dates]++ : frequencies[dates] = 1 )
       return frequencies
     },
 
     getPublishedDates(books) { // returns map of the dates on which books where published, adding up any books that share a common publication date
       const dates = books.filter(book => book.publishedDate).map(book => book.publishedDate.split("-")[0]).sort()
       const frequencies = {}
-      dates.forEach(dates => {
-        if (frequencies[dates]) frequencies[dates]++
-        else frequencies[dates] = 1
-      })
+      dates.forEach(dates => frequencies[dates] ? frequencies[dates]++ : frequencies[dates] = 1 )
       return frequencies
     },
 
-    getUnreadCount(books) {
-      const read = books.filter(book => book.readStatus === 0)
+    getReadStatusCount(books, readStats) {
+      const read = books.filter(book => book.readStatus === readStats)
       return Object.keys(read).length
     },
 
-    getReadingCount(books) {
-      const read = books.filter(book => book.readStatus === 1)
-      return Object.keys(read).length
-    },
-
-    getReadCount(books) {
-      const read = books.filter(book => book.readStatus === 2)
-      return Object.keys(read).length
-    },
-
-    getCategoryFrequencies(books) { // returns map of all categories listed in the Library books, and their frequencies 
-      const categories = []
-      books.forEach(book => {
-        if (!book.categories) return
-        book.categories.forEach(category => categories.push(category))
-      })
+    getCategoryFrequencies() { // returns map of all categories listed in the Library books, and their frequencies 
       const frequencies = {}
-      categories.forEach(category => {
-        if (frequencies[category]) frequencies[category]++
-        else frequencies[category] = 1
-      })
+      this.categories.map(i => frequencies[i] = this.booksFromCategory(i).length)
       return frequencies
     }
   }
 
 }
 </script>
-
-<style scoped>
-.vs-row { margin-bottom: 2em; }
-</style>

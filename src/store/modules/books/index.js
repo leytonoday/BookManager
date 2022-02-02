@@ -105,6 +105,7 @@ const getters = {
   responseStatus: state => state.responseStatus,
   loading: state => state.loading,
   bookFromId: state => id => state.books.find(book => book.id === id),
+  unreadCount: state => state.books.filter(book => book.readStatus === 0).length,
   booksFromCategory: state => givenCategory => {
     if (givenCategory === "all") 
       return state.books

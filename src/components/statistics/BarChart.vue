@@ -10,7 +10,7 @@ import randomColor    from "randomcolor"
 import Chart          from "chart.js"
 
 export default {
-  name: "BarCHart",
+  name: "BarChart",
 
   props: {
     inputData: {
@@ -24,8 +24,7 @@ export default {
     label: {
       type: String,
       required: true
-    },
-    colour: String
+    }
   },
 
   computed: {

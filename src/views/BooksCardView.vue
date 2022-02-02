@@ -1,10 +1,12 @@
 <template>
-  <div class="root" :key="rerenderKey">
-    <vs-button v-if="category !== 'all'" gradient style="position: absolute;" @click="$router.back()">
+  <div class="root">
+    <vs-button v-if="category !== 'all'" id="backButton" gradient @click="$router.back()">
       <i class="fas fa-arrow-left" style="margin-right: 0.5em;"></i> Back
     </vs-button>
-    <h1 class="title has-text-centered">{{category !== "all" ? category + " ": ""}}Library</h1>
+
+    <h1 class="title has-text-centered">{{ category !== "all" ? category + " ": "" }}Library</h1>
     <h2 class="subtitle has-text-centered">View your Library in card format</h2>
+
     <p class="subtitle has-text-centered" v-if="!books.length">No books have been added</p>
 
     <div v-if="uncategorisedBooks().length">
@@ -18,9 +20,9 @@
       <br/>
     </div>
 
-    <div v-if="books.length" style="text-align: center">
-      <div class="radioFilter" style="display: inline-block;">
-        <vs-radio v-model="radioFilterValue" val="3">
+    <div v-if="books.length">
+      <div class="radioFilter">
+        <vs-radio v-model="radioFilterValue" val="all">
           All 
         </vs-radio>
         <vs-radio v-model="radioFilterValue" val="2">
@@ -52,6 +54,7 @@
         <book-list-item :book="book" />
       </stack-item>
     </stack>
+    
   </div>
 </template>
 
@@ -82,9 +85,8 @@ export default {
     return {
       search: "",
       dialogActive: false,
-      rerenderKey: 0,
       filteredBooks: [], // This is for the user to change between displaying the read books, unread books or both 
-      radioFilterValue: "3", // all books
+      radioFilterValue: "all", // all books
     }
   },
 
@@ -110,26 +112,17 @@ export default {
 
   methods: {
     filterBooks(filter) {
-      switch (filter) {
-        case "0":
-          this.filteredBooks = this.booksFromCategory(this.category).filter(book => book.readStatus === 0) // unread
-          break;
-        case "1":
-          this.filteredBooks = this.booksFromCategory(this.category).filter(book => book.readStatus === 1) // reading
-          break;
-        case "2": 
-          this.filteredBooks = this.booksFromCategory(this.category).filter(book => book.readStatus === 2) // read
-          break;
-        case "3": 
-          this.filteredBooks = this.booksFromCategory(this.category) // all books
-          break;
-      }
+      if (filter === "all")
+        this.filteredBooks = this.booksFromCategory(this.category) 
+      else
+        this.filteredBooks = this.booksFromCategory(this.category).filter(book => book.readStatus === parseInt(filter))
     },
     uncategorisedBooks() {
       const uncategorised = []
-      for(const book of this.books) 
+      this.books.forEach(book => {
         if (!book.categories.length)
           uncategorised.push(`${book.title} (${book.isbn})`)
+      })
       return uncategorised.join(", ")
     }
   }
@@ -137,8 +130,19 @@ export default {
 </script>
 
 <style scoped>
-.vs-input-parent >>> .vs-input { width: 100%; }
-.radioFilter { text-align: center; }
-.radioFilter >>> .vs-radio-content { display: inline-block; }
-.vs-radio-content >>> .vs-radio { float: left; margin-left: 1em;}
+.vs-input-parent >>> .vs-input { 
+  width: 100%; 
+}
+.radioFilter { 
+  text-align: center; 
+}
+.radioFilter >>> .vs-radio-content { 
+  display: inline-block; 
+}
+.vs-radio-content >>> .vs-radio { 
+  float: left; margin-left: 1em;
+}
+#backButton {
+  position: absolute;
+}
 </style>

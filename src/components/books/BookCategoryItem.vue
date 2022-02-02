@@ -1,38 +1,33 @@
 <template>
-  <div class="container">
-    <vs-card :style="themeStyle" @click="$router.push(`/bookscardview/${categoryName}`)" :vs-theme="theme.name" type="1"> 
+  <vs-card :style="themeStyle" @click="$router.push(`/bookscardview/${getCategory()}`)" :vs-theme="theme.name" type="1"> 
 
-      <template #img>
-        <img :src="categoryBookImage" alt="">
-      </template>
+    <template #img>
+      <img :src="getCategoryImage()" alt="">
+    </template>
 
-      <template #title>
-        <h3>{{ categoryName }}</h3>
-      </template>
+    <template #title>
+      <h3>{{ getCategory() }}</h3>
+    </template>
 
-      <template #text> <!-- This empty template must be here. Vuesax is fucked. If it isn't here, the #title template won't render -->
-        <p></p>
-      </template>
+    <template #text> <!-- This empty template must be here. Vuesax is fucked. If it isn't here, the #title template won't render -->
+      <p></p>
+    </template>
 
-      <template #interactions>
-        <vs-button class="btn-chat" shadow primary>
-          <i class='bx bx-chat' ></i>
-          <span class="span" :style="{ color: theme.text }">{{ categoryCount }}</span>
-        </vs-button>
-      </template>
+    <template #interactions>
+      <vs-button class="btn-chat" shadow primary>
+        <i class='bx bx-chat' ></i>
+        <span class="span" :style="{ color: theme.text }">{{ getCategoryBookCount() }}</span>
+      </vs-button>
+    </template>
 
-    </vs-card>
-  </div>
+  </vs-card>
 </template>
 
 <script>
 "use strict"
 
-import { mapGetters, mapActions } from "vuex"
-
-function randomArrayItem(array) {
-  return array[Math.floor(Math.random() * array.length)]
-}
+import { truncate, randomArrayItem }  from "../../utils/utils.js"
+import { mapGetters }                 from "vuex"
 
 export default {
   name: "BookCategoryItem",
@@ -47,42 +42,34 @@ export default {
     category: {
       type: String,
       required: true
-    },
-    categoryCount: {
-      type: Number,
-      required: true
     }
   },
 
   computed: {
-    ...mapGetters(["theme", "accent", "books", "booksFromCategory"]),
+    ...mapGetters(["theme", "books", "booksFromCategory"]),
     themeStyle() {
       return {
         "--boxShadowOpacity": this.theme === "dark" ? 0.2 : 0.4
       }
     },
-    categoryName() {
+  },
+
+  methods: {
+    getCategory() {
       if (this.category.length > this.TEXT_LENGTH_LIMIT) 
-        return this.truncate(this.category)
-      else 
+        return truncate(this.category, this.TEXT_LENGTH_LIMIT)
+      else
         return this.category
     },
-    categoryBookImage() {
-      const booksInCategory = this.booksFromCategory(this.category)
-      return this.bookImage(randomArrayItem(booksInCategory))
-    }
-  },
-  
-  methods: {
-    ...mapActions(["deleteBook"]),
-    truncate(input) {
-      return input.substring(0, this.TEXT_LENGTH_LIMIT) + "..."
+    getCategoryImage() {
+      const randomBookInCategory = randomArrayItem(this.booksFromCategory(this.category))
+      return randomBookInCategory.frontCover
     },
-    bookImage(book) {
-      return book.frontCover
+    getCategoryBookCount() {
+      return this.booksFromCategory(this.category).length
     }
   }
-};
+}
 </script>
 
 <style scoped>
@@ -93,6 +80,7 @@ export default {
   transform: scale(1.1); 
 }
 .vs-card-content >>> .vs-card {
+  margin: 0 auto 0 auto;
   box-shadow: 0px 0px 17px 3px rgba(0,0,0, var(--boxShadowOpacity));
 }
 </style>

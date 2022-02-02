@@ -11,8 +11,7 @@
         <template #off> Dark </template>
         <template #on> Light </template>
         <template #circle>
-          <i v-if="!themeChoice" class="fas fa-moon" ></i>
-          <i v-else class="fas fa-sun" ></i>
+          <i :class="themeChoice ? 'fas fa-sun' : 'fas fa-moon'" />
         </template>
       </vs-switch>
 
@@ -30,15 +29,16 @@
     <div class="has-text-centered settingsBox" style="float: right">
       <h2 class="title">Import / Export Books</h2>
       <p class="subtitle">Must be exported and imported as .json</p>
-      <vs-button gradient class="centre" size="large" @click="exportBooks()">
-        Export Books
-        <template #animate ><i class="fas fa-file-export"></i></template>
-      </vs-button>
-      <vs-button gradient style="margin-top:1em" class="centre" size="large" @click="importBooks()">
-        Import Books
-        <template #animate ><i class="fas fa-file-import"></i></template>
-      </vs-button>
-
+      <div class="importExport">
+        <vs-button gradient class="centre" size="large" @click="importBooks">
+          Import Books
+          <template #animate ><i class="fas fa-file-import" /></template>
+        </vs-button>
+        <vs-button :disabled="!books.length" gradient class="centre" size="large" @click="exportBooks">
+          Export Books
+          <template #animate ><i class="fas fa-file-export" /></template>
+        </vs-button>
+      </div>
       <br />
 
       <h2 class="title">Unread Books Limit</h2>
@@ -52,13 +52,9 @@
         <template #off> Right </template>
         <template #on> Left </template>
         <template #circle>
-          <i v-if="!sidebarPositionChoice" class="fas fa-arrow-right" ></i>
-          <i v-else class="fas fa-arrow-left" ></i>
+          <i :class="sidebarPositionChoice ? 'fas fa-arrow-left' : 'fas fa-arrow-right'" />
         </template>
       </vs-switch>
-
-      <br />
-
 
     </div>
   </div>
@@ -68,7 +64,7 @@
 "use strict"
 
 import { notify, processResponseStatus }  from "../utils/utils"
-import { mapGetters }                     from "vuex"
+import { mapGetters, mapActions }         from "vuex"
 import { Chrome }                         from "vue-color"
 
 export default {
@@ -80,10 +76,10 @@ export default {
 
   data() {
     return {
-      themeChoice: null, // false = dark, true = light. Linked to the switch in the markup
-      accentColour: this.$store.getters.accent,
-      sidebarPositionChoice: null, // true = left, false = right
-      unreadLimit: ""
+      sidebarPositionChoice: this.$store.getters.sidebarPosition === "left", // true = left, false = right
+      themeChoice: this.$store.getters.theme.name !== "dark", // true = light, false = dark
+      unreadLimit: this.$store.getters.unreadLimit,
+      accentColour: this.$store.getters.accent
     }
   },
 
@@ -92,81 +88,86 @@ export default {
   },
 
   watch: {
-    themeChoice() { this.$store.dispatch("setTheme", this.themeChoice ? "light": "dark") }, // If the theme switch is changed, alert the store 
-    accentColour(newAccent) { this.$store.dispatch("setAccent", newAccent.hex) }, // When accent colour is changed, alert the store
-    responseStatus(newValue) { processResponseStatus(this, newValue) }, // This runs whenever the responseStatus changes. In Settings.vue, this happens when importing books
-    sidebarPositionChoice() { this.$store.dispatch("setSidebarPosition", this.sidebarPositionChoice ? "left": "right") } // When the sidebar position is changed, alert the store
+    themeChoice(newValue) { 
+      this.setTheme(newValue ? "light": "dark") 
+    },
+    accentColour(newValue) { 
+      this.setAccent(newValue.hex)
+    },
+    sidebarPositionChoice(newValue) { 
+      this.setSidebarPosition(newValue ? "left": "right") 
+    },
+    responseStatus(newValue) { // Used when importing books to indicate success or failure
+      processResponseStatus(this, newValue) 
+    }
   },
 
-  mounted() {
-    this.themeChoice = this.theme.name === "dark" ? false: true
-    this.sidebarPositionChoice = this.sidebarPosition === "left" ? true : false
-    this.unreadLimit = this.$store.getters.unreadLimit
-  },
-  
   methods: {
+    ...mapActions(["setTheme", "setAccent", "setSidebarPosition", "addBook", "resetAccent", "setUnreadLimit"]),
     exportBooks() {
-      if (!this.books.length) return notify(this, "Export Failure", `There are no books to export`, "danger")
       const link = document.createElement("a")
       link.href=`data:text/plain;charset=UTF-8,${escape((JSON.stringify(this.books)))}`
-      link.download = "books.json"
+      link.download = "book-manager-books.json"
       link.click()
       notify(this, "Export Success", `${this.books.length} have been exported`, "success")
     },
-    checkBooksAlreadyInLibrary(book) {
-      if (this.books.find(i => i.title === book.title)) {
-        notify(this, "Input Error", "A book with this title has already been added.", "warning")
-        return true
-      }
-      if (book.isbn && this.books.find(i => i.isbn === book.isbn)){
-        notify(this, "Input Error", "A book with this ISBN has already been added.", "warning")
-        return true
-      }
-      return false
-    },
     importBooks() {
-      let input = document.createElement("input")
+      const input = document.createElement("input")
       input.type = "file"
+
       input.onchange = () => {
-        let file = Array.from(input.files)[0]
+        const file = Array.from(input.files)[0]
         const reader = new FileReader()
+
         reader.onload = () => {
-          if (!reader.result) return notify(this, "Import Failure", "No data in given file", "danger")
+          if (!reader.result) 
+            return notify(this, "Import Failure", "No data in given file", "danger")
           try {
               const importedBooks = JSON.parse(reader.result)
-              for (let book of importedBooks) {
-                  this.$store.dispatch("addBook", { method: "import", input: book })
-              }
-          } catch (e) {
+              for (const book of importedBooks) 
+                  this.addBook({ method: "import", input: book })
+          } catch {
             notify(this, "Import Failure", "Could not parse books from the given file", "danger")
             return
           }
-
         }
+
         reader.readAsText(file)
       }
       input.click()
     },
     resetAccent() { 
-      this.$store.dispatch("resetAccent") 
+      this.resetAccent() 
     },
     handleUnreadLimitInput(input) {
-      if(Number.isNaN(parseInt(input)))
-        this.unreadLimit = ""
+      if(Number.isNaN(input))
+        this.unreadLimit = null
       else 
-        this.unreadLimit = parseInt(input) < 0 ? 0: parseInt(input)
-      this.$store.dispatch("setUnreadLimit", this.unreadLimit)
+        this.unreadLimit = input < 0 ? 0: input
+      this.setUnreadLimit(this.unreadLimit)
     }
   }
-};
+}
 </script>
 
 <style scoped>
 /* Settings box css */
-.settingsBox { width: 50%; }
+.settingsBox { 
+  width: 50%; 
+}
+
+.importExport {
+  width: 60%;
+  margin: 0 auto 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
 
 /* Color picker css and media queries */
-.vc-chrome >>> .vc-chrome-body { background: var(--themeBackground); }
+.vc-chrome >>> .vc-chrome-body { 
+  background: var(--themeBackground); 
+}
 @media screen and (max-width: 1500px) {
   .vc-chrome { width: 40%; }
 }
@@ -183,7 +184,6 @@ export default {
 }
 .vs-input-parent {
   width: 7em;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 auto 0 auto;
 }
 </style>

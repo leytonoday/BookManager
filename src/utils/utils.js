@@ -1,3 +1,5 @@
+const crypto = require("crypto")
+
 const self = module.exports = {
   notify(that, title, text, colour) { // send notification to the user 
     const colourToIcon = {
@@ -9,6 +11,8 @@ const self = module.exports = {
   },
   // Notifies the user with the appropriate message from the response status sent back from server
   processResponseStatus(that, responseStatus) {
+    if (!responseStatus)
+      return
     switch (responseStatus) {
       case 200: 
         self.notify(that, "Success", "Your book has been added.", "success")
@@ -25,5 +29,15 @@ const self = module.exports = {
       default:
         self.notify(that, "Unknown Response", "The server has returned an unknown response status", "danger")
     }
+    that.$store.dispatch("setResponseStatus", null)
+  },
+  truncate(input, limit) {
+    return input.substring(0, limit) + "..."
+  },
+  randomArrayItem(array) {
+    return array[Math.floor(Math.random() * array.length)]
+  },
+  createHash(input) {
+    return crypto.createHash("md5").update(input).digest("hex")
   }
 }

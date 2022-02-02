@@ -34,7 +34,7 @@ class Book {
     this.publishedDate = formatDate(Date.parse(this.publishedDate))
   }
   async setFrontCover() {
-    this.frontCover = await getFrontCover(this.industryIdentifiers[0].identifier, this.id)
+    this.frontCover = await getFrontCover(this.industryIdentifiers ? this.industryIdentifiers[0].identifier : this.title, this.id)
   }
 }
 

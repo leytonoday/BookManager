@@ -3,7 +3,7 @@
     <h1 class="title has-text-centered">Add Book Automatically</h1>
     <h2 class="subtitle has-text-centered">Input the book ISBN or a search query and we will attempt to add to your library automatically</h2>
 
-    <div v-if="unreadLimit && getUnreadCount() >= unreadLimit">
+    <div v-if="isUnreadLimitReached()">
       <vs-alert color="warn">
         <template #title>
           Notice: Unread Limit Reached
@@ -16,10 +16,12 @@
     <div class="container">
       <div class="center content-inputs">
         <form @submit="submitForm">
-          <vs-input id="vs-input" :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || loading || (searchQuery.length > 0)" border type="number" class="centre" primary :vs-theme="theme.name" label-placeholder="ISBN" v-model="isbn" />
-          <vs-input id="vs-input" :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || loading || (isbn.length > 0)" border type="search" style="margin-top: 3em"  class="centre" primary :vs-theme="theme.name" label-placeholder="Search" v-model="searchQuery" @input="searchInput"/>
+          <vs-input id="vs-input" :disabled="isUnreadLimitReached() || loading || (searchQuery.length > 0)" border type="number" class="centre" primary :vs-theme="theme.name" label-placeholder="ISBN" v-model="isbn" />
+          <br /> <br />
+          <vs-input id="vs-input" :disabled="isUnreadLimitReached() || loading || (isbn.length > 0)" border type="search" class="centre" primary :vs-theme="theme.name" label-placeholder="Search" v-model="searchQuery" @input="searchInput"/>
           
           <p v-if="loadingSearchResults">Loading results...</p>
+
           <vs-table v-model="selectedSearchResult" :vs-theme="theme.name" v-if="searchQuery.length && !loadingSearchResults" :key="searchQuery.length">
             <template #tbody>
               <vs-tr v-for="result, i in searchResults" :key="i" :data="result" :is-selected="selectedSearchResult == result">
@@ -29,10 +31,10 @@
                 <template #expand>
                   <div class="searchExpand">
                     <vs-avatar>
-                      <img :src="searchImage(result)">
+                      <img :src="getSearchBookFrontCover(result)">
                     </vs-avatar>
                     <p style="display: flex; align-items: center; margin: 0 1em 0 1em;">
-                      Author(s): {{result.volumeInfo.authors? authors(result.volumeInfo) : "N/A"}}, Published: {{result.volumeInfo.publishedDate || "N/A"}}, Identifier: {{getIdentifier(result.volumeInfo)}}
+                      Author(s): {{getAuthors(result.volumeInfo) || "N/A"}}, Published: {{result.volumeInfo.publishedDate || "N/A"}}, Identifier: {{getIdentifier(result.volumeInfo)}}
                     </p>
                     <vs-button type="button" :disabled="loading" :loading="loading" gradient @click="selectedSearchResult = result; submitForm($event)">
                       Add Book
@@ -47,7 +49,7 @@
           <br />
           
           <div class="parent">
-            <vs-button gradient :disabled="(unreadLimit && getUnreadCount() >= unreadLimit) || loading" :loading="loading" size="xl">
+            <vs-button gradient :disabled="isUnreadLimitReached() || loading" :loading="loading" size="xl">
               Add Book
               <template #animate ><i class="fas fa-paper-plane"></i></template>
             </vs-button>    
@@ -63,6 +65,7 @@
 
 import { notify, processResponseStatus }  from "../utils/utils"
 import { mapGetters }                     from "vuex"
+import { truncate }                       from "../utils/utils.js"
 import _                                  from "lodash"
 import axios                              from "axios"
 
@@ -76,11 +79,12 @@ export default {
       searchResults: [],
       selectedSearchResult: null,
       loadingSearchResults: false,
+      TEXT_LENGTH_LIMIT: 50
     }
   },
 
   computed: {
-    ...mapGetters(["responseStatus", "loading", "books", "theme", "unreadLimit"]),
+    ...mapGetters(["responseStatus", "loading", "theme", "unreadLimit", "unreadCount"]),
   },
 
   watch: {
@@ -89,28 +93,28 @@ export default {
     },
     searchQuery(newValue) {
       this.selectedSearchResult = null // we don't want the selection to linger when we change the search
-      if (!newValue) {
+      if (!newValue)
         this.searchResults = {}
-      }
     }
   },
 
   methods: {
      searchInput: _.debounce(async function(newValue) {
-      if (!newValue.length) return
+      if (!newValue.length) 
+        return
 
       this.loadingSearchResults = true 
-      const res = await axios.get(encodeURI(`https://www.googleapis.com/books/v1/volumes?q=${newValue.split().join("+")}&maxResults=5`))
+      const response = await axios.get(encodeURI(`https://www.googleapis.com/books/v1/volumes?q=${newValue.split().join("+")}&maxResults=5`))
       this.loadingSearchResults = false
-      this.searchResults = res.data.items
+
+      this.searchResults = response.data.items
     }, 200),
     addBook(method, input) {
       this.$store.dispatch("addBook", {method, input})
     },
     submitForm(event) {
       event.preventDefault()
-      if (this.books.find(book => !book.manual && (book.isbn === this.isbn))) 
-        return notify(this, "Input Error", "A book with this ISBN has already been added.", "warning")
+
       if (!this.isbn && !this.searchQuery) {
         this.clearInput()
         notify(this, "Input Error", "ISBN or search query required to add book", "warning")
@@ -127,28 +131,28 @@ export default {
       this.isbn = ""
       this.searchQuery = ""
     },
-    searchImage(result) {
+    getSearchBookFrontCover(result) {
       if (result.volumeInfo.imageLinks)
         return result.volumeInfo.imageLinks.smallThumbnail
       else
         return `https://books.google.com/books/content?id=${result.id}&printsec=frontcover&img=1&zoom=1edge=curl&source=gbs_api`
-      // this else also covers the case in which there is no image. It will provide an "image not available" substitute
     },
-    authors(book) {
-      if (!book.authors) return
-      let authorsString = typeof book.authors === "string" ? book.authors : book.authors.join(", ") 
-      let lengthLimit = 50
-      if (authorsString.length > lengthLimit) 
-        return authorsString.substring(0, lengthLimit) + "..."
+    getAuthors(book) {
+      if (!book.authors) 
+        return
+      
+      const authors = book.authors.join(", ") 
+      if (authors.length > this.TEXT_LENGTH_LIMIT) 
+        return truncate(authors, this.TEXT_LENGTH_LIMIT)
       else
-        return authorsString
-    },
-    getUnreadCount() {
-      return this.books.filter(i => i.readStatus === 0).length
+        return authors
     },
     getIdentifier(volumeInfo) {
       return volumeInfo.industryIdentifiers ? volumeInfo.industryIdentifiers[0].identifier : "N/A"
     },
+    isUnreadLimitReached() {
+      return this.unreadLimit && (this.unreadCount >= this.unreadLimit)
+    }
   }
 }
 </script>
@@ -159,9 +163,7 @@ export default {
 }
 .parent {
   display: flex;
-  flex-flow: column nowrap;
   justify-content: center;
-  align-items: center;
 }
 .searchExpand {
   display: flex;

@@ -8,9 +8,6 @@
       your favourite books and track your reading progress! </p>
 
     <br />
-
-
-
   </div>
 </template>
 

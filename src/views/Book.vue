@@ -5,8 +5,8 @@
         <i class="fas fa-arrow-left" style="margin-right: 0.5em;"></i> Back
       </vs-button>
 
-      <h1 class="title has-text-centered">{{ this.book.title }}</h1>
-      <h2 class="subtitle has-text-centered" v-if="book.subtitle">{{ this.book.subtitle }}</h2>
+      <h1 class="title has-text-centered">{{ book.title }}</h1>
+      <h2 class="subtitle has-text-centered" v-if="book.subtitle">{{ book.subtitle }}</h2>
 
       <div v-if="!bookCategories.length">
         <vs-alert color="warn">
@@ -21,7 +21,7 @@
       <div class="bookFrontCoverSide">
         <div class="bookFrontCoverContainer">
           <img class="bookFrontCover" slot="image" :src="bookFrontCover" />
-          <vs-input style="width: 50%" class="bookFrontCoverInput" :vs-theme="theme.name" border label-placeholder="Front Cover URL" v-model="bookFrontCoverURL"/>
+          <vs-input class="bookFrontCoverInput" :vs-theme="theme.name" border label-placeholder="Front Cover URL" v-model="bookFrontCover"/>
         </div>
       </div>
 
@@ -60,9 +60,7 @@
 
         <div v-if="book.authors" class="infoBox">
           <h2>Author(s):</h2>
-          <p> 
-            {{ this.book.authors.join(", ") }}
-          </p>
+          <p>{{ book.authors.join(", ") }}</p>
         </div>
 
         <div v-if="book.description" class="infoBox">
@@ -77,11 +75,12 @@
 
         <div class="infoBox">
           <h2>Categories:</h2>
-          <vs-select :key="categorySelectKey" placeholder="Categories" class="categoriesSelect" :vs-theme="theme.name" multiple filter v-model="bookCategories">
+          <vs-select v-if="categories.length" :key="categorySelectKey" placeholder="Categories" class="categoriesSelect" :vs-theme="theme.name" multiple filter v-model="bookCategories">
             <vs-option v-for="category in categories" :key="category" :label="category" :value="category" :vs-theme="theme.name">
               {{category}}
             </vs-option>
           </vs-select>
+          <p v-else>No available categories. Add below</p>
         </div>
         <form style="display: flex; flex-direction: row;" @submit="addNewCategory()">
           <vs-input style="width: 26.5em;" placeholder="New Category" border :vs-theme="theme.name" primary v-model="newCategory" />
@@ -103,9 +102,8 @@
           <p>{{ book.averageRating + " / 5" }}</p>
         </div>
 
-        <div v-if="identifiers.length">
-          <div v-for="identifier in identifiers" :key="identifier.identifier" class="infoBox">
-            
+        <div v-if="getIdentifiers()">
+          <div v-for="identifier in getIdentifiers()" :key="identifier.identifier" class="infoBox">
             <h2>{{ identifier.type.replace("_", " ") }}</h2>
             <p>{{ identifier.identifier }}</p>
           </div>
@@ -124,7 +122,6 @@
         <div class="infoBox">
           <h2>Book ID:</h2>
           <p>{{ book.id }}</p>
-          <!-- no v-if here, this will always be available -->
         </div>
       </div>
     </div>
@@ -164,12 +161,12 @@
 <script>
 "use strict"
 
-import { ipcRenderer }        from "electron"
-import { mapGetters }         from "vuex"
-import { VueEditor }          from "vue2-editor"
-import { notify }             from "../utils/utils"
-import StarRating             from 'vue-star-rating'
-import router                 from "../router"
+import { mapGetters, mapActions } from "vuex"
+import { ipcRenderer }            from "electron"
+import { VueEditor }              from "vue2-editor"
+import { notify }                 from "../utils/utils"
+import StarRating                 from 'vue-star-rating'
+import router                     from "../router"
 
 export default {
   name: "Book",
@@ -191,7 +188,7 @@ export default {
       readStatus: 0,
       dialogActive: false,
       editorContent: "",
-      rating: null, // init value
+      rating: null,
       customtToolbar: [
         ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
         ['blockquote', 'code-block'],
@@ -221,9 +218,6 @@ export default {
     book() {
       return this.$store.getters.bookFromId(this.id)
     },
-    bookFrontCover() {
-      return this.book.frontCover
-    },
     themeStyle() {
       return {
         "--themeBackground": this.theme.background,
@@ -236,14 +230,9 @@ export default {
         "--bookmarkColour" : this.bookmark ? this.accent : ""
       }
     },
-    identifiers() {
-      if (this.book.manual)
-        return [{ type: "ISBN",  identifier: this.book.isbn }]
-      return this.book.industryIdentifiers;
-    },
     pageCount: {
       set(newValue) {
-        this.$store.dispatch("setBookProperty", {id: this.book.id, pageCount: newValue})
+        this.setBookProperty({ id: this.book.id, pageCount: newValue })
       },
       get() {
         return this.book.pageCount
@@ -251,7 +240,7 @@ export default {
     },
     bookCategories: {
       set(newValue) {
-        this.$store.dispatch("setBookProperty", {id: this.book.id, categories: newValue})
+        this.setBookProperty({ id: this.book.id, categories: newValue })
       },
       get() {
         return this.book.categories || []
@@ -259,23 +248,23 @@ export default {
     },
     bookmark: {
       set(newValue) {
-        this.$store.dispatch("setBookProperty", {id: this.book.id, bookmark: newValue})
+        this.setBookProperty({ id: this.book.id, bookmark: newValue })
       },
       get() {
         return this.book.bookmark || null
       }
     },
-    bookFrontCoverURL: {
+    bookFrontCover: {
       async set(newValue) {
         if (newValue === "") 
           notify(this, "Input Error", "URL cannot be empty", "warning")
         else if (!(await this.isImageURLValid(newValue))) 
           notify(this, "Input Error", "URL must be to a valid image", "warning")
         else 
-          this.$store.dispatch("setBookProperty", {id: this.book.id, frontCover: newValue})
+          this.setBookProperty({ id: this.book.id, frontCover: newValue })
       },
       get() {
-        return this.bookFrontCover
+        return this.book.frontCover
       }
     }
   },
@@ -309,17 +298,20 @@ export default {
 
   watch: {
     rating(newRating) {
-      this.$store.dispatch("setBookProperty", { id: this.book.id, rating: newRating})
+      this.setBookProperty({ id: this.book.id, rating: newRating })
     },
     readStatus(newStatus) {
-      this.$store.dispatch("setBookProperty", {
-        id: this.book.id,
-        readStatus: newStatus,
-      })
+      this.setBookProperty({ id: this.book.id, readStatus: newStatus })
     },
   },
 
   methods: {
+    ...mapActions(["setBookProperty"]),
+    getIdentifiers() {
+      if (this.book.manual)
+        return [{ type: "ISBN",  identifier: this.book.identifier }]
+      return this.book.industryIdentifiers;
+    },
     clearRating() {
       this.rating = undefined
     },
@@ -348,7 +340,7 @@ export default {
       if (this.newCategory === "" || this.bookCategories.includes(this.newCategory)) 
         return
       this.bookCategories.push(this.newCategory)
-      this.$store.dispatch("setCategories", {id: this.book.id, categories: this.bookCategories})
+      this.$store.dispatch("setBookProperty", {id: this.book.id, categories: this.bookCategories})
       this.newCategory = ""
 
       this.categorySelectKey++ // refreshes the select, updating the list of visible categories. 
@@ -469,6 +461,7 @@ export default {
   opacity: 0.5;
 }
 .bookFrontCoverInput {
+  width: 50% !important;
   position: absolute;
   top: 50%;
   left: 50%;

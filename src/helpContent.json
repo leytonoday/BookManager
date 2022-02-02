@@ -1,0 +1,68 @@
+{
+  "Adding a Book": [
+    {
+      "body": "This is how you populate your Library, and begin recording your reading progress."
+    },
+    {
+      "head": "Automatic Addition",
+      "body": "You can access automatic addition by going to Add Book -> Auto Addition in the sidebar. There, you can input either a search query or an ISBN (International Standard Book Number), and the Book Manager will add the book automatically. If you want a specific book, use the ISBN. But if you just want to search generally, you can use the search bar, where you can search for the book title, author, year of publication, etc. and the search results will load to assist you in the addition process. Note however, that some older books may not have their ISBNs registered with the Google books API, therefore the Book Manager will be unable to add them. In such a case, simply search for the ISBN of a newer edition, and use that instead. Then click Submit, and the book will be added to your Library!"
+    },
+    {
+      "head": "Manual Addition",
+      "body": "You can access the manual addition by going to Add Book -> Manual Addition in the sidebar. In the event that the automatic book insertion doesn't work (in the case of an obscure book, or even your own) this is the option you need. Here, you will input all the information about your desired book. Then click Submit, and the book will be added to your Library!"
+    }
+  ],
+  "Settings": [
+    {
+      "body": "The settings can be accessed by going to Settings in the sidebar. This offers simple customization of the application, as well as the importing / exporting of books.      "
+    },
+    {
+      "head": "Customization",
+      "body": "You can toggle between a light theme and a dark theme! Although, dark mode is superior ;>3. You can also change the accent colour of the application using the built-in colour picker. If you grow tiresome of your accent choice, you can always just reset to the default, which is a lovely light green. The position of the sidebar can be set to the left or the right."
+    },
+    {
+      "head": "User Limitations",
+      "body": "To ensure productivity and prevent an infinitely growing list of unread books, you can set a limit of unread books in your Library."
+    },
+    {
+      "head": "Importing & Exporting",
+      "body": "If you want to share your Library with others, you could export your books by clicking the Export button; this will export your books into a JSON file. If you are on the receiving end of this book JSON file, you only have to click import, and upload the file! Easy peasy."
+    }
+  ],
+  "Statistics": [
+    {
+      "body": "You can access Statistics by going to Statistics in the Sidebar. Here, you can see a summary of the most important data regarding your Library. You can analyze your reading habbits, and ensure you are on track with your desired reading pace."
+    }
+  ],
+  "Your Library": [
+    {
+      "body": "Your Library is where all your books are stored. Here, you can manage, track, and make notes on all the books you have stored. To mark your book as read, reading or unread, you can simply change the option on the Book page using the select menu. You can also add your own bookmarks, and personal review using the start system."
+    },
+    {
+      "head": "Card View",
+      "body": "You can access the Card View by going to Library -> Card View. Here, books are displayed as simple cards, showing the book cover and author name. This a simple and clean design in which view your Library."
+    },
+    {
+      "head": "Category View",
+      "body": "You can access the Category View by going to Library -> Category View. Here, the categories of all books are displayed so you can more easily browse your library."
+    },
+    {
+      "head": "Tabular View",
+      "body": "You can access the Tabular View by going to Library -> Tabular View. This is for a more practical view of your libary. From here, you can operate on your books in mass, as opposed to individually. You can sort, search, and traverse your Library easily using this feature!"
+    },
+    {
+      "head": "Customization",
+      "body": "To change a books front cover, hover over the image on the Book View and enter a new URL in the input. To change the page count, simply change the value in the text box and it will be saved. To chagne the categories of a book or to add new categories, use the select menu on the Book View."
+    }
+  ],
+  "Shortcuts": [
+    {
+      "body": "Control + Alt + Left Arrow to go backwards a page. Control + Alt + Right Arrow to go forwards a page"
+    }
+  ],
+  "Author": [
+    {
+      "body": "This program was written by Leyton O'Day. Github - https://github.com/leytonoday. Email - leytonodayabc123@gmail.com"
+    }
+  ]
+}
