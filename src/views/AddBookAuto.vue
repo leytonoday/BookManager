@@ -115,6 +115,12 @@ export default {
     submitForm(event) {
       event.preventDefault()
 
+      if (!this.searchResults) {
+        this.clearInput()
+        notify(this, "Input Error", "No search results", "warning")
+        return
+      }
+
       if (!this.isbn && !this.searchQuery) {
         this.clearInput()
         notify(this, "Input Error", "ISBN or search query required to add book", "warning")

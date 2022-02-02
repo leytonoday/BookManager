@@ -136,9 +136,6 @@ export default {
       }
       input.click()
     },
-    resetAccent() { 
-      this.resetAccent() 
-    },
     handleUnreadLimitInput(input) {
       if(Number.isNaN(input))
         this.unreadLimit = null

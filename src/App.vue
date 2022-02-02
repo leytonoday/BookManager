@@ -73,6 +73,7 @@ export default {
       this.$store.dispatch("loadBooks")
       this.$store.dispatch("loadTheme")
       this.$store.dispatch("loadSettings")
+      this.$store.dispatch("loadMiscData")
     },
     setShortcuts() {
       document.addEventListener("keydown", event => 

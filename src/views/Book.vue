@@ -84,7 +84,7 @@
         </div>
         <form style="display: flex; flex-direction: row;" @submit="addNewCategory()">
           <vs-input style="width: 26.5em;" placeholder="New Category" border :vs-theme="theme.name" primary v-model="newCategory" />
-          <vs-button gradient primary @click="addNewCategory">Add</vs-button>
+          <vs-button gradient primary>Add</vs-button>
         </form>
 
         <div v-if="book.publishedDate" class="infoBox">
@@ -281,9 +281,10 @@ export default {
         ipcRenderer.send("precloseComplete")
       }
     })
-    this.setNotesCheck()
 
+    this.setNotesCheck()
     this.setSelectClickHandler()
+    this.setLastBookOpenedId(this.book.id)
   },
 
   beforeRouteLeave(to, from, next) {
@@ -306,7 +307,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(["setBookProperty"]),
+    ...mapActions(["setBookProperty", "setLastBookOpenedId"]),
     getIdentifiers() {
       if (this.book.manual)
         return [{ type: "ISBN",  identifier: this.book.identifier }]
@@ -339,6 +340,10 @@ export default {
     addNewCategory() {
       if (this.newCategory === "" || this.bookCategories.includes(this.newCategory)) 
         return
+      if (this.newCategory.length > 50) {
+        notify(this, "Input Error", "Category name cannot exceed 50 characters", "warning")
+        return
+      }
       this.bookCategories.push(this.newCategory)
       this.$store.dispatch("setBookProperty", {id: this.book.id, categories: this.bookCategories})
       this.newCategory = ""
