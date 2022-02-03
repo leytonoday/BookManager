@@ -6,17 +6,47 @@
 
     <br />
 
+    <div class="nav">
+      <vs-button-group>
+        <vs-button to="/bookscardview/all" size="xl">
+          <i class="fas fa-images" style="margin-right: 1em;"></i>
+          Card View
+        </vs-button>
+        <vs-button to="/bookscategoryview" size="xl">
+          <i class="fas fa-tags" style="margin-right: 1em;"></i>
+          Category View
+        </vs-button>
+        <vs-button to="/bookstableview" size="xl">
+          <i class="fas fa-table" style="margin-right: 1em;"></i>
+          Tabular View
+        </vs-button>
+        <vs-button to="/addbookauto" size="xl">
+          <i class="fas fa-magic" style="margin-right: 1em;"></i>
+          Auto Addition
+        </vs-button>
+        <vs-button to="/addbookmanual" size="xl">
+          <i class="fas fa-align-left" style="margin-right: 1em;"></i>
+          Manual Addition
+        </vs-button>
+        <vs-button to="/help" size="xl">
+          <i class="fas fa-question-circle" style="margin-right: 0.5em;"></i>
+          Help
+        </vs-button>
+      </vs-button-group>
+    </div>
+
     <div class="booksParent">
       <div v-if="lastBookOpened">
         <h2 class="title has-text-centered">Last Book Opened</h2>
         <book-list-item :book="lastBookOpened"/>
       </div>
 
-      <div>
+      <div v-if="lastBookAdded">
         <h2 class="title has-text-centered">Last Book Added</h2>
         <book-list-item :book="lastBookAdded"/>
       </div>
     </div>
+
   </div>
 </template>
 
@@ -24,7 +54,7 @@
 "use strict"
 
 import { mapGetters } from "vuex"
-import BookListItem from "../components/books/BookListItem"
+import BookListItem   from "../components/books/BookListItem"
 
 export default {
   name: "Home",
@@ -52,17 +82,15 @@ export default {
 </script>
 
 <style scoped>
-.instructions {
-  width: 50%; 
-  height: 50%;
-  box-sizing: border-box;
-  float: left;
-  padding: 1em;
-}
 .subtitle{
   margin-bottom: 0;
   color: var(--subtiteColour) !important;
 }
+
+.nav {
+  margin: 2em auto 3em auto;
+}
+
 .booksParent {
   display: flex;
   justify-content: space-evenly;
