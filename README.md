@@ -12,6 +12,8 @@ This application was written using Vue 2.0 rather than Vue 3.0. This is
 because I wanted to use a component library called Vuesax, however this does not support Vue 3.0 yet. The conversion to Vue 3.0
 is not a huge effort, so when Vuesax for Vue 3.0 is available, I shall convert the code over to Vue 3.0. 
 
+**Warning:** This requires Node.js version 15. For some god damn reason, Vue CLI Plugin Electron Builder breaks when using Node.js version 16; it simply doesn't build. I'm sure this issue will be resolved in the future.
+
 ## Features
 Features include:
 - Automatic addition of book data, just search the book name and pick from the search results, and click to see a preview! See figure 1
