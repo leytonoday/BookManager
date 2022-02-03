@@ -29,8 +29,8 @@
           Manual Addition
         </vs-button>
         <vs-button to="/help" size="xl">
-          <i class="fas fa-question-circle" style="margin-right: 0.5em;"></i>
-          Help
+          <i class="fas fa-question-circle" style="margin-right: 1em;"></i>
+          Seek Help
         </vs-button>
       </vs-button-group>
     </div>
