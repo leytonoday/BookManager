@@ -1,5 +1,7 @@
 # Book Manager
 
+Note: Currently under development, potential bugs
+
 The Book Manager is used to manage, track and note your reading progress during your academic endeavours. I created this program for 
 2 reasons:
 - To track my reading progress, because I prefer to read to learn programming concepts. 
