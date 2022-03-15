@@ -11,7 +11,7 @@ const booksRouter = express.Router()
   .use(express.urlencoded({ extended: true }))
 const store = new Store()
 const books = loadBooks()
-
+let groups = loadGroups()
 
 // Functions
 function loadBooks() {
@@ -29,10 +29,15 @@ function getBookFromId(id) {
 }
 function sendSuccessAndUpdateStore(res) {
   res.sendStatus(200)
-  updateStore()
+  updateBookStore()
 }
-function updateStore() {
+function updateBookStore() {
   store.set("books", books)
+}
+function loadGroups() {
+  if (!store.get("groups"))
+    store.set("groups", {})
+  return store.get("groups")
 }
 
 
@@ -43,7 +48,7 @@ const addBookRoute = async (req, res) => {
     const newBook = await createBook(books, req.body)
     books.push(newBook)
     res.status(200).send(newBook) 
-    updateStore()
+    updateBookStore()
   } catch (status) { // runs on status 409 and 404
     res.sendStatus(status)
   }
@@ -61,6 +66,27 @@ const deleteAllBooksRoute = (_, res) => {
   books.length = 0
   sendSuccessAndUpdateStore(res)
 }
+const getGroupsRoute = (_, res) => res.status(200).send(groups)
+const addGroupRoute = (req, res) => {
+  groups[req.body.groupName] = req.body.books
+  store.set("groups", groups)
+  res.sendStatus(200)
+}
+const renameGroupRoute = (req, res) => {
+  const clonedGroups = Object.assign({}, groups)
+  const targetGroup = groups[req.body.old]
+
+  delete clonedGroups[req.body.old]
+  clonedGroups[req.body.new] = targetGroup
+  groups = clonedGroups
+  store.set("groups", groups)
+  res.sendStatus(200)
+}
+const deleteGroupRoute = (req, res) => {
+  delete groups[req.body.groupName]
+  store.set("groups", groups)
+  res.sendStatus(200)
+}
 
 booksRouter.route("/")
 .get(getBooksRoute)
@@ -69,5 +95,11 @@ booksRouter.route("/")
 .delete(deleteBookRoute)
 
 booksRouter.delete("/deleteall", deleteAllBooksRoute)
+
+booksRouter.route("/groups")
+.get(getGroupsRoute)
+.post(addGroupRoute)
+.patch(renameGroupRoute)
+.delete(deleteGroupRoute)
 
 module.exports = booksRouter

@@ -6,12 +6,6 @@ module.exports = {
             productName: "Book Manager",
             win: {
               icon: "./electron-assets/icon.png"
-            },
-            mac: {
-              icon: "./electron-assets/icon.png"
-            },
-            linux: {
-              icon: "./electron-assets/icon.png"
             }
           },
       }

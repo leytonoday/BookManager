@@ -16,21 +16,13 @@
           <i class="fas fa-tags" style="margin-right: 1em;"></i>
           Category View
         </vs-button>
+        <vs-button to="/booksgroupsview" size="xl">
+          <i class="fas fa-layer-group" style="margin-right: 1em;"></i>
+          Group View
+        </vs-button>
         <vs-button to="/bookstableview" size="xl">
           <i class="fas fa-table" style="margin-right: 1em;"></i>
           Tabular View
-        </vs-button>
-        <vs-button to="/addbookauto" size="xl">
-          <i class="fas fa-magic" style="margin-right: 1em;"></i>
-          Auto Addition
-        </vs-button>
-        <vs-button to="/addbookmanual" size="xl">
-          <i class="fas fa-align-left" style="margin-right: 1em;"></i>
-          Manual Addition
-        </vs-button>
-        <vs-button to="/help" size="xl">
-          <i class="fas fa-question-circle" style="margin-right: 1em;"></i>
-          Seek Help
         </vs-button>
       </vs-button-group>
     </div>

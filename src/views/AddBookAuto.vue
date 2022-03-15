@@ -48,7 +48,7 @@
 
           <br />
           
-          <div class="parent">
+          <div class="centreButton">
             <vs-button gradient :disabled="isUnreadLimitReached() || loading" :loading="loading" size="xl">
               Add Book
               <template #animate ><i class="fas fa-paper-plane"></i></template>
@@ -167,7 +167,7 @@ export default {
 .vs-input-parent >>> .vs-input {
   width: 100%;
 }
-.parent {
+.centreButton {
   display: flex;
   justify-content: center;
 }

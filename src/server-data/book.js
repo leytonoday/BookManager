@@ -10,6 +10,7 @@ class Book {
     this.categories     = [] 
     this.bookmark       = ""
     this.rating         = null
+    this.groups         = []
     this.notes          = ""
     this.id             = id
     

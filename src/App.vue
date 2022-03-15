@@ -71,6 +71,7 @@ export default {
   methods: {
     loadBookManager() {
       this.$store.dispatch("loadBooks")
+      this.$store.dispatch("loadGroups")
       this.$store.dispatch("loadTheme")
       this.$store.dispatch("loadSettings")
       this.$store.dispatch("loadMiscData")

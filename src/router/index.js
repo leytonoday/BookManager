@@ -31,6 +31,22 @@ const routes = [
     component: () => import("../views/BooksCategoryView.vue")
   },
   {
+    path: "/booksgroupsview",
+    name: "BooksGroupsView",
+    component: () => import("../views/Group/BooksGroupsView.vue")
+  },
+  {
+    path: "/creategroup",
+    name: "CreateGroup",
+    component: () => import("../views/Group/CreateGroup.vue")
+  },
+  {
+    path: "/booksgroupview/:group",
+    name: "BooksGroupView",
+    props: true,
+    component: () => import("../views/Group/BooksGroupView.vue")
+  },
+  {
     path: "/books/:id",
     name: "Book",
     props: true,

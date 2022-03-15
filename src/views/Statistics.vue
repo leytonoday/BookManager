@@ -66,7 +66,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["books", "theme", "accent", "categories", "booksFromCategory"]),
+    ...mapGetters(["books", "theme", "accent", "allCategories", "booksFromCategory"]),
   },
 
   methods: {
@@ -107,7 +107,7 @@ export default {
 
     getCategoryFrequencies() { // returns map of all categories listed in the Library books, and their frequencies 
       const frequencies = {}
-      this.categories.map(i => frequencies[i] = this.booksFromCategory(i).length)
+      this.allCategories.map(i => frequencies[i] = this.booksFromCategory(i).length)
       return frequencies
     }
   }

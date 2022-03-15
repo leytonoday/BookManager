@@ -38,6 +38,11 @@
         Category View
       </vs-sidebar-item>
 
+      <vs-sidebar-item to="/booksgroupsview" id="/booksgroupsview">
+        <template #icon><i class="fas fa-layer-group"></i></template>
+        Groups View
+      </vs-sidebar-item>
+
       <vs-sidebar-item to="/bookstableview" id="/bookstableview">
         <template #icon><i class="fas fa-table"></i></template>
         Tabular View

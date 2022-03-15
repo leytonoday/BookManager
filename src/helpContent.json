@@ -47,6 +47,10 @@
       "body": "You can access the Category View by going to Library -> Category View. Here, the categories of all books are displayed so you can more easily browse your library."
     },
     {
+      "head": "Group View",
+      "body": "You can access the Group View by going to Library -> Group View. Here, you can create groups with the purpose of organizing books by purpose. For example, if you are reading a set of books to learn web development, then you could make a group for these books"
+    },
+    {
       "head": "Tabular View",
       "body": "You can access the Tabular View by going to Library -> Tabular View. This is for a more practical view of your libary. From here, you can operate on your books in mass, as opposed to individually. You can sort, search, and traverse your Library easily using this feature!"
     },

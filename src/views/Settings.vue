@@ -84,7 +84,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["theme", "books", "responseStatus", "sidebarPosition"]),
+    ...mapGetters(["theme", "books", "responseStatus", "sidebarPosition", "groups"]),
   },
 
   watch: {
@@ -103,13 +103,17 @@ export default {
   },
 
   methods: {
-    ...mapActions(["setTheme", "setAccent", "setSidebarPosition", "addBook", "resetAccent", "setUnreadLimit"]),
+    ...mapActions(["setTheme", "setAccent", "setSidebarPosition", "addBook", "resetAccent", "setUnreadLimit", "addGroup"]),
     exportBooks() {
       const link = document.createElement("a")
-      link.href=`data:text/plain;charset=UTF-8,${escape((JSON.stringify(this.books)))}`
+      const exportData = {
+        books: this.books,
+        groups: this.groups
+      }
+      link.href=`data:text/plain;charset=UTF-8,${escape((JSON.stringify(exportData)))}`
       link.download = "book-manager-books.json"
       link.click()
-      notify(this, "Export Success", `${this.books.length} have been exported`, "success")
+      notify(this, "Export Success", `${this.books.length} books have been exported`, "success")
     },
     importBooks() {
       const input = document.createElement("input")
@@ -123,9 +127,11 @@ export default {
           if (!reader.result) 
             return notify(this, "Import Failure", "No data in given file", "danger")
           try {
-              const importedBooks = JSON.parse(reader.result)
-              for (const book of importedBooks) 
-                  this.addBook({ method: "import", input: book })
+              const { books, groups } = JSON.parse(reader.result)
+              for (const book of books)
+                this.addBook({ method: "import", input: book })
+              for (const groupName of Object.keys(groups))
+                this.addGroup({ groupName, books: groups[groupName] })
           } catch {
             notify(this, "Import Failure", "Could not parse books from the given file", "danger")
             return

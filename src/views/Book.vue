@@ -75,8 +75,8 @@
 
         <div class="infoBox">
           <h2>Categories:</h2>
-          <vs-select v-if="categories.length" :key="categorySelectKey" placeholder="Categories" class="categoriesSelect" :vs-theme="theme.name" multiple filter v-model="bookCategories">
-            <vs-option v-for="category in categories" :key="category" :label="category" :value="category" :vs-theme="theme.name">
+          <vs-select v-if="allCategories.length" :key="categorySelectKey" placeholder="Categories" class="multipleSelect" :vs-theme="theme.name" multiple filter collapse-chips v-model="bookCategories">
+            <vs-option v-for="category in allCategories" :key="category" :label="category" :value="category" :vs-theme="theme.name">
               {{category}}
             </vs-option>
           </vs-select>
@@ -86,6 +86,11 @@
           <vs-input style="width: 26.5em;" placeholder="New Category" border :vs-theme="theme.name" primary v-model="newCategory" />
           <vs-button gradient primary>Add</vs-button>
         </form>
+
+        <div v-if="groups.length" class="infoBox">
+          <h2>Groups:</h2>
+          <p>{{groups.join(", ")}}</p>
+        </div>
 
         <div v-if="book.publishedDate" class="infoBox">
           <h2>Date Published:</h2>
@@ -209,12 +214,12 @@ export default {
         ['clean']                                         // remove formatting button
       ],
       newCategory: "",
-      categorySelectKey: 0
+      categorySelectKey: 0,
     }
   },
 
   computed: {
-    ...mapGetters(["theme", "accent", "categories"]),
+    ...mapGetters(["theme", "accent", "allCategories", "allGroups", "groupsFromBook"]),
     book() {
       return this.$store.getters.bookFromId(this.id)
     },
@@ -266,6 +271,9 @@ export default {
       get() {
         return this.book.frontCover
       }
+    },
+    groups() {
+      return this.groupsFromBook(this.book.id)
     }
   },
 
@@ -541,7 +549,7 @@ export default {
 .vs-select-content >>> .vs-select {
   width: 10em;
 }
-.vs-select-content.categoriesSelect >>> .vs-select{
+.vs-select-content.multipleSelect >>> .vs-select{
   width: 30em;
 }
 

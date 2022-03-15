@@ -43,9 +43,9 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["books", "theme", "categories"]),
+    ...mapGetters(["books", "theme", "allCategories"]),
     searchedCategories() {
-      return this.categories.filter(i => i.includes(this.search))
+      return this.allCategories.filter(i => i.includes(this.search))
     }
   }
 }

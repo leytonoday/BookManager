@@ -91,22 +91,22 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["books", "theme", "loading", "booksFromCategory"]),
+    ...mapGetters(["books", "theme", "booksFromCategory"]),
     searchedBooks() {
       return this.$vs.getSearch(this.filteredBooks, this.search)
     },
   },
 
   mounted() {
-    this.filteredBooks = this.booksFromCategory(this.category)
+    this.setFilteredBooks()
   },
 
   watch: {
-    books() {
-      this.filterBooks(this.radioFilterValue) // When we delete books using the "Delete All Books" button we need the books to update
-    },
     radioFilterValue(newValue) { // When we switch options, update the books in accordance to the filter of read === true
       this.filterBooks(newValue)
+    },
+    category() { // Switching the categories doesn't count as a re-mount. So check for category changes and update the "filtered" (filtered by category) books
+      this.setFilteredBooks()
     }
   },
 
@@ -124,6 +124,9 @@ export default {
           uncategorised.push(`${book.title} (${book.isbn})`)
       })
       return uncategorised.join(", ")
+    },
+    setFilteredBooks() {
+      this.filteredBooks = this.booksFromCategory(this.category)
     }
   }
 }
