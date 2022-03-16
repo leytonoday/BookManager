@@ -58,7 +58,7 @@
             {{ getBookTitle(book) }} 
           </vs-td>
           <vs-td>
-            {{ book.publisher || "N/A" }}
+            {{ getCleanedPublisher(book) || "N/A" }}
           </vs-td>
           <vs-td>
             {{ book.publishedDate || "N/A" }}
@@ -101,7 +101,7 @@
 <script>
 "use strict"
 
-import { notify, truncate }     from "../utils/utils.js"
+import { notify, truncate, removePunctuation }     from "../utils/utils.js"
 import { mapGetters }           from "vuex"
 
 export default {
@@ -188,6 +188,11 @@ export default {
         return truncate(book.title, this.TEXT_LENGTH_LIMIT)
       else 
         return book.title
+    },
+    getCleanedPublisher(book) {
+      if (!book.publisher)
+        return undefined
+      return removePunctuation(book.publisher)
     }
   }
 }

@@ -61,9 +61,9 @@ const mutations = { // These edit the state directly
     delete state.groups[payload]
   },
   RENAME_GROUP(state, payload) {
-    const clonedGroups = Object.assign({}, this.groups)
+    const clonedGroups = Object.assign({}, state.groups)
     const targetGroup = state.groups[payload.old]
-
+    
     delete clonedGroups[payload.old]
     clonedGroups[payload.new] = targetGroup
     state.groups = clonedGroups

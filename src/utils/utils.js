@@ -39,5 +39,8 @@ const self = module.exports = {
   },
   createHash(input) {
     return crypto.createHash("md5").update(input).digest("hex")
+  },
+  removePunctuation(text) { 
+    return text.replace(/[^\w\s]|_/g, "").replace(/\s+/g, " ")
   }
 }
