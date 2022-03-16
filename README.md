@@ -78,7 +78,7 @@ Category View of Library
 
 ### Figure 5
 Group View of Library
-![5](https://user-images.githubusercontent.com/36010516/158642128-6b57977f-f44e-45fa-ab09-57e21182370f.png)
+![5](https://user-images.githubusercontent.com/36010516/158665993-fe9f152f-7d02-479b-be2c-455f7aae6f80.png)
 
 ### Figure 6
 Book details, with rich text notes and bookmark
