@@ -161,6 +161,7 @@ export default {
 
   mounted() {
     this.setFilteredBooks()
+    console.log(this.booksFromGroup(this.group))
   },
 
   watch: {

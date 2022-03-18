@@ -159,7 +159,7 @@ export default {
       if (this.selected.length === this.books.length)
         this.$store.dispatch("deleteAllBooks")
       else
-        this.selected.forEach(book => this.$store.dispatch("deleteBook", book))
+        this.selected.forEach(book => this.$store.dispatch("deleteBook", { id: book.id} ))
       this.selected.length = 0
     },
     setReadStatus(status) {

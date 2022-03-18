@@ -19,6 +19,17 @@ function loadBooks() {
     store.set("books", [])
   return store.get("books")
 }
+function updateBooks() {
+  store.set("books", books)
+}
+function loadGroups() {
+  if (!store.get("groups"))
+  store.set("groups", {})
+  return store.get("groups")
+}
+function updateGroups() {
+  store.set("groups", groups)
+}
 function setBookProperty(bookData) {
   const id = bookData.id
   const propertyName = Object.keys(bookData)[1]
@@ -29,15 +40,7 @@ function getBookFromId(id) {
 }
 function sendSuccessAndUpdateStore(res) {
   res.sendStatus(200)
-  updateBookStore()
-}
-function updateBookStore() {
-  store.set("books", books)
-}
-function loadGroups() {
-  if (!store.get("groups"))
-    store.set("groups", {})
-  return store.get("groups")
+  updateBooks()
 }
 
 
@@ -48,7 +51,7 @@ const addBookRoute = async (req, res) => {
     const newBook = await createBook(books, req.body)
     books.push(newBook)
     res.status(200).send(newBook) 
-    updateBookStore()
+    updateBooks()
   } catch (status) { // runs on status 409 and 404
     res.sendStatus(status)
   }
@@ -58,33 +61,42 @@ const setBookPropertyRoute = (req, res) => {
   sendSuccessAndUpdateStore(res)
 }
 const deleteBookRoute = (req, res) => {
+  console.log(req.body)
   const index = books.findIndex(book => book.id == req.body.id)
+  console.log(index)
+  console.log(books.length)
   books.splice(index, 1)
+  console.log(books.length)
   sendSuccessAndUpdateStore(res)
 }
 const deleteAllBooksRoute = (_, res) => {
   books.length = 0
-  sendSuccessAndUpdateStore(res)
+  Object.keys(groups).forEach(key => groups[key] = [])
+  updateGroups()
+  updateBooks()
+  res.sendStatus(200)
 }
 const getGroupsRoute = (_, res) => res.status(200).send(groups)
 const addGroupRoute = (req, res) => {
   groups[req.body.groupName] = req.body.books
-  store.set("groups", groups)
+  updateGroups()
   res.sendStatus(200)
 }
 const renameGroupRoute = (req, res) => {
   const clonedGroups = Object.assign({}, groups)
   const targetGroup = groups[req.body.old]
 
+  console.log(req.body)
+
   delete clonedGroups[req.body.old]
   clonedGroups[req.body.new] = targetGroup
   groups = clonedGroups
-  store.set("groups", groups)
+  updateGroups()
   res.sendStatus(200)
 }
 const deleteGroupRoute = (req, res) => {
   delete groups[req.body.groupName]
-  store.set("groups", groups)
+  updateGroups()
   res.sendStatus(200)
 }
 

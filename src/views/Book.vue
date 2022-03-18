@@ -326,7 +326,7 @@ export default {
     },
     deleteBook(book) {
       this.$router.back()
-      this.$store.dispatch("deleteBook", book)
+      this.$store.dispatch("deleteBook", {id: book.id} )
     },
     setNotesCheck() { // Attempt to set the notes  every two seconds. This will minimize any issues with the app forcibly being closed and notes not being saved.
       if (router.currentRoute.name !== "Book") return

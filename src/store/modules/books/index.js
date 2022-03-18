@@ -41,6 +41,7 @@ const mutations = { // These edit the state directly
   },
   DELETE_ALL_BOOKS (state) {
     state.books = []
+    Object.keys(state.groups).forEach(key => state.groups[key] = [])
   },
   SET_BOOK_PROPERTY(state, payload) {
     const id = payload.id
@@ -93,9 +94,14 @@ const actions = {
   },
 
   async deleteBook({commit}, bookId) {
-    await axios.delete(`${URLBase}/books`, bookId)
+    await axios({ 
+      method: "DELETE",
+      url: `${URLBase}/books`,
+      data: bookId
+    })
     commit("DELETE_BOOK", bookId)
   },
+
   async deleteAllBooks({commit}) {
     commit('SET_LOADING', true)
     await axios.delete(`${URLBase}/books/deleteall`)
