@@ -19,10 +19,11 @@ Features include:
 - Automatic addition of book data, just search the book name and pick from the search results, and click to see a preview! See figure 1
 - Beautiful pinterest-esque stacking book cards in the Card View. See figure 2
 - Efficient Tabular View for managing and editing several books at once. See figure 3
-- Category View for the Card View is too disorganised. See figure 4
-- Bookmarking, personal star rating, and note taking with a rich text editor! See figure 5
-- Statistics to analyse your reading habits and your libraries growth. See figure 6
-- Fully customizable accent colour, and a crisp light mode available. See figure 7 and 8
+- Category View for if you want to view your Library by category. See figure 4
+- Group View for creating groups and viewing books by common purpose. See figure 5
+- Bookmarking, personal star rating, and note taking with a rich text editor! See figure 6
+- Statistics to analyse your reading habits and your libraries growth. See figure 7
+- Fully customizable accent colour, and a crisp light mode available. See figure 8 and 9
 - Finally, for those obscure books that aren't documented by the Google Books API, you can manually input their details
 
 ## Project setup
@@ -69,27 +70,31 @@ Card View of Library
 
 ### Figure 3
 Tabular View of Library
-![3](https://user-images.githubusercontent.com/36010516/152333262-7c1eaf1c-5cf8-4860-8ad9-a4ca1628082c.png)
+![3](https://user-images.githubusercontent.com/36010516/158642371-9353e422-dad9-499f-b4e7-2e24096b4b0d.png)
 
 ### Figure 4
 Category View of Library
 ![4](https://user-images.githubusercontent.com/36010516/152333346-aabf28bf-7f7b-4b59-bba9-304a06a8b6c1.png)
 
 ### Figure 5
-Book details, with rich text notes and bookmark
-![5](https://user-images.githubusercontent.com/36010516/152333349-90c9fbb5-a542-4eff-a4d8-6c8545154b81.png)
+Group View of Library
+![5](https://user-images.githubusercontent.com/36010516/158665993-fe9f152f-7d02-479b-be2c-455f7aae6f80.png)
 
 ### Figure 6
-Library statistics
-![6](https://user-images.githubusercontent.com/36010516/152333360-7147142e-e24a-4bd7-8dd3-5591eb6cacfc.png)
+Book details, with rich text notes and bookmark
+![6](https://user-images.githubusercontent.com/36010516/152333349-90c9fbb5-a542-4eff-a4d8-6c8545154b81.png)
 
 ### Figure 7
-Settings and customization
-![7](https://user-images.githubusercontent.com/36010516/152333365-72545516-14f0-4efd-bfe2-26e38a224d9c.png)
+Library statistics
+![7](https://user-images.githubusercontent.com/36010516/152333360-7147142e-e24a-4bd7-8dd3-5591eb6cacfc.png)
 
 ### Figure 8
+Settings and customization
+![8](https://user-images.githubusercontent.com/36010516/152333365-72545516-14f0-4efd-bfe2-26e38a224d9c.png)
+
+### Figure 9
 Light mode example
-![8](https://user-images.githubusercontent.com/36010516/152333373-89c5d12a-cc56-4fb6-b581-2f528331a49d.png)
+![9](https://user-images.githubusercontent.com/36010516/152333373-89c5d12a-cc56-4fb6-b581-2f528331a49d.png)
 
 
 ## Contributing
