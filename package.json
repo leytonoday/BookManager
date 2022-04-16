@@ -34,6 +34,7 @@
     "looks-same": "^7.3.0",
     "quill-image-drop-module": "^1.0.3",
     "randomcolor": "^0.6.2",
+    "request-image-size": "^2.2.0",
     "scroll-to-element": "^2.0.3",
     "update-electron-app": "^2.0.1",
     "url": "^0.11.0",

@@ -1,7 +1,8 @@
 "use strict"
 
-const axios = require("axios")
-const gis   = require("g-i-s")
+const requestImageSize  = require('request-image-size');
+const axios             = require("axios")
+const gis               = require("g-i-s")
 
 class Book {
   constructor(id, volumeInfo) {
@@ -44,7 +45,7 @@ const ApiUrlEnd = `&printsec=frontcover&img=1&zoom=1edge=curl&source=gbs_api`
 const noFrontCoverApiUrl = `${ApiUrlStart}none${ApiUrlEnd}`
 
 async function getFrontCover(isbn, id) {
-  if (await hasFrontCover(id)) 
+  if (await hasFrontCover(id) && await requestImageSize(`${ApiUrlStart}${id}${ApiUrlEnd}`).height > 200) 
     return `${ApiUrlStart}${id}${ApiUrlEnd}`
   else 
     return await getFrontCoverGoogleImages(isbn)

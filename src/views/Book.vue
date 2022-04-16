@@ -114,7 +114,7 @@
           </div>
         </div>
 
-        <div v-if="book.pageCount" class="infoBox">
+        <div class="infoBox">
           <h2>Page Count:</h2>
           <vs-input id="vs-input" type="number" border primary :vs-theme="theme.name" placeholder="Page Count" v-model="pageCount"/>
         </div>
@@ -343,7 +343,7 @@ export default {
       if(Number.isNaN(input)) 
         return this.bookmark = null
       
-      return this.bookmark = Math.min(Math.max(input, 0), this.book.pageCount).toString()
+      return this.bookmark = input <= 0 ? null : Math.min(Math.max(input, 0), this.book.pageCount).toString()
     },
     addNewCategory() {
       if (this.newCategory === "" || this.bookCategories.includes(this.newCategory)) 

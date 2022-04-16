@@ -76,7 +76,7 @@ export default {
         return book.title 
     },
     getAuthors(book) {
-      if (!book.authors.length) 
+      if (!book.authors || !book.authors.length) 
         return
       
       const authors = book.authors.join(", ") 
