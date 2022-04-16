@@ -6,7 +6,7 @@
     </template>
 
     <template #img>
-      <img :src="book.frontCover" alt=""/>
+      <img :src="getBookImage(book)" alt=""/>
     </template>
 
     <template #text>
@@ -60,7 +60,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["theme", "accent"]),
+    ...mapGetters(["theme", "accent", "coverResolution"]),
     themeStyle() {
       return {
         "--boxShadowOpacity": this.theme === "dark" ? 0.2 : 0.4
@@ -88,6 +88,15 @@ export default {
     getBookURL(book) {
       return `/books/${book.id}`
     },
+    getBookImage(book) {
+      if (this.coverResolution === "low") {
+        if (book.imageLinks && book.imageLinks.smallThumbnail) {
+          return book.imageLinks.smallThumbnail
+        }
+      }
+
+      return book.frontCover
+    }
   }
 };
 </script>

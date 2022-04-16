@@ -102,9 +102,7 @@ export default {
      searchInput: _.debounce(async function(newValue) {
       if (!newValue.length) 
         return
-
-      console.log(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(newValue.split().join("+"))}&maxResults=5`)
-
+        
       this.loadingSearchResults = true 
       const response = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(newValue.split().join("+"))}&maxResults=5`)
       this.loadingSearchResults = false

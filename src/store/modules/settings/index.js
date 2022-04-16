@@ -4,7 +4,8 @@ const store = new Store()
 
 const state = {
   sidebarPosition: "left",
-  unreadLimit: ""
+  unreadLimit: "",
+  coverResolution: "high"
 }
 
 const mutations = {
@@ -27,6 +28,16 @@ const mutations = {
       store.set("unreadLimit", state.unreadLimit)
     else
       state.unreadLimit = store.get("unreadLimit")
+  },
+  LOAD_COVER_RESOLUTION(state) {
+    if (!store.get("coverResolution")) 
+      store.set("coverResolution", state.coverResolution)
+    else
+      state.coverResolution = store.get("coverResolution")
+  },
+  SET_COVER_RESOLUTION(state, payload) {
+    state.coverResolution = payload
+    store.set("coverResolution", payload)
   }
 }
 
@@ -40,15 +51,20 @@ const actions = {
   setUnreadLimit({commit}, limit) {
     commit("SET_UNREAD_LIMIT", limit)
   },
+  setCoverResolution({commit}, resolution) {
+    commit("SET_COVER_RESOLUTION", resolution)
+  },
   loadSettings({commit}) {
     commit("LOAD_SIDEBAR_POSITION")
     commit("LOAD_UNREAD_LIMIT")
+    commit("LOAD_COVER_RESOLUTION")
   },
 }
 
 const getters = {
   sidebarPosition: state => state.sidebarPosition,
-  unreadLimit: state => state.unreadLimit
+  unreadLimit: state => state.unreadLimit,
+  coverResolution: state => state.coverResolution
 }
 
 export default { state, mutations, actions, getters }

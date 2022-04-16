@@ -56,6 +56,18 @@
         </template>
       </vs-switch>
 
+      <br />
+
+      <h2 class="title">Cover Resolution</h2>
+      <p class="subtitle">Resolution of book cover images on cards. Setting this to Low may increase performance. Recommended for large libraries</p>
+      <vs-switch class="centre" style="width: 6em;" square :vs-theme="theme.name" v-model="coverResolutionChoice">
+        <template #off> Low </template>
+        <template #on> High </template>
+        <template #circle>
+          <i :class="coverResolutionChoice ? 'fas fa-arrow-up' : 'fas fa-arrow-down'" />
+        </template>
+      </vs-switch>
+
     </div>
   </div>
 </template>
@@ -79,7 +91,8 @@ export default {
       sidebarPositionChoice: this.$store.getters.sidebarPosition === "left", // true = left, false = right
       themeChoice: this.$store.getters.theme.name !== "dark", // true = light, false = dark
       unreadLimit: this.$store.getters.unreadLimit,
-      accentColour: this.$store.getters.accent
+      accentColour: this.$store.getters.accent,
+      coverResolutionChoice: this.$store.getters.coverResolution === "high", // true = high, false = low
     }
   },
 
@@ -97,13 +110,16 @@ export default {
     sidebarPositionChoice(newValue) { 
       this.setSidebarPosition(newValue ? "left": "right") 
     },
+    coverResolutionChoice(newValue) { 
+      this.setCoverResolution(newValue ? "high": "low") 
+    },
     responseStatus(newValue) { // Used when importing books to indicate success or failure
       processResponseStatus(this, newValue) 
     }
   },
 
   methods: {
-    ...mapActions(["setTheme", "setAccent", "setSidebarPosition", "addBook", "resetAccent", "setUnreadLimit", "addGroup"]),
+    ...mapActions(["setTheme", "setAccent", "setSidebarPosition", "addBook", "resetAccent", "setUnreadLimit", "addGroup", "setCoverResolution"]),
     exportBooks() {
       const link = document.createElement("a")
       const exportData = {
