@@ -66,8 +66,8 @@
 import { notify, processResponseStatus }  from "../utils/utils"
 import { mapGetters }                     from "vuex"
 import { truncate }                       from "../utils/utils.js"
-import _                                  from "lodash"
 import axios                              from "axios"
+import _                                  from "lodash"
 
 export default {
   name: "AddBookAuto",
@@ -103,8 +103,10 @@ export default {
       if (!newValue.length) 
         return
 
+      console.log(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(newValue.split().join("+"))}&maxResults=5`)
+
       this.loadingSearchResults = true 
-      const response = await axios.get(encodeURI(`https://www.googleapis.com/books/v1/volumes?q=${newValue.split().join("+")}&maxResults=5`))
+      const response = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(newValue.split().join("+"))}&maxResults=5`)
       this.loadingSearchResults = false
 
       this.searchResults = response.data.items
@@ -131,7 +133,7 @@ export default {
         this.addBook("isbn", this.isbn)
       else 
         this.addBook("search", this.selectedSearchResult ? this.selectedSearchResult : this.searchResults[0])
-      this.clearInput()
+      //this.clearInput()
     },
     clearInput() {
       this.isbn = ""
