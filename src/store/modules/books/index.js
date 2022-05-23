@@ -22,7 +22,9 @@ const mutations = { // These edit the state directly
   },
   DELETE_BOOK (state, payload) {
     const index = state.books.findIndex(book => book.id == payload.id)
-    const bookGroups = state.books[index].groups // The groups that this book is in
+    const bookGroups = getters.groupsFromBook(state)(payload.id)
+
+    console.log(getters.groupsFromBook(state)(payload.id))
 
     Object.keys(state.groups).forEach(group => { // Remove book from all groups
       if (bookGroups.includes(group)) {
@@ -30,6 +32,8 @@ const mutations = { // These edit the state directly
         state.groups[group].splice(index, 1)
       }
     })
+
+    console.log(getters.groupsFromBook(state)(payload.id))
 
     state.books.splice(index, 1)
   },

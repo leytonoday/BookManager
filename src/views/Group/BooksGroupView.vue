@@ -111,7 +111,7 @@ import BookListItem           from "../../components/books/BookListItem"
 import { notify }             from "../../utils/utils"
 
 export default {
-  name: "BooksCardView",
+  name: "BooksGroupView",
   
   props: {
     group: {
@@ -154,7 +154,10 @@ export default {
       },
       get() {
         this.groupBooksGetDependency--;
-        return this.booksFromGroup(this.group).map(i => i.id)
+        const groupBooks = this.booksFromGroup(this.group)
+        if (!groupBooks.length)
+          return []
+        return groupBooks.map(i => i.id)
       }
     }
   },
