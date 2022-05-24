@@ -140,7 +140,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["books", "theme", "booksFromGroup"]),
+    ...mapGetters(["books", "theme", "booksFromGroup", "groups"]),
     searchedBooks() {
       return this.$vs.getSearch(this.filteredBooks, this.search)
     },
@@ -194,6 +194,8 @@ export default {
     },
     renameGroup(event) {
       event.preventDefault()
+      if (this.groups[this.newGroupName])
+         return notify(this, "Warning", `Group ${this.newGroupName} already exists`, "warning")
       this.$store.dispatch("renameGroup", {old: this.group, new: this.newGroupName})
       this.$router.push(`/booksgroupview/${this.newGroupName}`)
       this.renameVisible = false

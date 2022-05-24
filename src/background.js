@@ -11,7 +11,7 @@ import cors                                       from "cors"
 const server = express()
 server.use(cors())
 server.use("/books", booksRouter)
-server.listen(3000)
+server.listen(6969)
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([

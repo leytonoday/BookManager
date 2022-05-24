@@ -42,6 +42,14 @@ function sendSuccessAndUpdateStore(res) {
   res.sendStatus(200)
   updateBooks()
 }
+function groupsFromBook(bookId) {
+  const bookGroups = []
+  Object.keys(groups).forEach(group => {
+    if(groups[group].includes(bookId)) 
+      bookGroups.push(group)
+  })
+  return bookGroups
+}
 
 
 // Routes
@@ -61,12 +69,18 @@ const setBookPropertyRoute = (req, res) => {
   sendSuccessAndUpdateStore(res)
 }
 const deleteBookRoute = (req, res) => {
-  console.log(req.body)
   const index = books.findIndex(book => book.id == req.body.id)
-  console.log(index)
-  console.log(books.length)
+  const bookGroups = groupsFromBook(req.body.id)
+
+  Object.keys(groups).forEach(group => { // Remove book from all groups
+    if (bookGroups.includes(group)) {
+      const index = groups[group].indexOf(req.body.id)
+      groups[group].splice(index, 1)
+    }
+  })
+
   books.splice(index, 1)
-  console.log(books.length)
+  updateGroups()
   sendSuccessAndUpdateStore(res)
 }
 const deleteAllBooksRoute = (_, res) => {
@@ -85,8 +99,6 @@ const addGroupRoute = (req, res) => {
 const renameGroupRoute = (req, res) => {
   const clonedGroups = Object.assign({}, groups)
   const targetGroup = groups[req.body.old]
-
-  console.log(req.body)
 
   delete clonedGroups[req.body.old]
   clonedGroups[req.body.new] = targetGroup

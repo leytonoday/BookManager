@@ -4,7 +4,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 
 const URLBase = isDevelopment 
   ? "/api"
-  : "http://localhost:3000"
+  : "http://localhost:6969"
 
 const state = {
   books: [],
@@ -24,16 +24,12 @@ const mutations = { // These edit the state directly
     const index = state.books.findIndex(book => book.id == payload.id)
     const bookGroups = getters.groupsFromBook(state)(payload.id)
 
-    console.log(getters.groupsFromBook(state)(payload.id))
-
     Object.keys(state.groups).forEach(group => { // Remove book from all groups
       if (bookGroups.includes(group)) {
         const index = state.groups[group].indexOf(payload.id)
         state.groups[group].splice(index, 1)
       }
     })
-
-    console.log(getters.groupsFromBook(state)(payload.id))
 
     state.books.splice(index, 1)
   },
