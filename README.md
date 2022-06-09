@@ -90,7 +90,7 @@ Library statistics
 
 ### Figure 8
 Settings and customization
-![8](https://user-images.githubusercontent.com/36010516/152333365-72545516-14f0-4efd-bfe2-26e38a224d9c.png)
+![8](https://user-images.githubusercontent.com/36010516/172751904-5a9bed67-9f1c-4861-90c1-be263e5a05f9.png)
 
 ### Figure 9
 Light mode example
